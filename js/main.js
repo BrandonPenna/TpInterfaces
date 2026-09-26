@@ -2,15 +2,28 @@
 // para que funcione desde la raíz (index.html) y desde subcarpetas (pages/).
 const BASE_TEMPLATES = new URL('../templates/', document.currentScript.src).href;
 
+// Los partials usan rutas relativas a templates/ (ej: ../assets/icons/logo.png).
+// Como se inyectan en páginas que están a distinta profundidad, las convertimos
+// a URLs absolutas resolvinglas contra la ruta del propio template.
+function resolverRutas(html) {
+    return html.replace(
+        /(\s(?:src|href)\s*=\s*)(["'])(\.\.\/[^"']+)\2/g,
+        (match, prefijo, comilla, ruta) => prefijo + comilla + new URL(ruta, BASE_TEMPLATES).href + comilla
+    );
+}
+
 // Función para cargar componentes reutilizables (Header y Footer)
 function cargarTemplate(idContenedor, rutaArchivo) {
+    const contenedor = document.getElementById(idContenedor);
+    if (!contenedor) return;
+
     fetch(rutaArchivo)
         .then(response => {
             if (!response.ok) throw new Error(`No se pudo cargar ${rutaArchivo}`);
             return response.text();
         })
         .then(data => {
-            document.getElementById(idContenedor).innerHTML = data;
+            contenedor.innerHTML = resolverRutas(data);
         })
         .catch(error => console.error('Error cargando template:', error));
 }
