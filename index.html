@@ -1,168 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CyberHub - Menú del Proyecto</title>
-  <style>
-    /* Estilos generales del fondo - Estética Dark/Gamer */
-    body {
-      background-color: #0d0d0d; /* Negro casi puro */
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      color: #ffffff;
-    }
-
-    /* Contenedor principal (La tarjeta) */
-    .card {
-      background-color: #1a1a1a; /* Gris muy oscuro */
-      border: 1px solid #333333; /* Borde sutil para despegar del fondo */
-      border-radius: 20px;
-      padding: 40px 30px;
-      width: 100%;
-      max-width: 450px;
-      box-shadow: 0 15px 30px rgba(0,0,0,0.8);
-    }
-
-    /* Encabezado */
-    .header {
-      margin-bottom: 30px;
-    }
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 900; /* Letra más gruesa para CyberHub */
-      font-size: 24px;
-      margin-bottom: 25px;
-      letter-spacing: 1px;
-    }
-    .logo-circle {
-      background-color: #00ff41; /* Verde neón estilo Cyber/Matrix */
-      color: #000;
-      width: 36px;
-      height: 36px;
-      border-radius: 8px; /* Cuadrado con bordes redondeados, más gamer */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 20px;
-    }
-    .hub-text {
-      color: #00ff41; /* Pinta la palabra "HUB" de verde */
-    }
-    h1 {
-      font-size: 22px;
-      margin: 0 0 10px 0;
-    }
-    p {
-      color: #a0a0a0; /* Gris claro */
-      font-size: 15px;
-      margin: 0;
-    }
-
-    /* Estilos compartidos de los botones */
-    .btn {
-      display: flex;
-      align-items: center;
-      text-decoration: none;
-      padding: 20px;
-      border-radius: 12px; /* Bordes un poco más rectos */
-      margin-bottom: 15px;
-      transition: all 0.3s ease;
-    }
-    .btn:hover {
-      transform: translateY(-2px);
-    }
-    .btn-icon {
-      font-size: 24px;
-      margin-right: 15px;
-    }
-    .btn-text {
-      display: flex;
-      flex-direction: column;
-    }
-    .btn-title {
-      font-weight: bold;
-      font-size: 17px;
-      margin-bottom: 4px;
-    }
-    .btn-subtitle {
-      font-size: 13px;
-      opacity: 0.8;
-    }
-
-    /* Botón Primario (Presentación) */
-    .btn-primary {
-      background-color: #00ff41; /* Verde neón */
-      color: #000000;
-      box-shadow: 0 4px 15px rgba(0, 255, 65, 0.2); /* Resplandor verde */
-    }
-    .btn-primary:hover {
-      background-color: #00e63a;
-      box-shadow: 0 6px 20px rgba(0, 255, 65, 0.4);
-    }
-
-    /* Botón Secundario (Editor) */
-    .btn-secondary {
-      background-color: transparent;
-      border: 1px solid #444444;
-      color: #ffffff;
-    }
-    .btn-secondary:hover {
-      border-color: #00ff41; /* Al pasar el mouse el borde se pone verde */
-      color: #00ff41;
-    }
-
-    /* Pie de página */
-    .footer {
-      margin-top: 35px;
-      padding-top: 25px;
-      border-top: 1px solid #333333;
-      text-align: center;
-      color: #666666;
-      font-size: 13px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber HUB - Home</title>
+    <!-- Enlace a tu CSS principal (que ya tiene la fuente de Google adentro) -->
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-  <div class="card">
-    <div class="header">
-      <div class="logo">
-        <div class="logo-circle">👾</div>
-        CYBER<span class="hub-text">HUB</span>
-      </div>
-      <h1>TPE1 — Plataforma de juegos</h1>
-      <p>Accedé a la presentación o al archivo de diseño en Figma.</p>
-    </div>
+<!-- Contenedor vacío donde el JavaScript inyectará el header -->
+<div id="header-container"></div>
 
-    <!-- ENLACE 1: Presentación -->
-    <a href="https://www.figma.com/proto/hLMEdj20X4sUIHpTFmWClv/TPE1---Juegos-Online?node-id=233-1157&t=QcO2dJ8ZlFTCYDID-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=233%3A1157&show-proto-sidebar=1" class="btn btn-primary" target="_blank">
-      <div class="btn-icon">▶</div>
-      <div class="btn-text">
-        <span class="btn-title">Ver presentación</span>
-        <span class="btn-subtitle">Registro → Home → Peg Solitaire</span>
-      </div>
-    </a>
-
-    <!-- ENLACE 2: Modo Editor -->
-    <a href="https://www.figma.com/design/hLMEdj20X4sUIHpTFmWClv/TPE1---Juegos-Online?node-id=0-1&t=RXKEE9h7gGbqNi4Q-1" class="btn btn-secondary" target="_blank">
-      <div class="btn-icon">🎨</div>
-      <div class="btn-text">
-        <span class="btn-title">Ver archivo de Figma</span>
-        <span class="btn-subtitle">Prototipos en alta fidelidad · modo editor</span>
-      </div>
-    </a>
-
-    <div class="footer">
-      TUDAI · Arquitectura Web
-    </div>
-  </div>
-
+<!-- Tu script para cargar templates -->
+<script src="js/main.js"></script>
 </body>
 </html>

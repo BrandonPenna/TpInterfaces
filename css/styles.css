@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Oxanium&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Oxanium&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #0a0a0a;
+    font-family: 'Oxanium', sans-serif;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 90px;
+    background-color: #121212;
+    padding: 0 35px;
+    gap: 15px;
+}
+
+/* Hamburger Menu */
+.hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    width: 38px;
+    height: 40px;
+    flex-shrink: 0;
+}
+
+.hamburger span {
+    display: block;
+    width: 38px;
+    height: 8px;
+    background-color: #39ff14;
+    border-radius: 20px;
+}
+
+/* Logo */
+.logo-icon {
+    width: 55px;
+    height: 38px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.logo-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Brand Name */
+.brand-name {
+    font-size: 26px;
+    color: #ffffff;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.brand-name span {
+    color: #39ff14;
+    font-weight: bold;
+}
+
+/* Search Bar */
+.search-bar {
+    flex: 1;
+    max-width: 600px;
+    height: 45px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.search-bar input {
+    width: 100%;
+    height: 100%;
+    background-color: #2a2731;
+    border: 1px solid #39ff14;
+    border-radius: 15px;
+    padding: 0 20px;
+    font-family: 'Oxanium', sans-serif;
+    font-size: 33px;
+    color: #ffffff;
+    outline: none;
+}
+
+.search-bar input::placeholder {
+    color: #757575;
+}
+
+.search-bar input:focus {
+    box-shadow: 0 0 8px rgba(57, 255, 20, 0.3);
+}
+
+/* Cart Icon */
+.cart-icon {
+    width: 48px;
+    height: 44px;
+    flex-shrink: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+}
+
+.cart-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* User Avatar */
+.user-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background-color: #424242;
+    border: 2px solid #39ff14;
+    flex-shrink: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.user-avatar svg {
+    width: 75%;
+    height: 75%;
+}
