@@ -16,10 +16,10 @@ body {
     display: flex;
     align-items: center;
     width: 100%;
-    height: 90px;
+    height: 66px;
     background-color: #121212;
-    padding: 0 35px;
-    gap: 15px;
+    padding: 0 26px;
+    gap: 12px;
 }
 
 /* Hamburger Menu */
@@ -27,25 +27,25 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 4px;
+    gap: 3px;
     cursor: pointer;
-    width: 38px;
-    height: 40px;
+    width: 29px;
+    height: 30px;
     flex-shrink: 0;
 }
 
 .hamburger span {
     display: block;
-    width: 38px;
-    height: 8px;
+    width: 29px;
+    height: 6px;
     background-color: #39ff14;
     border-radius: 20px;
 }
 
 /* Logo */
 .logo-icon {
-    width: 55px;
-    height: 38px;
+    width: 42px;
+    height: 29px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -65,7 +65,7 @@ body {
 
 /* Brand Name */
 .brand-name {
-    font-size: 26px;
+    font-size: 20px;
     color: #ffffff;
     white-space: nowrap;
     flex-shrink: 0;
@@ -79,8 +79,8 @@ body {
 /* Search Bar */
 .search-bar {
     flex: 1;
-    max-width: 600px;
-    height: 45px;
+    max-width: 460px;
+    height: 34px;
     margin: 0 auto;
     position: relative;
 }
@@ -90,10 +90,10 @@ body {
     height: 100%;
     background-color: #2a2731;
     border: 1px solid #39ff14;
-    border-radius: 15px;
-    padding: 0 20px;
+    border-radius: 11px;
+    padding: 0 15px;
     font-family: 'Oxanium', sans-serif;
-    font-size: 33px;
+    font-size: 24px;
     color: #ffffff;
     outline: none;
 }
@@ -108,8 +108,8 @@ body {
 
 /* Cart Icon */
 .cart-icon {
-    width: 48px;
-    height: 44px;
+    width: 36px;
+    height: 33px;
     flex-shrink: 0;
     cursor: pointer;
     display: flex;
@@ -125,8 +125,8 @@ body {
 
 /* User Avatar */
 .user-avatar {
-    width: 52px;
-    height: 52px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background-color: #424242;
     border: 2px solid #39ff14;
@@ -239,18 +239,24 @@ button {
 
 /* ---------- 4. HERO ---------- */
 .hero {
+    display: flex;
+    justify-content: center;
     width: 100%;
-    aspect-ratio: 1450 / 749;
+    max-width: 1200px; /* Ancho alineado con las tarjetas de abajo */
+    margin: 0 auto;
     overflow: hidden;
-    border-radius: 26px;
-    background: #000;
+    padding: 0 20px;
 }
 
 .hero img {
+    display: block;
     width: 100%;
-    height: 111.4%;
-    object-fit: cover;
-    object-position: center top;
+    height: auto;
+    /* Usamos la proporción original de tu imagen (1200 / 578) para que no deforme */
+    aspect-ratio: 1200 / 578;
+    max-height: 380px;    /* Bajamos un poco esto para que no sea tan alta y se vea el "Compartir" */
+    object-fit: contain;  /* Muestra la imagen entera sin recortar nada */
+    object-position: center;
 }
 
 /* ---------- 5. COMPARTIR + VALORACIÓN ---------- */
@@ -349,8 +355,8 @@ button {
 /* ---------- 7. GALERÍA ---------- */
 .gallery {
     display: grid;
-    grid-template-columns: 1.08fr repeat(3, 1fr);
-    align-items: stretch;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: start;
     gap: 38px;
     padding: 16px 0 50px;
 }
@@ -649,7 +655,7 @@ button {
    con escala ~0.75 de los valores originales.
    --------------------------------------------------------------------- */
 .game-page .page-shell {
-    width: min(100%, 1370px);
+    width: min(100%, 1538px);
     padding-inline: 44px;
 }
 
@@ -713,7 +719,7 @@ button {
 }
 
 .game-page .gallery {
-    gap: 26px;
+    gap: 22px;
     padding: 14px 0 36px;
 }
 
@@ -866,411 +872,4 @@ button {
     min-height: 43px;
     margin-top: 19px;
     font-size: 17px;
-}
-
-/* ---------- 15. RESPONSIVE ---------- */
-@media (max-width: 900px) {
-    .page-shell {
-        padding-inline: 12px;
-    }
-
-    .breadcrumbs {
-        font-size: 14px;
-    }
-
-    .breadcrumbs img {
-        width: 26px;
-    }
-
-    .hero {
-        border-radius: 16px;
-    }
-
-    .share-row {
-        min-height: 90px;
-        flex-wrap: wrap;
-        gap: 12px;
-        padding-block: 12px;
-    }
-
-    .share-row > strong,
-    .section-title {
-        font-size: 24px;
-    }
-
-    .overall-rating {
-        margin-left: auto;
-        padding-right: 0;
-    }
-
-    .overall-rating small {
-        font-size: 13px;
-    }
-
-    .gallery {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 14px;
-    }
-
-    .instructions ol {
-        font-size: 18px;
-    }
-
-    .comment-card {
-        grid-template-columns: 58px minmax(0, 1fr) auto;
-    }
-
-    .avatar {
-        width: 52px;
-        height: 52px;
-    }
-
-    .comment-form {
-        padding: 24px;
-    }
-}
-
-@media (max-width: 520px) {
-    .page-shell {
-        padding-inline: 8px;
-    }
-
-    .breadcrumbs span {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .hero {
-        aspect-ratio: 1.45;
-    }
-
-    .hero img {
-        height: 100%;
-    }
-
-    .share-row > strong {
-        width: 100%;
-    }
-
-    .share-actions {
-        gap: 12px;
-    }
-
-    .overall-rating {
-        font-size: 16px;
-    }
-
-    .overall-rating img {
-        width: 34px;
-        height: 34px;
-    }
-
-    .section-title {
-        font-size: 21px;
-    }
-
-    .gallery {
-        padding-bottom: 28px;
-    }
-
-    .about-copy {
-        padding: 18px;
-    }
-
-    .instructions {
-        padding: 22px 14px;
-    }
-
-    .instructions ol {
-        padding-left: 24px;
-        font-size: 15px;
-    }
-
-    .comments-section {
-        margin-top: 26px;
-    }
-
-    .comments-panel {
-        min-height: 0;
-        gap: 12px;
-        padding: 14px;
-    }
-
-    .comment-card {
-        min-height: 104px;
-        grid-template-columns: 48px minmax(0, 1fr) auto;
-        padding: 10px 8px;
-    }
-
-    .comment-card .avatar {
-        width: 42px;
-        height: 42px;
-    }
-
-    .comment-meta {
-        display: block;
-    }
-
-    .comment-meta span {
-        display: block;
-    }
-
-    .comment-copy p {
-        margin-top: 7px;
-        font-size: 12px;
-    }
-
-    .comment-rating {
-        gap: 3px;
-        font-size: 17px;
-    }
-
-    .more-button {
-        width: 190px;
-    }
-
-    .comment-form {
-        min-height: 430px;
-        padding: 20px 14px;
-    }
-
-    .rating-picker {
-        font-size: 15px;
-    }
-
-    .comment-form textarea {
-        font-size: 14px;
-    }
-}
-
-/* ---------- 16. RESPONSIVE DE LOS AJUSTES DE ESCALA ----------
-   Necesario porque .game-page ... tiene mayor especificidad que
-   las reglas genéricas de la sección 15.
-   --------------------------------------------------------------------- */
-@media (max-width: 900px) {
-    .game-page .page-shell {
-        padding-inline: 20px;
-    }
-
-    .game-page .breadcrumbs {
-        font-size: 13px;
-    }
-
-    .game-page .breadcrumbs img {
-        width: 20px;
-        height: 18px;
-    }
-
-    .game-page .hero {
-        border-radius: 14px;
-    }
-
-    .game-page .share-row {
-        min-height: 74px;
-        flex-wrap: wrap;
-        gap: 10px;
-        padding-block: 10px;
-    }
-
-    .game-page .share-row > strong,
-    .game-page .section-title {
-        font-size: 18px;
-    }
-
-    .game-page .section-title {
-        min-height: 36px;
-    }
-
-    .game-page .section-title img {
-        height: 19px;
-        max-width: 24px;
-    }
-
-    .game-page .share-actions {
-        gap: 11px;
-    }
-
-    .game-page .share-actions button {
-        width: 25px;
-        height: 25px;
-    }
-
-    .game-page .overall-rating {
-        padding-right: 0;
-    }
-
-    .game-page .overall-rating small {
-        font-size: 11px;
-    }
-
-    .game-page .overall-rating img {
-        width: 27px;
-        height: 27px;
-    }
-
-    .game-page .gallery {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-    }
-
-    .game-page .about-copy p {
-        font-size: 12px;
-    }
-
-    .game-page .instructions ol {
-        font-size: 15px;
-    }
-
-    .game-page .comment-form {
-        padding: 18px 20px;
-    }
-}
-
-@media (max-width: 520px) {
-    .game-page .page-shell {
-        padding-inline: 12px;
-    }
-
-    .game-page .hero {
-        aspect-ratio: 1.45;
-    }
-
-    .game-page .hero img {
-        height: 100%;
-    }
-
-    .game-page .share-row > strong {
-        width: 100%;
-        font-size: 16px;
-    }
-
-    .game-page .overall-rating {
-        font-size: 13px;
-    }
-
-    .game-page .overall-rating img {
-        width: 23px;
-        height: 23px;
-    }
-
-    .game-page .section-title {
-        font-size: 15px;
-    }
-
-    .game-page .section-title img {
-        height: 16px;
-        max-width: 20px;
-    }
-
-    .game-page .gallery {
-        padding: 10px 0 20px;
-    }
-
-    .game-page .gallery-item {
-        border-radius: 13px;
-    }
-
-    .game-page .gallery-item span {
-        font-size: 10px;
-    }
-
-    .game-page .gallery-item .play-icon {
-        width: 28px;
-        height: 28px;
-    }
-
-    .game-page .neon-panel {
-        border-radius: 16px;
-    }
-
-    .game-page .about-copy {
-        padding: 15px 14px;
-    }
-
-    .game-page .about-copy p {
-        font-size: 11px;
-    }
-
-    .game-page .instructions {
-        padding: 18px 12px;
-    }
-
-    .game-page .instructions ol {
-        padding-left: 20px;
-        font-size: 12.5px;
-    }
-
-    .game-page .comments-section {
-        margin-top: 20px;
-    }
-
-    .game-page .comments-panel {
-        min-height: 0;
-        gap: 10px;
-        padding: 11px;
-    }
-
-    .game-page .comment-card {
-        min-height: 76px;
-        grid-template-columns: 42px minmax(0, 1fr) auto;
-        padding: 8px 7px;
-    }
-
-    .game-page .comment-card .avatar {
-        width: 40px;
-        height: 40px;
-    }
-
-    .game-page .comment-meta {
-        display: block;
-    }
-
-    .game-page .comment-meta span {
-        display: block;
-    }
-
-    .game-page .comment-copy p {
-        margin-top: 6px;
-        font-size: 11px;
-    }
-
-    .game-page .comment-rating {
-        gap: 3px;
-        font-size: 14px;
-    }
-
-    .game-page .comment-rating img {
-        width: 13px;
-        height: 13px;
-    }
-
-    .game-page .more-button {
-        width: 150px;
-        min-height: 36px;
-        font-size: 12px;
-    }
-
-    .game-page .comment-form {
-        min-height: 0;
-        padding: 16px 12px;
-    }
-
-    .game-page .form-user strong {
-        font-size: 13px;
-    }
-
-    .game-page .rating-picker {
-        font-size: 12px;
-    }
-
-    .game-page .comment-form textarea {
-        min-height: 110px;
-        font-size: 12px;
-    }
-
-    .game-page .submit-button {
-        width: 140px;
-        min-height: 36px;
-        font-size: 14px;
-    }
 }
