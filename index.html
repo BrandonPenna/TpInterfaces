@@ -1,18 +1,34 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber HUB - Home</title>
-    <!-- Enlace a tu CSS principal (que ya tiene la fuente de Google adentro) -->
-    <link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Catálogo de juegos premium, acción, estrategia, deportes y aventura."
+    />
+    <title>Juegos del momento</title>
+    <link rel="stylesheet" href="css/home.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="featured" aria-labelledby="featured-title">
+        <h1 id="featured-title">Juegos del momento</h1>
+        <div class="carousel carousel--featured" data-carousel="featured">
+          <div class="carousel__track" data-track></div>
+          <button class="carousel__arrow carousel__arrow--previous" type="button" data-direction="-1" aria-label="Ver juegos anteriores">
+            <img src="assets/c6527.svg" alt="" />
+          </button>
+          <button class="carousel__arrow carousel__arrow--next" type="button" data-direction="1" aria-label="Ver más juegos">
+            <img src="assets/c6527.svg" alt="" />
+          </button>
+        </div>
+      </section>
 
-<!-- Contenedor vacío donde el JavaScript inyectará el header -->
-<div id="header-container"></div>
+      <div id="game-sections"></div>
+    </main>
 
-<!-- Tu script para cargar templates -->
-<script src="js/main.js"></script>
-</body>
+    <div class="cart-notice" role="status" aria-live="polite"></div>
+    <script src="js/script.js" defer></script>
+  </body>
 </html>
