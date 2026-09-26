@@ -1,10 +1,291 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Title</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Peg solitaire - CyberPunk</title>
+  <link rel="stylesheet" href="../css/styles.css" />
 </head>
-<body>
 
+<body>
+<!-- Contenedor vacío donde el JavaScript inyectará el header -->
+<div id="header-container"></div>
+
+<!-- ============================================================
+     PEG SOLITAIRE - CyberPunk
+     Página estática: HTML + CSS + JavaScript (sin frameworks).
+     Cada bloque está comentado para poder copiar/pegar zonas sueltas.
+     ============================================================ -->
+
+<main class="game-page">
+  <div class="page-shell">
+    <!-- ---------- BREADCRUMBS ---------- -->
+    <nav class="breadcrumbs" aria-label="Navegación">
+      <a href="#juego">Juegos</a>
+      <img src="../assets/games/30dee.svg" alt="" />
+      <a href="#imagenes">Más Jugados</a>
+      <img src="../assets/games/07fa4.svg" alt="" />
+      <span>Peg solitaire - CyberPunk</span>
+    </nav>
+
+    <!-- ---------- HERO / IMAGEN PRINCIPAL ---------- -->
+    <section id="juego" class="hero" aria-label="Peg Solitaire">
+      <img
+              id="hero-image"
+              src="../assets/games/0a376.png"
+              alt="Tablero luminoso de Peg Solitaire CyberPunk"
+      />
+    </section>
+
+    <!-- ---------- COMPARTIR + VALORACIÓN ---------- -->
+    <div class="share-row">
+      <strong>Compartir en:</strong>
+
+      <div class="share-actions">
+        <button
+                type="button"
+                data-share="https://wa.me/?text=Peg%20Solitaire%20CyberPunk"
+                aria-label="Compartir por WhatsApp"
+        >
+          <img src="../assets/games/9c2c6.svg" alt="" />
+        </button>
+
+        <button
+                type="button"
+                data-share="https://x.com/intent/post?text=Peg%20Solitaire%20CyberPunk"
+                aria-label="Compartir en X"
+        >
+          <img src="../assets/games/6ae11.svg" alt="" />
+        </button>
+
+        <button
+                type="button"
+                data-share="mailto:?subject=Peg Solitaire CyberPunk"
+                aria-label="Compartir por correo"
+        >
+          <img src="../assets/games/41885.svg" alt="" />
+        </button>
+
+        <button type="button" id="copy-link" aria-label="Copiar enlace">
+          <img src="../assets/games/81ef8.svg" alt="" />
+        </button>
+      </div>
+
+      <div class="overall-rating">
+        <img src="../assets/games/320c5.svg" alt="estrella" />
+        <span>
+              <small>Valoración</small>
+              4.8
+            </span>
+      </div>
+    </div>
+
+    <!-- ---------- GALERÍA DE IMÁGENES ---------- -->
+    <section id="imagenes" class="gallery-section">
+      <h2 class="section-title">Imágenes del juego:</h2>
+
+      <div class="gallery">
+        <button
+                class="gallery-item"
+                type="button"
+                data-hero="assets/4736e.png"
+                data-hero-alt="Tráiler de Peg Solitaire"
+                aria-label="Mostrar Tráiler de Peg Solitaire"
+        >
+          <img src="../assets/games/4736e.png" alt="Tráiler de Peg Solitaire" />
+          <span>Gameplay Trailer</span>
+          <img class="play-icon" src="../assets/games/60471.svg" alt="" />
+        </button>
+
+        <button
+                class="gallery-item"
+                type="button"
+                data-hero="assets/4d6a5.png"
+                data-hero-alt="Tablero de Peg Solitaire completo"
+                aria-label="Mostrar Tablero de Peg Solitaire completo"
+        >
+          <img
+                  src="../assets/games/4d6a5.png"
+                  alt="Tablero de Peg Solitaire completo"
+          />
+        </button>
+
+        <button
+                class="gallery-item"
+                type="button"
+                data-hero="assets/6ee44.png"
+                data-hero-alt="Partida de Peg Solitaire en curso"
+                aria-label="Mostrar Partida de Peg Solitaire en curso"
+        >
+          <img
+                  src="../assets/games/6ee44.png"
+                  alt="Partida de Peg Solitaire en curso"
+          />
+        </button>
+
+        <button
+                class="gallery-item"
+                type="button"
+                data-hero="assets/38a86.png"
+                data-hero-alt="Tablero de Peg Solitaire con pocas fichas"
+                aria-label="Mostrar Tablero de Peg Solitaire con pocas fichas"
+        >
+          <img
+                  src="../assets/games/38a86.png"
+                  alt="Tablero de Peg Solitaire con pocas fichas"
+          />
+        </button>
+      </div>
+    </section>
+
+    <!-- ---------- DESCRIPCIÓN ---------- -->
+    <section class="about-section">
+      <h2 class="section-title">
+        <img src="../assets/games/35fdd.svg" alt="" />
+        Peg Solitaire - CyberPunk
+      </h2>
+
+      <div class="neon-panel about-copy">
+        <p>
+          Peg Solitaire es un desafiante juego de lógica individual.
+          Comienza con el tablero completamente ocupado a excepción de la
+          casilla central. El objetivo es simple pero astuto: realizar saltos
+          en línea recta sobre fichas adyacentes para eliminarlas,
+          reduciéndolas una a una hasta lograr dejar una única ficha en el
+          centro.
+        </p>
+      </div>
+    </section>
+
+    <!-- ---------- INSTRUCCIONES ---------- -->
+    <section class="instructions-section">
+      <h2 class="section-title">¿Cómo Jugar?</h2>
+
+      <div class="neon-panel instructions">
+        <ol>
+          <li>
+            Saltá una ficha en vertical u horizontal sobre otra hacia un
+            espacio vacío.
+          </li>
+          <li>La ficha saltada se elimina del tablero.</li>
+          <li>¡El objetivo es dejar una sola ficha en el centro!</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ---------- COMENTARIOS ---------- -->
+    <section class="comments-section">
+      <h2 class="section-title">
+        <img src="../assets/games/56518.svg" alt="" />
+        comentarios
+      </h2>
+
+      <div class="neon-panel comments-panel" id="comments-list">
+        <article class="comment-card">
+          <img class="avatar" src="../assets/games/6109e.png" alt="" />
+          <div class="comment-copy">
+            <div class="comment-meta">
+              <strong>NicoGamer777</strong>
+              <span>3 h</span>
+            </div>
+            <p>Juegaso PA.</p>
+          </div>
+          <div class="comment-rating">
+            <strong>4.0</strong>
+            <img src="../assets/games/6d78f.svg" alt="estrella" />
+          </div>
+        </article>
+
+        <article class="comment-card">
+          <img class="avatar" src="../assets/games/6109e.png" alt="" />
+          <div class="comment-copy">
+            <div class="comment-meta">
+              <strong>BrandonWarrior</strong>
+              <span>7 h</span>
+            </div>
+            <p>Me gustó al principio, pero me aburrió.</p>
+          </div>
+          <div class="comment-rating">
+            <strong>5.0</strong>
+            <img src="../assets/games/6d78f.svg" alt="estrella" />
+          </div>
+        </article>
+
+        <article class="comment-card">
+          <img class="avatar" src="../assets/games/6109e.png" alt="" />
+          <div class="comment-copy">
+            <div class="comment-meta">
+              <strong>Emanuel__777</strong>
+              <span>19/07/25</span>
+            </div>
+            <p>Increíble</p>
+          </div>
+          <div class="comment-rating">
+            <strong>4.5</strong>
+            <img src="../assets/games/6d78f.svg" alt="estrella" />
+          </div>
+        </article>
+
+        <article class="comment-card">
+          <img class="avatar" src="../assets/games/6109e.png" alt="" />
+          <div class="comment-copy">
+            <div class="comment-meta">
+              <strong>Julian67AuraB5</strong>
+              <span>3 h</span>
+            </div>
+            <p>Súper adictivo.</p>
+          </div>
+          <div class="comment-rating">
+            <strong>5.0</strong>
+            <img src="../assets/games/6d78f.svg" alt="estrella" />
+          </div>
+        </article>
+
+        <button class="cyber-button more-button" type="button">
+          Ver más<br />Comentarios
+        </button>
+      </div>
+    </section>
+
+    <!-- ---------- FORMULARIO DE COMENTARIO ---------- -->
+    <section class="form-section">
+      <h2 class="section-title">Deja tu comentario:</h2>
+
+      <form class="neon-panel comment-form" id="comment-form">
+        <div class="form-user">
+          <img class="avatar" src="../assets/games/6109e.png" alt="" />
+          <strong>Agustin</strong>
+        </div>
+
+        <label class="rating-picker">
+          <span>Calificación:</span>
+          <button
+                  type="button"
+                  id="rating-picker"
+                  aria-label="Calificación actual: 5 de 5. Cambiar calificación"
+          >
+            <img src="../assets/games/b2a08.svg" alt="" />
+            <i style="width: 100%"></i>
+          </button>
+        </label>
+
+        <textarea
+                id="comment-text"
+                placeholder="Por ejemplo: Me gustó mucho"
+                aria-label="Tu comentario"
+        ></textarea>
+
+        <button class="cyber-button submit-button" type="submit">
+          Subir Comentario
+        </button>
+      </form>
+    </section>
+  </div>
+</main>
+
+<!-- Contenedor vacío donde el JavaScript inyectará el footer -->
+<div id="footer-container"></div>
+
+<script src="../js/main.js"></script>
 </body>
 </html>
