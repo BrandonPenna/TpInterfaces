@@ -29,8 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
 (function () {
     "use strict";
 
-    var AVATAR = "assets/6109e.png";
-    var STAR_SMALL = "assets/6d78f.svg";
+    var AVATAR = "../assets/games/6109e.webp";
+    var STAR_SMALL = "../assets/games/6d78f.svg";
 
     /* ---------- 1. GALERÍA -> imagen principal ---------- */
     var heroImage = document.getElementById("hero-image");
