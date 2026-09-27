@@ -279,8 +279,7 @@ button {
     gap: 18px;
 }
 
-.share-actions button,
-.gallery-item {
+.share-actions button {
     border: 0;
     padding: 0;
     background: transparent;
@@ -364,6 +363,7 @@ button {
 .gallery-item {
     position: relative;
     min-width: 0;
+    margin: 0;
     aspect-ratio: 1.58;
     overflow: hidden;
     border: 1px solid var(--neon);

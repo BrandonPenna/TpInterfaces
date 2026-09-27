@@ -48,7 +48,7 @@ button {
 .page {
   width: 100%;
   min-height: 100dvh;
-  padding: 161px 0 910px;
+  padding: 44px 0 72px;
   overflow: hidden;
   box-sizing: border-box;
   background: #2a2a2a;
@@ -75,38 +75,104 @@ h2 {
   font-size: 36px;
 }
 
+/* Caja externa al carrusel: es la que posiciona las flechas.
+   Si fueran hijas de .carousel se moverían con el scroll del track. */
+.carousel-box {
+  /* Las flechas de los carruseles normales son más chico que las del
+     carrusel grande, para no tapar las tarjetas. */
+  --flecha-size: 58px;
+  --flecha-offset: 12px;
+  position: relative;
+}
+
+.carousel-box--featured {
+  --flecha-size: 118px;
+  --flecha-offset: 52px;
+  --gap: 76.409px;
+  /* La tarjeta ocupa la mitad de lo que sobra tras el hueco central, con tope
+     en 605.394px (el ancho del diseño). Gracias a esto "2 tarjetas + 2 huecos"
+     miden siempre lo mismo que el carrusel, así que al centrar la tarjeta
+     central las dos vecinas quedan cortadas a la mitad en cualquier pantalla.
+     La altura y el radio se derivan del ancho para no deformar la imagen. */
+  --card-w: min(605.394px, calc((100vw - 2 * var(--gap)) / 2));
+  --card-h: calc(var(--card-w) * 0.7009);
+  --card-r: calc(var(--card-w) * 0.0611);
+  max-width: calc(2 * (var(--card-w) + var(--gap)));
+  margin-inline: auto;
+}
+
+.carousel-arrow {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  width: var(--flecha-size);
+  height: calc(var(--flecha-size) * 0.88);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.carousel-arrow img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* btnant.svg apunta a la derecha y btnsig.svg a la izquierda: los volteamos
+     para que, puestos en los costados, apunten hacia afuera del carrusel. */
+  transform: scaleX(-1);
+}
+
+.carousel-arrow--prev {
+  left: var(--flecha-offset);
+}
+
+.carousel-arrow--next {
+  right: var(--flecha-offset);
+}
+
 .carousel {
   position: relative;
   width: 100%;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+
+.carousel::-webkit-scrollbar {
+  display: none;
 }
 
 .carousel__track {
   display: flex;
   align-items: center;
   width: max-content;
-  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
 }
 
 .carousel--featured {
-  height: 424.462px;
+  height: var(--card-h);
   margin-top: 5px;
 }
 
 .carousel--featured .carousel__track {
-  gap: 76.409px;
-  height: 424.462px;
-  padding-left: 0;
-  transform: translateX(var(--track-offset, -26px));
+  gap: var(--gap);
+  height: var(--card-h);
+  /* El padding derecho es el espacio que hace falta para poder desplazar el
+     scroll y dejar la tarjeta central al centro del carrusel. Al desplazarlo,
+     ese espacio se ve como margen a los dos lados de la tarjeta centrada. */
+  padding-right: calc((100% - var(--card-w)) / 2);
 }
 
 .featured-card {
   position: relative;
-  flex: 0 0 605.394px;
-  height: 424.462px;
+  flex: 0 0 var(--card-w);
+  height: var(--card-h);
   overflow: hidden;
-  border-radius: 37px;
+  border-radius: var(--card-r);
+  scroll-snap-align: center;
 }
 
 .featured-card > img {
@@ -118,72 +184,51 @@ h2 {
 
 .featured-card__label {
   position: absolute;
-  top: 10px;
-  right: 14px;
+  top: 1.65%;
+  right: 2.3%;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 303px;
-  height: 69px;
-  border-radius: 27px;
+  width: 50%;
+  height: 16.3%;
+  border-radius: 6.4%;
   background: linear-gradient(90deg, rgba(41, 103, 50, 0.58), rgba(26, 24, 24, 0.58));
   color: #39ff14;
   font-family: "Oxanium:Bold", sans-serif;
-  font-size: 27.44px;
+  font-size: calc(var(--card-w) * 0.0453);
   font-weight: 700;
   opacity: 0.66;
 }
 
+/* La altura la define el contenido (h2 + fila de tarjetas) para que la
+   barra de título de cada tarjeta nunca quede recortada. */
 .game-section {
-  height: 330px;
-  padding-top: 89px;
-  box-sizing: border-box;
-}
-
-.game-section:first-child {
-  padding-top: 89px;
-}
-
-.game-section:nth-child(2) {
-  height: 318px;
-}
-
-.game-section:nth-child(3) {
-  height: 341px;
-}
-
-.game-section:nth-child(4) {
-  height: 343px;
-}
-
-.game-section:nth-child(5) {
-  height: 341px;
-}
-
-.game-section:nth-child(6) {
-  height: 345px;
+  padding-top: 58px;
 }
 
 .game-section .carousel {
-  height: 272px;
-  margin-top: -20px;
+  margin-top: 14px;
+  /* Sin snap: el desplazamiento inicial deja la primera y la última tarjeta
+     a medio ver, y el snap las llevaría de vuelta al borde. */
+  scroll-snap-type: none;
 }
 
 .game-section .carousel__track {
+  --card-w: 280px;
   gap: 43px;
-  height: 272px;
+  height: 192px;
   padding-left: 0;
-  transform: translateX(var(--track-offset, -164px));
 }
 
 .game-card {
   position: relative;
-  flex: 0 0 280px;
+  flex: 0 0 var(--card-w);
   height: 192px;
   overflow: hidden;
   border-radius: 42px;
   background: #111111;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  scroll-snap-align: none;
 }
 
 .game-card__cover {
@@ -207,6 +252,7 @@ h2 {
   align-items: center;
   justify-content: center;
   height: 47px;
+  margin: 0;
   padding: 0 10px;
   box-sizing: border-box;
   background: rgba(0, 0, 0, 0.6);
@@ -232,6 +278,7 @@ h2 {
 .game-card__price {
   display: flex;
   align-items: center;
+  justify-content: center;
   width: 68px;
   height: 26px;
   border-radius: 20px;
@@ -270,54 +317,9 @@ h2 {
   transform: scale(0.95);
 }
 
-.carousel__arrow {
-  position: absolute;
-  z-index: 4;
-  top: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 120px;
-  height: 106px;
-  padding: 17px 24px;
-  border: 0;
-  border-radius: 100px;
-  cursor: pointer;
-  background: #ffffff;
-  transform: translateY(-50%);
-  box-sizing: border-box;
-  transition: background-color 160ms ease, scale 160ms ease;
-}
-
-.carousel__arrow:hover {
-  background: #eeffee;
-  scale: 1.04;
-}
-
-.carousel__arrow--previous {
-  left: 21px;
-}
-
-.carousel__arrow--previous img {
-  transform: rotate(180deg);
-}
-
-.carousel__arrow--next {
-  right: 21px;
-}
-
-.carousel--featured .carousel__arrow {
-  width: 118px;
-  height: 104px;
-  padding: 16px 24px;
-}
-
-.carousel--featured .carousel__arrow--previous {
-  left: 52px;
-}
-
-.carousel--featured .carousel__arrow--next {
-  right: 52px;
+.game-card__add:disabled {
+  cursor: default;
+  filter: grayscale(0.55) brightness(0.85);
 }
 
 .cart-notice {
@@ -346,8 +348,8 @@ h2 {
 
 @media (max-width: 900px) {
   .page {
-    padding-top: 64px;
-    padding-bottom: 180px;
+    padding-top: 28px;
+    padding-bottom: 48px;
   }
 
   h1 {
@@ -360,21 +362,35 @@ h2 {
     font-size: clamp(24px, 6vw, 32px);
   }
 
+  .carousel-box {
+    --flecha-size: 34px;
+    --flecha-offset: 8px;
+  }
+
+  .carousel-box--featured {
+    --flecha-size: 52px;
+    --flecha-offset: 14px;
+    --gap: 20px;
+    --card-w: min(420px, calc((100vw - 2 * var(--gap)) / 2));
+    --card-h: calc(var(--card-w) * 0.7009);
+    --card-r: calc(var(--card-w) * 0.0611);
+  }
+
   .carousel--featured {
-    height: 290px;
+    height: var(--card-h);
     margin-top: 14px;
   }
 
   .carousel--featured .carousel__track {
-    gap: 20px;
-    height: 290px;
-    padding-left: 18px;
+    gap: var(--gap);
+    height: var(--card-h);
+    padding-right: calc((100% - var(--card-w)) / 2);
   }
 
   .featured-card {
-    flex-basis: min(82vw, 420px);
-    height: 280px;
-    border-radius: 26px;
+    flex-basis: var(--card-w);
+    height: var(--card-h);
+    border-radius: var(--card-r);
   }
 
   .featured-card__label {
@@ -387,23 +403,22 @@ h2 {
   }
 
   #game-sections .game-section {
-    height: 275px;
-    padding-top: 54px;
+    padding-top: 36px;
   }
 
   .game-section .carousel {
-    height: 225px;
-    margin-top: -11px;
+    margin-top: 10px;
   }
 
   .game-section .carousel__track {
+    --card-w: 240px;
     gap: 18px;
-    height: 225px;
-    padding-left: 18px;
+    height: 165px;
+    padding-left: 0;
   }
 
   .game-card {
-    flex-basis: 240px;
+    flex-basis: var(--card-w);
     height: 165px;
     border-radius: 32px;
   }
@@ -412,29 +427,6 @@ h2 {
     height: 42px;
     font-size: 18px;
   }
-
-  .carousel__arrow,
-  .carousel--featured .carousel__arrow {
-    width: 46px;
-    height: 46px;
-    padding: 0;
-  }
-
-  .carousel__arrow img,
-  .carousel--featured .carousel__arrow img {
-    width: 36px;
-    height: 36px;
-  }
-
-  .carousel__arrow--previous,
-  .carousel--featured .carousel__arrow--previous {
-    left: 8px;
-  }
-
-  .carousel__arrow--next,
-  .carousel--featured .carousel__arrow--next {
-    right: 8px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -442,10 +434,8 @@ h2 {
     scroll-behavior: auto;
   }
 
-  .carousel__track,
   .cart-notice,
-  .game-card__add,
-  .carousel__arrow {
+  .game-card__add {
     transition: none;
   }
 }
