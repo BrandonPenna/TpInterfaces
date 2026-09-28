@@ -16,9 +16,13 @@ function resolverRutas(html) {
 }
 
 // Función para cargar componentes reutilizables (Header y Footer)
-function cargarTemplate(idContenedor, rutaArchivo) {
+// Cada contenedor puede pedir su propio partial con data-template="archivo.html".
+// Si no lo indica, se usa el partial por defecto de ese contenedor.
+function cargarTemplate(idContenedor, partialPorDefecto) {
     const contenedor = document.getElementById(idContenedor);
     if (!contenedor) return;
+
+    const rutaArchivo = BASE_TEMPLATES + (contenedor.dataset.template || partialPorDefecto);
 
     fetch(rutaArchivo)
         .then(response => {
@@ -33,8 +37,8 @@ function cargarTemplate(idContenedor, rutaArchivo) {
 
 // Ejecutar al cargar la página
 document.addEventListener('DOMContentLoaded', () => {
-    cargarTemplate('header-container', BASE_TEMPLATES + 'header.html');
-    cargarTemplate('footer-container', BASE_TEMPLATES + 'fat-footer.html');
+    cargarTemplate('header-container', 'header.html');
+    cargarTemplate('footer-container', 'fat-footer.html');
 });
 
 /* ============================================================

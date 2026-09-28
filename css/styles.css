@@ -63,15 +63,15 @@ body {
     height: 100%;
 }
 
-/* Brand Name */
-.brand-name {
+/* Site Name */
+.header__name {
     font-size: 20px;
     color: #ffffff;
     white-space: nowrap;
     flex-shrink: 0;
 }
 
-.brand-name span {
+.header__name span {
     color: #39ff14;
     font-weight: bold;
 }
@@ -141,6 +141,184 @@ body {
 .user-avatar svg {
     width: 75%;
     height: 75%;
+}
+
+/* ============================================================
+   HEADER HOME - CyberHub | CSS puro (sin frameworks)
+   Partial inyectado desde templates/header-home.html.
+   Reutiliza el token de color del sitio: var(--neon).
+   ============================================================ */
+
+/* ---------- 1. TIPOGRAFÍAS ---------- */
+@font-face {
+    font-family: "BBH Bartle:Regular";
+    src: url("https://static.figma.com/font/BBHBartle-Regular_1") format("woff2");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Oxanium:Regular";
+    src: url("https://static.figma.com/font/Oxanium_wght__1") format("woff2");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+}
+
+/* ---------- 2. CONTENEDOR ---------- */
+/* Las páginas que inyectan este partial (login, registro) lo restan de su
+   propio alto, así que la altura vive en una variable. El media query de
+   abajo la baja a 96px en mobile. */
+:root {
+    --header-height: 120px;
+}
+
+.site-header {
+    position: relative;
+    width: 100%;
+    height: var(--header-height);
+    border-bottom: 1px solid var(--neon);
+    box-sizing: border-box;
+    background: #121212;
+}
+
+/* ---------- 3. ENLACE DEL LOGO ---------- */
+.site-logo {
+    position: absolute;
+    top: 0;
+    left: clamp(24px, 5.625vw, 108px);
+    display: flex;
+    align-items: flex-start;
+    color: #fff;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.site-logo:focus-visible {
+    border-radius: 6px;
+    outline: 2px solid var(--neon);
+    outline-offset: 5px;
+}
+
+.site-logo.is-pressed {
+    transform: translateY(1px);
+}
+
+/* ---------- 4. SÍMBOLO ---------- */
+.site-logo__mark {
+    position: relative;
+    display: block;
+    width: 78px;
+    height: 75.77px;
+    margin-top: 22px;
+    flex: 0 0 auto;
+}
+
+.site-logo__image {
+    position: absolute;
+    top: 3.662px;
+    left: 3.662px;
+    display: block;
+    width: 70.676px;
+    height: 49.83px;
+    object-fit: cover;
+}
+
+/* ---------- 5. TICKS DEL SÍMBOLO ---------- */
+.site-logo__ticks {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.site-logo__ticks img {
+    position: absolute;
+    display: block;
+}
+
+.site-logo__ticks img:nth-child(1) {
+    top: 50.18px;
+    left: 27.46px;
+}
+
+.site-logo__ticks img:nth-child(2) {
+    top: 49.81px;
+    left: 52.74px;
+}
+
+.site-logo__ticks img:nth-child(3) {
+    top: 59.33px;
+    left: 27.46px;
+}
+
+.site-logo__ticks img:nth-child(4) {
+    top: 59.33px;
+    left: 52.74px;
+}
+
+.site-logo__ticks img:nth-child(5) {
+    top: 68.48px;
+    left: 27.46px;
+}
+
+.site-logo__ticks img:nth-child(6) {
+    top: 69.21px;
+    left: 52.74px;
+}
+
+/* ---------- 6. TEXTO ---------- */
+.site-logo__text {
+    display: flex;
+    gap: 9px;
+    align-items: baseline;
+    margin-top: 24px;
+    margin-left: 21px;
+    font-family: "BBH Bartle:Regular", sans-serif;
+    font-size: 36px;
+    font-weight: 400;
+    line-height: normal;
+    white-space: nowrap;
+}
+
+.site-logo__text strong {
+    color: #14ff35;
+    font: inherit;
+}
+
+.site-logo:hover .site-logo__text strong,
+.site-logo:focus-visible .site-logo__text strong {
+    text-shadow: 0 0 14px rgba(20, 255, 53, 0.65);
+}
+
+/* ---------- 7. RESPONSIVE ---------- */
+@media (max-width: 600px) {
+    :root {
+        --header-height: 96px;
+    }
+
+    .site-header {
+        height: var(--header-height);
+    }
+
+    .site-logo__mark {
+        width: 62px;
+        margin-top: 10px;
+        transform: scale(0.8);
+        transform-origin: top left;
+    }
+
+    .site-logo__text {
+        margin-top: 23px;
+        margin-left: 5px;
+        font-size: 29px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .site-logo {
+        transition: none;
+    }
 }
 
 /* ============================================================
@@ -945,7 +1123,7 @@ body {
 
 /* Logo */
 
-.cyber-footer__brand {
+.cyber-footer__logo {
   justify-self: start;
   align-self: start;
 
@@ -953,7 +1131,7 @@ body {
   min-width: 0;
 }
 
-.cyber-footer__brand img {
+.cyber-footer__logo img {
   display: block;
 
   width: 100%;
@@ -1136,7 +1314,7 @@ body {
     column-gap: 36px;
   }
 
-  .cyber-footer__brand {
+  .cyber-footer__logo {
     width: 230px;
   }
 
@@ -1168,7 +1346,7 @@ body {
     row-gap: 48px;
   }
 
-  .cyber-footer__brand {
+  .cyber-footer__logo {
     justify-self: center;
   }
 
@@ -1199,7 +1377,7 @@ body {
     row-gap: 40px;
   }
 
-  .cyber-footer__brand {
+  .cyber-footer__logo {
     width: min(100%, 240px);
   }
 
