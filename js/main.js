@@ -1,3 +1,5 @@
+// Este es mi main.js
+
 // Ruta base de templates resuelta desde este propio archivo (js/main.js),
 // para que funcione desde la raíz (index.html) y desde subcarpetas (pages/).
 const BASE_TEMPLATES = new URL('../templates/', document.currentScript.src).href;
@@ -88,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // y Red Dead Redemption 2 a la derecha.
     const DESTACADOS = [
         { titulo: "GTA VI", cover: "gta-vi-1560x880.jpg.webp", etiqueta: "Juego del momento" },
-        { titulo: "Peg Solitaire - CyberPunk", cover: "peg-solitaire.webp", etiqueta: "Juego del momento" },
+        { titulo: "Peg Solitaire - CyberPunk", cover: "peg-solitaire.webp", etiqueta: "Juego del momento", link: "../pages/game_solitare.html" },
         { titulo: "Red Dead Redemption 2", cover: "rdr2.jpg", etiqueta: "Juego del momento" }
     ];
 
@@ -211,8 +213,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function tarjeta_destacado(juego, indice) {
+        // El data-ir lo marca como clickeable y da el destino (ver delegación).
+        const destino = juego.link ? ' data-ir="' + juego.link + '"' : '';
         return (
-            '<article class="featured-card">' +
+            '<article class="featured-card"' + destino + '>' +
                 '<img src="' + portada("juegos-momento", juego.cover) + '" alt="Portada de ' + juego.titulo + '"' +
                     ' width="605" height="424" loading="' + (indice < 2 ? "eager" : "lazy") + '" decoding="async" />' +
                 '<span class="featured-card__label">' + juego.etiqueta + '</span>' +
@@ -362,6 +366,14 @@ document.addEventListener('DOMContentLoaded', () => {
         boton.disabled = true;
         boton.textContent = "Agregado";
         mostrarAviso(boton.dataset.juego + " se agregó al carrito");
+    });
+
+    // Las tarjetas del carrusel grande con data-ir son clickeables:
+    // redirigen al detalle del juego (puede ser una página por jugo).
+    document.addEventListener("click", function (evento) {
+        const tarjeta = evento.target.closest(".featured-card[data-ir]");
+        if (!tarjeta) return;
+        window.location.href = tarjeta.dataset.ir;
     });
 
     /* ---------- 6. INICIO ---------- */

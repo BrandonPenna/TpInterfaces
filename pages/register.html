@@ -6,14 +6,105 @@
     <meta name="description" content="Crear una cuenta en CyberHub" />
     <title>Crear cuenta | CyberHub</title>
     <link rel="stylesheet" href="../css/styles.css" />
+    <!-- login.css aporta el diseño base (header + formulario); register.css
+         sólo lo propio del registro, por eso va después. -->
+    <link rel="stylesheet" href="../css/login.css" />
+    <link rel="stylesheet" href="../css/register.css" />
   </head>
   <body>
     <!-- Contenedor vacío donde el JavaScript inyectará el header del registro -->
     <div id="header-container" data-template="header-home.html"></div>
 
-    <main class="page"></main>
+    <main class="login-page">
+      <h1>Crear Cuenta</h1>
+
+      <img class="bowser bowser--left" src="../assets/login/5f47d.png" alt="" />
+
+      <form class="login-form register-form" novalidate>
+        <div class="register-form__row">
+          <div class="form-field">
+            <label for="nombre">Nombre</label>
+            <input id="nombre" name="nombre" type="text" placeholder="Ingrese su nombre" autocomplete="given-name" required />
+            <small></small>
+          </div>
+
+          <div class="form-field">
+            <label for="apellido">Apellido</label>
+            <input id="apellido" name="apellido" type="text" placeholder="Ingrese su apellido" autocomplete="family-name" required />
+            <small></small>
+          </div>
+        </div>
+
+        <div class="register-form__row">
+          <div class="form-field">
+            <label for="nickname">Nickname</label>
+            <input id="nickname" name="nickname" type="text" placeholder="Ingrese su nickname" autocomplete="nickname" required />
+            <small></small>
+          </div>
+
+          <div class="form-field">
+            <label for="edad">Edad</label>
+            <input id="edad" name="edad" type="number" min="13" max="99" placeholder="Ingrese su edad" inputmode="numeric" required />
+            <small></small>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="Ingrese su correo electrónico" autocomplete="email" required />
+          <small></small>
+        </div>
+
+        <div class="register-form__row">
+          <div class="form-field">
+            <label for="password">Contraseña</label>
+            <input id="password" name="password" type="password" placeholder="Ingrese su contraseña" autocomplete="new-password" required />
+            <small></small>
+          </div>
+
+          <div class="form-field">
+            <label for="password2">Repita su contraseña</label>
+            <input id="password2" name="password2" type="password" placeholder="Repita su contraseña" autocomplete="new-password" required />
+            <small></small>
+          </div>
+        </div>
+
+        <div class="auth-buttons">
+          <button class="google-auth" type="button" aria-label="Registrarse con Google">
+            <img class="google-auth__surface" src="../assets/login/a5ce6.svg" alt="" />
+            <img class="google-auth__logo" src="../assets/login/f6cdc.svg" alt="" />
+            <img class="google-auth__text" src="../assets/login/3a1a2.svg" alt="" />
+            <img class="google-auth__border" src="../assets/login/adc4d.svg" alt="" />
+          </button>
+
+          <button class="facebook-auth" type="button">
+            <img src="../assets/login/ba87c.svg" alt="" />
+            <span>Sign up with Facebook</span>
+          </button>
+        </div>
+
+        <label class="captcha">
+          <input type="checkbox" name="captcha" required />
+          <img class="captcha__robot" src="../assets/login/bc9bb.svg" alt="I'm not a robot" />
+          <span class="captcha__check" aria-hidden="true">✓</span>
+          <span class="captcha__badge">
+            <img src="../assets/login/43ba7.svg" alt="" />
+            <img src="../assets/login/cf4d1.svg" alt="reCAPTCHA" />
+            <img class="captcha__dash" src="../assets/login/bad77.svg" alt="" />
+          </span>
+        </label>
+
+        <button class="login-button register-button" type="submit">Registrarme</button>
+        <a class="create-account" href="login.html">Ya tengo cuenta</a>
+
+        <p class="form-message" role="status" aria-live="polite"></p>
+      </form>
+
+      <img class="bowser bowser--right" src="../assets/login/5f47d.png" alt="" />
+    </main>
 
     <script src="../js/main.js" defer></script>
     <script src="../js/header-home.js" defer></script>
+    <script src="../js/register.js" defer></script>
   </body>
 </html>

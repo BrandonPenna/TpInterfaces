@@ -1,0 +1,31 @@
+/* ============================================================
+   REGISTRO | Estilos propios de pages/register.html
+   El diseño base (header, formulario, campos, botones sociales,
+   captcha, fuentes y colores) ya está en css/login.css, así que
+   acá sólo va lo que el registro cambia: el formulario es más
+   ancho y los campos van en dos columnas.
+
+   Este archivo va DESPUÉS de login.css en el HTML: tiene la misma
+   especificidad, así que gana por orden.
+   ============================================================ */
+
+/* El login mide 452px; acá hay más campos, entonces se ensancha. */
+.register-form {
+  width: min(640px, 100%);
+  gap: clamp(10px, 1.8vh, 20px);
+  padding: clamp(16px, 2.4vh, 28px);
+}
+
+/* Pares de campos: Nombre|Apellido, Contraseña|Repita su contraseña. */
+.register-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+}
+
+/* Dentro de las filas el mensaje va en el flujo: si fuera absoluto
+   (como en login.css) se superpondría con la fila de abajo. */
+.register-form__row .form-field small {
+  position: static;
+}

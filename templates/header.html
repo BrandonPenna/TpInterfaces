@@ -1,10 +1,10 @@
-  <header class="header">
-      <!-- Hamburger Menu -->
-      <div class="hamburger">
+<header class="header">
+      <!-- Hamburger Menu: abre el menú desplegable de categorías -->
+      <button class="hamburger menu-trigger" type="button" aria-expanded="false" aria-controls="category-menu" aria-label="Abrir menú de categorías">
           <span></span>
           <span></span>
           <span></span>
-      </div>
+      </button>
 
       <!-- Logo Icon -->
       <div class="logo-icon">
@@ -38,4 +38,31 @@
               <path d="M0 43c0-12 10-22 23-22s23 10 23 22" fill="#39ff14"/>
           </svg>
       </div>
+
+      <!-- Menú desplegable: las rutas ../ las vuelve absolutas main.js
+           (resolverRutas), así funcionan desde index y desde pages/. -->
+      <nav id="category-menu" class="category-menu" aria-label="Categorías">
+          <div class="category-menu__panel">
+              <p class="category-menu__title">Categorías</p>
+              <ul class="category-menu__list">
+                  <li><a href="../index.html">Inicio</a></li>
+                  <li><a href="../index.html#seccion-0"><img class="category-menu__icon" src="../assets/icons/premium.svg" alt="" />Premium</a></li>
+                  <li><a href="../index.html#seccion-1"><img class="category-menu__icon" src="../assets/icons/accion.svg" alt="" />Acción</a></li>
+                  <li><a href="../index.html#seccion-2"><img class="category-menu__icon" src="../assets/icons/aventura.svg" alt="" />Aventura</a></li>
+                  <li><a href="../index.html#seccion-3"><img class="category-menu__icon" src="../assets/icons/carreras.svg" alt="" />Carrera</a></li>
+                  <li><a href="../index.html#seccion-4"><img class="category-menu__icon" src="../assets/icons/futbol.svg" alt="" />Deportes</a></li>
+                  <li><a href="../index.html#seccion-5"><img class="category-menu__icon" src="../assets/icons/estrategia.svg" alt="" />Estrategia</a></li>
+                  <li><a href="../index.html#seccion-6"><img class="category-menu__icon" src="../assets/icons/simulacion.svg" alt="" />Simulación</a></li>
+              </ul>
+              <div class="category-menu__social">
+                  <p class="category-menu__social-title">Conocé más de nosotros</p>
+                  <div class="category-menu__social-icons">
+                      <a href="#" aria-label="CyberHub en Discord"><img src="../assets/icons/logoDiscord copy.png" alt="" /></a>
+                      <a href="#" aria-label="CyberHub en YouTube"><img src="../assets/icons/logoYoutube.png" alt="" /></a>
+                      <a href="#" aria-label="CyberHub en Facebook"><img src="../assets/icons/logoFacebook.png" alt="" /></a>
+                      <a href="#" aria-label="CyberHub en Instagram"><img src="../assets/icons/logoInstagram.png" alt="" /></a>
+                  </div>
+              </div>
+          </div>
+      </nav>
   </header>

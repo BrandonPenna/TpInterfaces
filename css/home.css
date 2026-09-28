@@ -131,6 +131,31 @@ h2 {
   right: var(--flecha-offset);
 }
 
+/* Hover de las flechas: crecen, se tiñen de neón y, mientras el puntero
+   queda encima, hacen un balanceo suave (rebote constante). */
+.carousel-arrow {
+  transition: filter 160ms ease;
+}
+
+.carousel-arrow:hover {
+  animation: arrow-nudge 900ms ease-in-out infinite;
+}
+
+.carousel-arrow:hover img {
+  filter: drop-shadow(0 0 10px rgba(57, 255, 20, 0.9)) drop-shadow(0 0 26px rgba(57, 255, 20, 0.5));
+  transform: scaleX(-1) scale(1.12);
+  transition: transform 160ms ease;
+}
+
+@keyframes arrow-nudge {
+  0%, 100% {
+    transform: translateY(-50%);
+  }
+  50% {
+    transform: translateY(calc(-50% - 7px));
+  }
+}
+
 .carousel {
   position: relative;
   width: 100%;
@@ -153,8 +178,14 @@ h2 {
 }
 
 .carousel--featured {
-  height: var(--card-h);
-  margin-top: 5px;
+  /* Igual que en .game-section .carousel: el alto extra y los márgenes
+     negativos se compensan (netos 5px arriba como antes) para que sin mover
+     el layout la tarjeta tenga aire arriba y abajo y no se corte el lift y
+     el glow del hover de .featured-card. */
+  height: calc(var(--card-h) + 56px);
+  padding-block: 28px;
+  margin-top: -23px;
+  margin-bottom: -28px;
 }
 
 .carousel--featured .carousel__track {
@@ -173,6 +204,15 @@ h2 {
   overflow: hidden;
   border-radius: var(--card-r);
   scroll-snap-align: center;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.featured-card:hover {
+  border-color: #39ff14;
+  box-shadow: 0 0 26px rgba(57, 255, 20, 0.6), inset 0 0 16px rgba(57, 255, 20, 0.15);
+  transform: translateY(-6px);
 }
 
 .featured-card > img {
@@ -207,7 +247,13 @@ h2 {
 }
 
 .game-section .carousel {
-  margin-top: 14px;
+  /* El margin-top compensado con el padding deja 14px netos (como antes):
+     el scroll oculta el overflow vertical en los bordes del alto de las
+     tarjetas, así que este aire interior es el que evita que la elevación
+     y el glow del hover de .game-card se corten arriba/abajo. */
+  margin-top: -10px;
+  padding-block: 24px;
+  margin-bottom: -24px;
   /* Sin snap: el desplazamiento inicial deja la primera y la última tarjeta
      a medio ver, y el snap las llevaría de vuelta al borde. */
   scroll-snap-type: none;
@@ -229,6 +275,15 @@ h2 {
   background: #111111;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
   scroll-snap-align: none;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.game-card:hover {
+  border-color: #39ff14;
+  box-shadow: 0 0 18px rgba(57, 255, 20, 0.55), inset 0 0 14px rgba(57, 255, 20, 0.18);
+  transform: translateY(-4px);
 }
 
 .game-card__cover {
