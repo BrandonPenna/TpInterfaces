@@ -1,0 +1,114 @@
+.loader {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    background-color: #0a0a0a;
+    opacity: 1;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.loader.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* ---------- PORCENTAJE ---------- */
+
+.loader__percent {
+    font-size: 38px;
+    font-weight: bold;
+    color: #ffffff;
+    letter-spacing: 1px;
+}
+
+.loader__percent span {
+    color: #39ff14;
+    font-size: 20px;
+}
+
+/* ---------- SPINNER (3 puntitos saltando) ---------- */
+
+.loader__spinner {
+    display: flex;
+    gap: 8px;
+    height: 12px;
+}
+
+.loader__spinner i {
+    display: block;
+    width: 12px;
+    height: 12px;
+    background-color: #39ff14;
+    border-radius: 50%;
+}
+
+/* ---------- BARRA RECTA DE AVANCE ---------- */
+
+.loader__barra {
+    width: min(320px, 70vw);
+    height: 4px;
+    background-color: #1c1c1c;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.loader__barra-relleno {
+    height: 100%;
+    width: 0%;
+    background-color: #39ff14;
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.7);
+    transition: width 0.1s linear;
+}
+
+/* ---------- TEXTO ---------- */
+
+.loader__texto {
+    font-size: 15px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #7d7d7d;
+}
+
+/* ---------- SCROLL ---------- */
+
+.is-cargando {
+    overflow: hidden;
+}
+
+/* ---------- ANIMACIONES ---------- */
+
+/* Rebote de los 3 puntitos, escalonado con un delay distinto en cada uno.
+   Va fuera de cualquier media query: si el sistema pide menos movimiento
+   igual tiene que verse el loading. */
+.loader__spinner i {
+    animation: loader-salto 0.9s ease-in-out infinite;
+}
+
+.loader__spinner i:nth-child(2) { animation-delay: 0.15s; }
+.loader__spinner i:nth-child(3) { animation-delay: 0.3s; }
+
+.loader__texto {
+    animation: loader-pulso 1.6s ease-in-out infinite;
+}
+
+@keyframes loader-salto {
+    0%, 100% { transform: translateY(0); opacity: 0.4; }
+    50% { transform: translateY(-7px); opacity: 1; }
+}
+
+@keyframes loader-pulso {
+    0%, 100% { opacity: 0.45; }
+    50% { opacity: 1; }
+}
+
+/* Si el sistema pide menos movimiento se apaga sólo lo decorativo:
+   el rebote de los puntitos se mantiene porque es parte del loading. */
+@media (prefers-reduced-motion: reduce) {
+    .loader__texto { animation: none; }
+    .loader__barra-relleno { box-shadow: none; }
+}
