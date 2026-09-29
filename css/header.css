@@ -2,6 +2,7 @@
    HEADER PRINCIPAL + MENÚ HAMBURGUESA
    Partial templates/header.html (Home y páginas de juego).
    Incluye la barra superior y el menú desplegable de categorías.
+   Mobile first: en celular el panel ocupa todo el ancho.
    ============================================================ */
 
 /* ---------- 1. BARRA ---------- */
@@ -185,11 +186,11 @@ body.menu-open .category-menu {
     display: flex;
     flex-direction: column;
     gap: 14px;
-    width: min(300px, 85vw);
+    width: 100%;
     padding: 22px 24px 26px;
     border: 1px solid var(--neon);
     border-top: 0;
-    border-radius: 0 0 14px 14px;
+    border-radius: 0;
     background: #121212;
     box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
 }
@@ -276,10 +277,10 @@ body.menu-open .category-menu {
     object-fit: contain;
 }
 
-/* ---------- 5. PANTALLAS CHICAS ---------- */
-@media (max-width: 600px) {
+/* ---------- 5. PANTALLAS MÁS ANCHAS ---------- */
+@media (min-width: 601px) {
     .category-menu__panel {
-        width: 100%;
-        border-radius: 0;
+        width: min(300px, 85vw);
+        border-radius: 0 0 14px 14px;
     }
 }

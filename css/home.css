@@ -1,6 +1,8 @@
 /* ============================================================
-   HOME | index.html
+   HOME | index.html — MOBILE FIRST
    Carrusel grande de destacados + carruseles por categoría.
+   Los estilos base son los de celular; el media query
+   (min-width: 901px) del final agrega los de escritorio.
    ============================================================ */
 
 body {
@@ -11,7 +13,7 @@ body {
 .page {
   width: 100%;
   min-height: 100dvh;
-  padding: 44px 0 72px;
+  padding: 28px 0 48px;
   overflow: hidden;
   background: #2a2a2a;
 }
@@ -27,13 +29,13 @@ h2 {
 }
 
 h1 {
-  margin-left: 21px;
-  font-size: 43px;
+  margin-left: 18px;
+  font-size: clamp(29px, 7vw, 40px);
 }
 
 h2 {
-  margin-left: 22px;
-  font-size: 36px;
+  margin-left: 18px;
+  font-size: clamp(24px, 6vw, 32px);
 }
 
 /* ---------- FLECHAS ---------- */
@@ -42,21 +44,21 @@ h2 {
 .carousel-box {
   /* Las flechas de los carruseles normales son más chicas que las del
      carrusel grande, para no tapar las tarjetas. */
-  --flecha-size: 58px;
-  --flecha-offset: 12px;
+  --flecha-size: 34px;
+  --flecha-offset: 8px;
   position: relative;
 }
 
 .carousel-box--featured {
-  --flecha-size: 118px;
-  --flecha-offset: 52px;
-  --gap: 76.409px;
+  --flecha-size: 52px;
+  --flecha-offset: 14px;
+  --gap: 20px;
   /* La tarjeta ocupa la mitad de lo que sobra tras el hueco central, con tope
-     en 605.394px (el ancho del diseño). Gracias a esto "2 tarjetas + 2 huecos"
+     en 420px (605.394px en escritorio, el ancho del diseño). Gracias a esto "2 tarjetas + 2 huecos"
      miden siempre lo mismo que el carrusel, así que al centrar la tarjeta
      central las dos vecinas quedan cortadas a la mitad en cualquier pantalla.
      La altura y el radio se derivan del ancho para no deformar la imagen. */
-  --card-w: min(605.394px, calc((100vw - 2 * var(--gap)) / 2));
+  --card-w: min(420px, calc((100vw - 2 * var(--gap)) / 2));
   --card-h: calc(var(--card-w) * 0.7009);
   --card-r: calc(var(--card-w) * 0.0611);
   max-width: calc(2 * (var(--card-w) + var(--gap)));
@@ -142,10 +144,10 @@ h2 {
   /* Igual que en .game-section .carousel: el alto extra y los márgenes
      negativos se compensan (netos 5px arriba como antes) para que sin mover
      el layout la tarjeta tenga aire arriba y abajo y no se corte el lift y
-     el glow del hover de .featured-card. */
-  height: calc(var(--card-h) + 56px);
+     el glow del hover de .featured-card (en escritorio: ver media query). */
+  height: var(--card-h);
   padding-block: 28px;
-  margin-top: -23px;
+  margin-top: 14px;
   margin-bottom: -28px;
 }
 
@@ -185,17 +187,16 @@ h2 {
 
 .featured-card__label {
   position: absolute;
-  top: 1.65%;
-  right: 2.3%;
+  top: 9px;
+  right: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 50%;
-  height: 16.3%;
+  padding: 10px 14px;
   border-radius: 6.4%;
   background: linear-gradient(90deg, rgba(41, 103, 50, 0.58), rgba(26, 24, 24, 0.58));
   color: var(--neon);
-  font-size: calc(var(--card-w) * 0.0453);
+  font-size: 16px;
   font-weight: 700;
   opacity: 0.66;
 }
@@ -204,15 +205,15 @@ h2 {
 /* La altura la define el contenido (h2 + fila de tarjetas) para que la
    barra de título de cada tarjeta nunca quede recortada. */
 .game-section {
-  padding-top: 58px;
+  padding-top: 36px;
 }
 
 .game-section .carousel {
-  /* El margin-top compensado con el padding deja 14px netos (como antes):
+  /* En escritorio el margin-top compensado con el padding deja 14px netos:
      el scroll oculta el overflow vertical en los bordes del alto de las
      tarjetas, así que este aire interior es el que evita que la elevación
      y el glow del hover de .game-card se corten arriba/abajo. */
-  margin-top: -10px;
+  margin-top: 10px;
   padding-block: 24px;
   margin-bottom: -24px;
   /* Sin snap: el desplazamiento inicial deja la primera y la última tarjeta
@@ -221,17 +222,17 @@ h2 {
 }
 
 .game-section .carousel__track {
-  --card-w: 280px;
-  gap: 43px;
-  height: 192px;
+  --card-w: 240px;
+  gap: 18px;
+  height: 165px;
 }
 
 .game-card {
   position: relative;
   flex: 0 0 var(--card-w);
-  height: 192px;
+  height: 165px;
   overflow: hidden;
-  border-radius: 42px;
+  border-radius: 32px;
   background: #111111;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
   scroll-snap-align: none;
@@ -266,13 +267,13 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 47px;
+  height: 42px;
   margin: 0;
   padding: 0 10px;
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(1.3px);
   color: #ffffff;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 600;
   line-height: normal;
   text-align: center;
@@ -354,72 +355,73 @@ h2 {
   transform: translateY(0);
 }
 
-/* ---------- RESPONSIVE ---------- */
-@media (max-width: 900px) {
+/* ---------- ESCRITORIO ---------- */
+@media (min-width: 901px) {
   .page {
-    padding-top: 28px;
-    padding-bottom: 48px;
+    padding-top: 44px;
+    padding-bottom: 72px;
   }
 
   h1 {
-    margin-left: 18px;
-    font-size: clamp(29px, 7vw, 40px);
+    margin-left: 21px;
+    font-size: 43px;
   }
 
   h2 {
-    margin-left: 18px;
-    font-size: clamp(24px, 6vw, 32px);
+    margin-left: 22px;
+    font-size: 36px;
   }
 
   .carousel-box {
-    --flecha-size: 34px;
-    --flecha-offset: 8px;
+    --flecha-size: 58px;
+    --flecha-offset: 12px;
   }
 
   /* --card-h y --card-r se recalculan solos a partir del nuevo --card-w */
   .carousel-box--featured {
-    --flecha-size: 52px;
-    --flecha-offset: 14px;
-    --gap: 20px;
-    --card-w: min(420px, calc((100vw - 2 * var(--gap)) / 2));
+    --flecha-size: 118px;
+    --flecha-offset: 52px;
+    --gap: 76.409px;
+    --card-w: min(605.394px, calc((100vw - 2 * var(--gap)) / 2));
   }
 
   .carousel--featured {
-    height: var(--card-h);
-    margin-top: 14px;
+    height: calc(var(--card-h) + 56px);
+    margin-top: -23px;
   }
 
+  /* La etiqueta escala con la tarjeta */
   .featured-card__label {
-    top: 9px;
-    right: 10px;
-    width: auto;
-    height: auto;
-    padding: 10px 14px;
-    font-size: 16px;
+    top: 1.65%;
+    right: 2.3%;
+    width: 50%;
+    height: 16.3%;
+    padding: 0;
+    font-size: calc(var(--card-w) * 0.0453);
   }
 
-  #game-sections .game-section {
-    padding-top: 36px;
+  .game-section {
+    padding-top: 58px;
   }
 
   .game-section .carousel {
-    margin-top: 10px;
+    margin-top: -10px;
   }
 
   .game-section .carousel__track {
-    --card-w: 240px;
-    gap: 18px;
-    height: 165px;
+    --card-w: 280px;
+    gap: 43px;
+    height: 192px;
   }
 
   .game-card {
-    height: 165px;
-    border-radius: 32px;
+    height: 192px;
+    border-radius: 42px;
   }
 
   .game-card__title {
-    height: 42px;
-    font-size: 18px;
+    height: 47px;
+    font-size: 24px;
   }
 }
 

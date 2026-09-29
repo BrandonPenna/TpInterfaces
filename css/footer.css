@@ -1,6 +1,8 @@
 /* ============================================================
    FOOTER - CyberHub
    Partial templates/fat-footer.html (Home y páginas de juego).
+   Mobile first: la base es celular (una columna) y cada media
+   query suma columnas a medida que hay más ancho.
    ============================================================ */
 
 :root {
@@ -24,28 +26,30 @@
 
 /* ---------- 1. CONTENEDOR ---------- */
 .cyber-footer {
-  display: grid;
+  display: block;
   grid-template-rows: 1fr auto;
   align-content: stretch;
   width: 100%;
-  min-height: var(--footer-height);
-  padding: var(--footer-padding-top) var(--page-padding) var(--footer-padding-bottom);
+  min-height: 0;
+  padding: 40px 24px 24px;
   background-color: var(--footer-background);
   color: var(--footer-text);
 }
 
 .cyber-footer__content {
   display: grid;
-  grid-template-columns: 290px minmax(0, 1fr);
+  grid-template-columns: 1fr;
   align-items: start;
+  column-gap: 36px;
+  row-gap: 40px;
   width: 100%;
 }
 
 /* ---------- 2. LOGO ---------- */
 .cyber-footer__logo {
-  justify-self: start;
+  justify-self: center;
   align-self: start;
-  width: 280px;
+  width: min(100%, 240px);
   min-width: 0;
 }
 
@@ -59,15 +63,10 @@
 /* ---------- 3. COLUMNAS ---------- */
 .cyber-footer__columns {
   display: grid;
-  grid-template-columns:
-    minmax(140px, 0.8fr)
-    minmax(210px, 1.1fr)
-    minmax(180px, 1fr)
-    minmax(190px, 210px)
-    minmax(220px, 1.1fr);
+  grid-template-columns: 1fr;
   gap: var(--columns-gap);
   align-items: start;
-  width: min(100%, var(--columns-width));
+  width: 100%;
   justify-self: center;
 }
 
@@ -78,7 +77,7 @@
 .cyber-footer__column h2 {
   margin: 0 0 16px;
   color: var(--footer-text);
-  font-size: var(--title-size);
+  font-size: 20px;
   font-weight: 700;
   line-height: 1.25;
   letter-spacing: 0.02em;
@@ -118,7 +117,6 @@
 /* Legal: los textos largos cortan línea dentro de la columna. */
 .cyber-footer__column--legal {
   width: 100%;
-  max-width: 210px;
 }
 
 .cyber-footer__column--legal ul,
@@ -135,7 +133,7 @@
 
 /* ---------- 4. REDES SOCIALES ---------- */
 .cyber-footer__social {
-  min-width: 220px;
+  min-width: 0;
 }
 
 .cyber-footer__social ul {
@@ -148,7 +146,7 @@
   gap: 12px;
   width: fit-content;
   min-height: 40px;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .cyber-footer__social a:hover,
@@ -168,25 +166,27 @@
 .cyber-footer__copyright {
   align-self: end;
   width: 100%;
+  margin-top: 40px;
   color: var(--footer-muted);
-  font-size: var(--copyright-size);
+  font-size: 13px;
   font-weight: 400;
   line-height: 1.4;
   letter-spacing: 0.04em;
   text-align: center;
 }
 
-/* ---------- 6. RESPONSIVE ---------- */
+/* ---------- 6. RESPONSIVE (de menor a mayor) ---------- */
 
-/* Escritorios medianos */
-@media (max-width: 1500px) {
+/* Tablets: dos columnas de links */
+@media (min-width: 561px) {
   .cyber-footer {
+    display: grid;
+    min-height: var(--footer-height);
     padding: 70px var(--page-padding) 20px;
   }
 
   .cyber-footer__content {
-    grid-template-columns: 240px minmax(0, 1fr);
-    column-gap: 36px;
+    row-gap: 48px;
   }
 
   .cyber-footer__logo {
@@ -194,71 +194,75 @@
   }
 
   .cyber-footer__columns {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     row-gap: 48px;
-    width: 100%;
   }
 
-  .cyber-footer__social {
-    min-width: 0;
+  .cyber-footer__column h2 {
+    font-size: var(--title-size);
+  }
+
+  .cyber-footer__social a {
+    white-space: nowrap;
   }
 
   .cyber-footer__copyright {
     margin-top: 48px;
+    font-size: var(--copyright-size);
   }
 }
 
-/* Tablets */
-@media (max-width: 900px) {
+/* Escritorios medianos: logo a la izquierda y tres columnas */
+@media (min-width: 901px) {
   .cyber-footer__content {
-    grid-template-columns: 1fr;
-    row-gap: 48px;
+    grid-template-columns: 240px minmax(0, 1fr);
+    row-gap: normal;
   }
 
   .cyber-footer__logo {
-    justify-self: center;
+    justify-self: start;
   }
 
   .cyber-footer__columns {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .cyber-footer__column--legal {
-    max-width: none;
+    max-width: 210px;
   }
 }
 
-/* Celulares */
-@media (max-width: 560px) {
+/* Escritorios grandes: todas las columnas en una fila */
+@media (min-width: 1501px) {
   .cyber-footer {
-    display: block;
-    min-height: 0;
-    padding: 40px 24px 24px;
+    padding: var(--footer-padding-top) var(--page-padding) var(--footer-padding-bottom);
   }
 
   .cyber-footer__content {
-    row-gap: 40px;
+    grid-template-columns: 290px minmax(0, 1fr);
+    column-gap: normal;
   }
 
   .cyber-footer__logo {
-    width: min(100%, 240px);
+    width: 280px;
   }
 
   .cyber-footer__columns {
-    grid-template-columns: 1fr;
-    row-gap: 40px;
+    grid-template-columns:
+      minmax(140px, 0.8fr)
+      minmax(210px, 1.1fr)
+      minmax(180px, 1fr)
+      minmax(190px, 210px)
+      minmax(220px, 1.1fr);
+    row-gap: var(--columns-gap);
+    width: min(100%, var(--columns-width));
   }
 
-  .cyber-footer__column h2 {
-    font-size: 20px;
-  }
-
-  .cyber-footer__social a {
-    white-space: normal;
+  .cyber-footer__social {
+    min-width: 220px;
   }
 
   .cyber-footer__copyright {
-    margin-top: 40px;
-    font-size: 13px;
+    margin-top: 0;
   }
 }
