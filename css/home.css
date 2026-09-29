@@ -1,48 +1,11 @@
-@font-face {
-  font-family: "Oxanium:Bold";
-  src: url("https://static.figma.com/font/Oxanium_wght__1") format("woff2");
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Oxanium:Medium";
-  src: url("https://static.figma.com/font/Oxanium_wght__1") format("woff2");
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Oxanium:SemiBold";
-  src: url("https://static.figma.com/font/Oxanium_wght__1") format("woff2");
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-}
-
-:root {
-  color: #ffffff;
-  background: #2a2a2a;
-  font-synthesis: none;
-}
-
-html {
-  background: #2a2a2a;
-  scroll-behavior: smooth;
-}
+/* ============================================================
+   HOME | index.html
+   Carrusel grande de destacados + carruseles por categoría.
+   ============================================================ */
 
 body {
-  min-width: 320px;
   min-height: 100dvh;
-  margin: 0;
   overflow-x: hidden;
-  background: #2a2a2a;
-}
-
-button {
-  font: inherit;
 }
 
 .page {
@@ -50,7 +13,6 @@ button {
   min-height: 100dvh;
   padding: 44px 0 72px;
   overflow: hidden;
-  box-sizing: border-box;
   background: #2a2a2a;
 }
 
@@ -59,7 +21,6 @@ h2 {
   position: relative;
   z-index: 2;
   margin: 0;
-  font-family: "Oxanium:Bold", sans-serif;
   font-weight: 700;
   line-height: normal;
   color: #ffffff;
@@ -75,10 +36,11 @@ h2 {
   font-size: 36px;
 }
 
+/* ---------- FLECHAS ---------- */
 /* Caja externa al carrusel: es la que posiciona las flechas.
    Si fueran hijas de .carousel se moverían con el scroll del track. */
 .carousel-box {
-  /* Las flechas de los carruseles normales son más chico que las del
+  /* Las flechas de los carruseles normales son más chicas que las del
      carrusel grande, para no tapar las tarjetas. */
   --flecha-size: 58px;
   --flecha-offset: 12px;
@@ -112,6 +74,7 @@ h2 {
   background: transparent;
   transform: translateY(-50%);
   cursor: pointer;
+  transition: filter 160ms ease;
 }
 
 .carousel-arrow img {
@@ -133,10 +96,6 @@ h2 {
 
 /* Hover de las flechas: crecen, se tiñen de neón y, mientras el puntero
    queda encima, hacen un balanceo suave (rebote constante). */
-.carousel-arrow {
-  transition: filter 160ms ease;
-}
-
 .carousel-arrow:hover {
   animation: arrow-nudge 900ms ease-in-out infinite;
 }
@@ -156,6 +115,7 @@ h2 {
   }
 }
 
+/* ---------- CARRUSEL (base común) ---------- */
 .carousel {
   position: relative;
   width: 100%;
@@ -177,6 +137,7 @@ h2 {
   will-change: transform;
 }
 
+/* ---------- CARRUSEL GRANDE (destacados) ---------- */
 .carousel--featured {
   /* Igual que en .game-section .carousel: el alto extra y los márgenes
      negativos se compensan (netos 5px arriba como antes) para que sin mover
@@ -210,7 +171,7 @@ h2 {
 }
 
 .featured-card:hover {
-  border-color: #39ff14;
+  border-color: var(--neon);
   box-shadow: 0 0 26px rgba(57, 255, 20, 0.6), inset 0 0 16px rgba(57, 255, 20, 0.15);
   transform: translateY(-6px);
 }
@@ -233,13 +194,13 @@ h2 {
   height: 16.3%;
   border-radius: 6.4%;
   background: linear-gradient(90deg, rgba(41, 103, 50, 0.58), rgba(26, 24, 24, 0.58));
-  color: #39ff14;
-  font-family: "Oxanium:Bold", sans-serif;
+  color: var(--neon);
   font-size: calc(var(--card-w) * 0.0453);
   font-weight: 700;
   opacity: 0.66;
 }
 
+/* ---------- CARRUSELES POR CATEGORÍA ---------- */
 /* La altura la define el contenido (h2 + fila de tarjetas) para que la
    barra de título de cada tarjeta nunca quede recortada. */
 .game-section {
@@ -263,7 +224,6 @@ h2 {
   --card-w: 280px;
   gap: 43px;
   height: 192px;
-  padding-left: 0;
 }
 
 .game-card {
@@ -281,7 +241,7 @@ h2 {
 }
 
 .game-card:hover {
-  border-color: #39ff14;
+  border-color: var(--neon);
   box-shadow: 0 0 18px rgba(57, 255, 20, 0.55), inset 0 0 14px rgba(57, 255, 20, 0.18);
   transform: translateY(-4px);
 }
@@ -309,11 +269,9 @@ h2 {
   height: 47px;
   margin: 0;
   padding: 0 10px;
-  box-sizing: border-box;
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(1.3px);
   color: #ffffff;
-  font-family: "Oxanium:SemiBold", sans-serif;
   font-size: 24px;
   font-weight: 600;
   line-height: normal;
@@ -321,6 +279,7 @@ h2 {
   white-space: nowrap;
 }
 
+/* Precio + botón "Agregar": sólo en la categoría Premium */
 .game-card__actions {
   position: absolute;
   top: 10px;
@@ -339,14 +298,8 @@ h2 {
   border-radius: 20px;
   background: rgba(30, 30, 30, 0.94);
   color: #ffffff;
-  font-family: "Oxanium:Medium", sans-serif;
   font-size: 14px;
   font-weight: 500;
-}
-
-.game-card__price img {
-  display: block;
-  flex: 0 0 auto;
 }
 
 .game-card__add {
@@ -358,7 +311,6 @@ h2 {
   cursor: pointer;
   background: linear-gradient(180deg, #2e973a 31.25%, #115619);
   color: #ffffff;
-  font-family: "Oxanium:Bold", sans-serif;
   font-size: 12px;
   font-weight: 700;
   transition: filter 160ms ease, transform 160ms ease;
@@ -377,6 +329,7 @@ h2 {
   filter: grayscale(0.55) brightness(0.85);
 }
 
+/* ---------- AVISO DEL CARRITO ---------- */
 .cart-notice {
   position: fixed;
   right: 24px;
@@ -387,8 +340,8 @@ h2 {
   border-radius: 16px;
   background: #ffffff;
   color: #115619;
-  font-family: "Oxanium:SemiBold", sans-serif;
   font-size: 15px;
+  font-weight: 600;
   opacity: 0;
   pointer-events: none;
   transform: translateY(16px);
@@ -401,6 +354,7 @@ h2 {
   transform: translateY(0);
 }
 
+/* ---------- RESPONSIVE ---------- */
 @media (max-width: 900px) {
   .page {
     padding-top: 28px;
@@ -422,30 +376,17 @@ h2 {
     --flecha-offset: 8px;
   }
 
+  /* --card-h y --card-r se recalculan solos a partir del nuevo --card-w */
   .carousel-box--featured {
     --flecha-size: 52px;
     --flecha-offset: 14px;
     --gap: 20px;
     --card-w: min(420px, calc((100vw - 2 * var(--gap)) / 2));
-    --card-h: calc(var(--card-w) * 0.7009);
-    --card-r: calc(var(--card-w) * 0.0611);
   }
 
   .carousel--featured {
     height: var(--card-h);
     margin-top: 14px;
-  }
-
-  .carousel--featured .carousel__track {
-    gap: var(--gap);
-    height: var(--card-h);
-    padding-right: calc((100% - var(--card-w)) / 2);
-  }
-
-  .featured-card {
-    flex-basis: var(--card-w);
-    height: var(--card-h);
-    border-radius: var(--card-r);
   }
 
   .featured-card__label {
@@ -469,11 +410,9 @@ h2 {
     --card-w: 240px;
     gap: 18px;
     height: 165px;
-    padding-left: 0;
   }
 
   .game-card {
-    flex-basis: var(--card-w);
     height: 165px;
     border-radius: 32px;
   }

@@ -1,0 +1,127 @@
+/* ============================================================
+   HEADER DE LOGIN / REGISTRO - CyberHub
+   Partial templates/header-home.html.
+   ============================================================ */
+
+/* ---------- 1. CONTENEDOR ---------- */
+/* Las páginas que inyectan este partial (login, registro) lo restan de su
+   propio alto, así que la altura vive en una variable. El media query de
+   abajo la baja a 96px en mobile. */
+:root {
+    --header-height: 120px;
+}
+
+.site-header {
+    position: relative;
+    width: 100%;
+    height: var(--header-height);
+    border-bottom: 1px solid var(--neon);
+    background: #121212;
+}
+
+/* ---------- 2. ENLACE DEL LOGO ---------- */
+.site-logo {
+    position: absolute;
+    top: 0;
+    left: clamp(24px, 5.625vw, 108px);
+    display: flex;
+    align-items: flex-start;
+    color: #fff;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.site-logo:focus-visible {
+    border-radius: 6px;
+    outline: 2px solid var(--neon);
+    outline-offset: 5px;
+}
+
+.site-logo.is-pressed {
+    transform: translateY(1px);
+}
+
+/* ---------- 3. SÍMBOLO ---------- */
+.site-logo__mark {
+    position: relative;
+    display: block;
+    width: 78px;
+    height: 75.77px;
+    margin-top: 22px;
+    flex: 0 0 auto;
+}
+
+.site-logo__image {
+    position: absolute;
+    top: 3.662px;
+    left: 3.662px;
+    display: block;
+    width: 70.676px;
+    height: 49.83px;
+    object-fit: cover;
+}
+
+/* ---------- 4. TICKS DEL SÍMBOLO ---------- */
+.site-logo__ticks {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.site-logo__ticks img {
+    position: absolute;
+    display: block;
+}
+
+.site-logo__ticks img:nth-child(odd)  { left: 27.46px; }
+.site-logo__ticks img:nth-child(even) { left: 52.74px; }
+.site-logo__ticks img:nth-child(1) { top: 50.18px; }
+.site-logo__ticks img:nth-child(2) { top: 49.81px; }
+.site-logo__ticks img:nth-child(3),
+.site-logo__ticks img:nth-child(4) { top: 59.33px; }
+.site-logo__ticks img:nth-child(5) { top: 68.48px; }
+.site-logo__ticks img:nth-child(6) { top: 69.21px; }
+
+/* ---------- 5. TEXTO ---------- */
+.site-logo__text {
+    display: flex;
+    gap: 9px;
+    align-items: baseline;
+    margin-top: 24px;
+    margin-left: 21px;
+    font-family: "BBH Bartle", sans-serif;
+    font-size: 36px;
+    font-weight: 400;
+    line-height: normal;
+    white-space: nowrap;
+}
+
+.site-logo__text strong {
+    color: #14ff35;
+    font: inherit;
+}
+
+.site-logo:hover .site-logo__text strong,
+.site-logo:focus-visible .site-logo__text strong {
+    text-shadow: 0 0 14px rgba(20, 255, 53, 0.65);
+}
+
+/* ---------- 6. RESPONSIVE ---------- */
+@media (max-width: 600px) {
+    :root {
+        --header-height: 96px;
+    }
+
+    .site-logo__mark {
+        width: 62px;
+        margin-top: 10px;
+        transform: scale(0.8);
+        transform-origin: top left;
+    }
+
+    .site-logo__text {
+        margin-top: 23px;
+        margin-left: 5px;
+        font-size: 29px;
+    }
+}

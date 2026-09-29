@@ -1,61 +1,8 @@
-@font-face {
-  font-family: "Abel:Regular";
-  src: url("https://static.figma.com/font/Abel-Regular_2") format("woff2");
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Inter:Regular";
-  src: url("https://static.figma.com/font/Inter_1") format("woff2");
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Nunito:Medium";
-  src: url("https://static.figma.com/font/Nunito_wght__1") format("woff2");
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Oxanium:Medium";
-  src: url("https://static.figma.com/font/Oxanium_wght__1") format("woff2");
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Oxanium:Regular";
-  src: url("https://static.figma.com/font/Oxanium_wght__1") format("woff2");
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-
-:root {
-  color: #fff;
-  background: #2a2a2a;
-  font-synthesis: none;
-}
-
-html,
-body {
-  min-width: 320px;
-  min-height: 100%;
-  margin: 0;
-  background: #2a2a2a;
-}
-
-button,
-input {
-  font: inherit;
-}
+/* ============================================================
+   LOGIN | pages/login.html
+   También es el diseño base del registro (register.css le suma
+   sólo lo propio).
+   ============================================================ */
 
 /* El header se inyecta arriba, así que el login ocupa lo que queda de la
    pantalla. Todo el layout es fluido (flex + clamp) para que el formulario
@@ -70,7 +17,6 @@ input {
   width: 100%;
   min-height: calc(100dvh - var(--header-height, 120px));
   padding: clamp(12px, 2.5vh, 32px) 16px;
-  box-sizing: border-box;
   /* hidden en X recorta los bowser, que se salen a los costados. */
   overflow-x: hidden;
   background: #2a2a2a;
@@ -80,7 +26,6 @@ input {
   z-index: 2;
   margin: 0;
   color: #fff;
-  font-family: "Oxanium:Regular", sans-serif;
   font-size: clamp(26px, 4.4vh, 40px);
   font-weight: 400;
   line-height: normal;
@@ -120,7 +65,6 @@ input {
   padding: clamp(16px, 2.4vh, 24px);
   border: 1px solid #d9d9d9;
   border-radius: 8px;
-  box-sizing: border-box;
   background: #fff;
 }
 
@@ -134,7 +78,6 @@ input {
 
 .form-field label {
   color: #1e1e1e;
-  font-family: "Oxanium:Regular", sans-serif;
   font-size: 16px;
   font-weight: 400;
   line-height: 1.4;
@@ -146,11 +89,9 @@ input {
   padding: 12px 16px;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
-  box-sizing: border-box;
   outline: none;
   color: #1e1e1e;
   background: #fff;
-  font-family: "Oxanium:Regular", sans-serif;
   font-size: 16px;
   line-height: 1;
   transition: border-color 160ms ease, box-shadow 160ms ease;
@@ -170,7 +111,7 @@ input {
   top: calc(100% + 2px);
   left: 2px;
   color: #cf2020;
-  font-family: "Inter:Regular", sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 11px;
 }
 
@@ -229,32 +170,55 @@ input {
   justify-content: flex-start;
   padding-left: 16.5px;
   border-radius: 10px;
-  box-sizing: border-box;
   color: #fff;
   background: #1877f2;
 }
 
 .facebook-auth span {
-  font-family: "Abel:Regular", sans-serif;
+  font-family: "Abel", sans-serif;
   font-size: 13px;
   white-space: nowrap;
 }
 
 .google-auth:hover,
 .facebook-auth:hover,
-.login-button:hover,
 .create-account:hover {
   filter: brightness(1.08);
   transform: translateY(-1px);
 }
 
+/* ---------- BOTONES PRINCIPALES ---------- */
+.login-button,
+.create-account {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 272px;
+  height: 40px;
+  padding: 10px;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 25.1px;
+  text-decoration: none;
+  transition: filter 160ms ease, transform 160ms ease;
+}
+
+.create-account {
+  background: #424242;
+}
+
 /* Hover distintivo de los botones principales ("Iniciar sesión" y
    "Registrarme"): un barrido de luz blanca que cruza el botón + glow verde.
-   Reemplaza para estos botones el hover genérico de arriba. */
+   Es distinto del hover genérico de los otros botones. */
 .login-button {
   position: relative;
   overflow: hidden;
   isolation: isolate;
+  background: #39ff14;
 }
 
 .login-button::before {
@@ -276,7 +240,6 @@ input {
 
 .login-button:hover {
   box-shadow: 0 0 18px rgba(57, 255, 20, 0.8), inset 0 0 8px rgba(255, 255, 255, 0.18);
-  filter: none;
   transform: scale(1.04);
 }
 
@@ -287,7 +250,6 @@ input {
   height: 76px;
   border: 1px solid #d3d3d3;
   border-radius: 3px;
-  box-sizing: border-box;
   cursor: pointer;
   background: #f9f9f9;
   box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.08);
@@ -317,7 +279,7 @@ input {
   z-index: 2;
   display: none;
   color: #2e973a;
-  font-family: "Inter:Regular", sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 25px;
 }
 
@@ -349,7 +311,6 @@ input {
   cursor: pointer;
   color: #000;
   background: transparent;
-  font-family: "Oxanium:Regular", sans-serif;
   font-size: 16px;
   line-height: 28px;
 }
@@ -358,42 +319,13 @@ input {
   color: #1d9909;
 }
 
-.login-button,
-.create-account {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 272px;
-  height: 40px;
-  padding: 10px;
-  border: 0;
-  border-radius: 8px;
-  box-sizing: border-box;
-  cursor: pointer;
-  color: #fff;
-  font-family: "Oxanium:Medium", sans-serif;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 25.1px;
-  text-decoration: none;
-  transition: filter 160ms ease, transform 160ms ease;
-}
-
-.login-button {
-  background: #39ff14;
-}
-
-.create-account {
-  background: #424242;
-}
-
 /* Va en el flujo (no absoluto) para que el form mida lo que necesita
    y el mensaje quede siempre debajo, sin pisar el boton de crear cuenta. */
 .form-message {
   min-height: 1.2em;
   margin: -8px 0 0;
   color: #15751e;
-  font-family: "Inter:Regular", sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 11px;
   text-align: center;
 }
@@ -417,12 +349,10 @@ input {
   flex-direction: column;
   gap: 14px;
   padding: 28px;
-  font-family: "Oxanium:Regular", sans-serif;
 }
 
-.recovery-dialog h2,
-.recovery-dialog p {
-  margin: 0;
+.recovery-dialog h2 {
+  font-weight: 400;
 }
 
 .recovery-dialog input {
@@ -449,4 +379,3 @@ input {
   color: #fff;
   background: #39ff14;
 }
-

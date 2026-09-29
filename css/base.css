@@ -1,0 +1,96 @@
+/* ============================================================
+   BASE | Común a todas las páginas
+   Tipografías, variables globales y reset. Cada página suma
+   después sólo los componentes que usa (header, footer, etc.).
+   ============================================================ */
+
+/* ---------- 1. TIPOGRAFÍAS ---------- */
+/* Oxanium de Google Fonts: es la que dibuja el texto de peso normal (400).
+   El @import tiene que ir antes que cualquier otra regla. */
+@import url("https://fonts.googleapis.com/css2?family=Oxanium&display=swap");
+
+/* Oxanium variable: un solo archivo cubre el resto de los pesos que usa
+   el sitio (hasta 800). */
+@font-face {
+    font-family: "Oxanium";
+    src: url("https://static.figma.com/font/Oxanium_wght__1") format("woff2");
+    font-style: normal;
+    font-weight: 400 800;
+    font-display: swap;
+}
+
+/* Logo del header de login / registro */
+@font-face {
+    font-family: "BBH Bartle";
+    src: url("https://static.figma.com/font/BBHBartle-Regular_1") format("woff2");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+}
+
+/* Comentarios de la página del juego */
+@font-face {
+    font-family: "Nunito";
+    src: url("https://static.figma.com/font/Nunito_wght__1") format("woff2");
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+}
+
+/* Botón de Facebook del login / registro */
+@font-face {
+    font-family: "Abel";
+    src: url("https://static.figma.com/font/Abel-Regular_2") format("woff2");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+}
+
+/* Mensajes de error de los formularios */
+@font-face {
+    font-family: "Inter";
+    src: url("https://static.figma.com/font/Inter_1") format("woff2");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+}
+
+/* ---------- 2. VARIABLES Y RAÍZ ---------- */
+:root {
+    --neon: #39ff14;
+
+    color: #fff;
+    background: #2a2a2a;
+    font-family: "Oxanium", sans-serif;
+    font-synthesis: none;
+}
+
+/* ---------- 3. RESET ---------- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+    min-width: 320px;
+    min-height: 100%;
+    background: #2a2a2a;
+    color: #e6e6e6;
+}
+
+/* Los controles de formulario no heredan la tipografía por defecto. */
+button,
+input,
+textarea {
+    font: inherit;
+}
+
+button {
+    color: inherit;
+}

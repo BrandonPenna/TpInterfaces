@@ -1,0 +1,264 @@
+/* ============================================================
+   FOOTER - CyberHub
+   Partial templates/fat-footer.html (Home y páginas de juego).
+   ============================================================ */
+
+:root {
+  --footer-background: #121212;
+  --footer-text: #e6e6e6;
+  --footer-muted: #9a9a9a;
+  --footer-accent: var(--neon);
+
+  --footer-height: 400px;
+  --footer-padding-top: 70px;
+  --footer-padding-bottom: 28px;
+  --page-padding: 16px;
+
+  --columns-gap: 40px;
+  --columns-width: 1200px;
+
+  --title-size: 22px;
+  --link-size: 16px;
+  --copyright-size: 15px;
+}
+
+/* ---------- 1. CONTENEDOR ---------- */
+.cyber-footer {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  align-content: stretch;
+  width: 100%;
+  min-height: var(--footer-height);
+  padding: var(--footer-padding-top) var(--page-padding) var(--footer-padding-bottom);
+  background-color: var(--footer-background);
+  color: var(--footer-text);
+}
+
+.cyber-footer__content {
+  display: grid;
+  grid-template-columns: 290px minmax(0, 1fr);
+  align-items: start;
+  width: 100%;
+}
+
+/* ---------- 2. LOGO ---------- */
+.cyber-footer__logo {
+  justify-self: start;
+  align-self: start;
+  width: 280px;
+  min-width: 0;
+}
+
+.cyber-footer__logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* ---------- 3. COLUMNAS ---------- */
+.cyber-footer__columns {
+  display: grid;
+  grid-template-columns:
+    minmax(140px, 0.8fr)
+    minmax(210px, 1.1fr)
+    minmax(180px, 1fr)
+    minmax(190px, 210px)
+    minmax(220px, 1.1fr);
+  gap: var(--columns-gap);
+  align-items: start;
+  width: min(100%, var(--columns-width));
+  justify-self: center;
+}
+
+.cyber-footer__column {
+  min-width: 0;
+}
+
+.cyber-footer__column h2 {
+  margin: 0 0 16px;
+  color: var(--footer-text);
+  font-size: var(--title-size);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+}
+
+.cyber-footer__column ul {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  list-style: none;
+}
+
+.cyber-footer__column li {
+  min-width: 0;
+}
+
+.cyber-footer__column a {
+  display: inline-block;
+  max-width: 100%;
+  color: var(--footer-text);
+  font-size: var(--link-size);
+  font-weight: 400;
+  line-height: 1.4;
+  text-decoration: none;
+  white-space: normal;
+  transition: color 160ms ease, transform 160ms ease;
+}
+
+.cyber-footer__column a:hover,
+.cyber-footer__column a:focus-visible {
+  color: var(--footer-accent);
+  outline: none;
+  transform: translateX(3px);
+}
+
+/* Legal: los textos largos cortan línea dentro de la columna. */
+.cyber-footer__column--legal {
+  width: 100%;
+  max-width: 210px;
+}
+
+.cyber-footer__column--legal ul,
+.cyber-footer__column--legal li {
+  width: 100%;
+  max-width: 100%;
+}
+
+.cyber-footer__column--legal a {
+  display: block;
+  width: 100%;
+  overflow-wrap: break-word;
+}
+
+/* ---------- 4. REDES SOCIALES ---------- */
+.cyber-footer__social {
+  min-width: 220px;
+}
+
+.cyber-footer__social ul {
+  gap: 6px;
+}
+
+.cyber-footer__social a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: fit-content;
+  min-height: 40px;
+  white-space: nowrap;
+}
+
+.cyber-footer__social a:hover,
+.cyber-footer__social a:focus-visible {
+  transform: none;
+}
+
+.social-icon {
+  display: block;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+/* ---------- 5. COPYRIGHT ---------- */
+.cyber-footer__copyright {
+  align-self: end;
+  width: 100%;
+  color: var(--footer-muted);
+  font-size: var(--copyright-size);
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+/* ---------- 6. RESPONSIVE ---------- */
+
+/* Escritorios medianos */
+@media (max-width: 1500px) {
+  .cyber-footer {
+    padding: 70px var(--page-padding) 20px;
+  }
+
+  .cyber-footer__content {
+    grid-template-columns: 240px minmax(0, 1fr);
+    column-gap: 36px;
+  }
+
+  .cyber-footer__logo {
+    width: 230px;
+  }
+
+  .cyber-footer__columns {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: 48px;
+    width: 100%;
+  }
+
+  .cyber-footer__social {
+    min-width: 0;
+  }
+
+  .cyber-footer__copyright {
+    margin-top: 48px;
+  }
+}
+
+/* Tablets */
+@media (max-width: 900px) {
+  .cyber-footer__content {
+    grid-template-columns: 1fr;
+    row-gap: 48px;
+  }
+
+  .cyber-footer__logo {
+    justify-self: center;
+  }
+
+  .cyber-footer__columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cyber-footer__column--legal {
+    max-width: none;
+  }
+}
+
+/* Celulares */
+@media (max-width: 560px) {
+  .cyber-footer {
+    display: block;
+    min-height: 0;
+    padding: 40px 24px 24px;
+  }
+
+  .cyber-footer__content {
+    row-gap: 40px;
+  }
+
+  .cyber-footer__logo {
+    width: min(100%, 240px);
+  }
+
+  .cyber-footer__columns {
+    grid-template-columns: 1fr;
+    row-gap: 40px;
+  }
+
+  .cyber-footer__column h2 {
+    font-size: 20px;
+  }
+
+  .cyber-footer__social a {
+    white-space: normal;
+  }
+
+  .cyber-footer__copyright {
+    margin-top: 40px;
+    font-size: 13px;
+  }
+}
