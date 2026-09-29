@@ -29,3 +29,132 @@
 .register-form__row .form-field small {
   position: static;
 }
+
+/* ---------- ANIMACIÓN DE REGISTRO EXITOSO ----------
+   js/register.js agrega .is-success al formulario y le inserta la
+   tarjeta .register-success. Todo con @keyframes por porcentajes:
+   1. el formulario late con un brillo neón,
+   2. aparece la tarjeta y se dibuja el círculo,
+   3. se traza el tilde y
+   4. sube el texto. */
+.register-form.is-success {
+  animation: registro-brillo 1.2s ease-out forwards;
+}
+
+.register-success {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-radius: 8px;
+  background: #fff;
+  color: #1e1e1e;
+  text-align: center;
+  animation: exito-aparece 350ms ease-out both;
+}
+
+.register-success__check {
+  width: 104px;
+  height: 104px;
+  animation: exito-pop 700ms 150ms ease-out both;
+}
+
+.register-success__check circle,
+.register-success__check path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.register-success__check circle {
+  stroke: var(--neon);
+  stroke-width: 3;
+  stroke-dasharray: 151;
+  stroke-dashoffset: 151;
+  animation: exito-trazo 650ms 200ms ease-out forwards;
+}
+
+.register-success__check path {
+  stroke: #2e973a;
+  stroke-width: 4;
+  stroke-dasharray: 36;
+  stroke-dashoffset: 36;
+  animation: exito-trazo 400ms 750ms ease-out forwards;
+}
+
+.register-success p {
+  font-size: 26px;
+  font-weight: 700;
+  animation: exito-texto 500ms 1s ease-out both;
+}
+
+.register-success small {
+  color: #6b6b6b;
+  font-size: 14px;
+  animation: exito-texto 500ms 1.2s ease-out both;
+}
+
+@keyframes registro-brillo {
+  0% {
+    box-shadow: 0 0 0 0 rgba(57, 255, 20, 0);
+    transform: scale(1);
+  }
+  40% {
+    box-shadow: 0 0 40px 8px rgba(57, 255, 20, 0.75);
+    transform: scale(1.015);
+  }
+  100% {
+    box-shadow: 0 0 20px 2px rgba(57, 255, 20, 0.45);
+    transform: scale(1);
+  }
+}
+
+@keyframes exito-aparece {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes exito-pop {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  80% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Sin 0%: arranca desde el stroke-dashoffset de cada elemento (trazo
+   "vacío") y lo lleva a 0, así sirve para el círculo y para el tilde. */
+@keyframes exito-trazo {
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes exito-texto {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

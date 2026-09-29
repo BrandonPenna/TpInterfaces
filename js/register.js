@@ -83,6 +83,28 @@
             return;
         }
 
-        Formulario.exito(message, "¡Cuenta creada con éxito! Redirigiendo...", "login.html");
+        mostrarAnimacionExito();
+        Formulario.exito(message, "¡Cuenta creada con éxito! Redirigiendo...", "login.html", DURACION_EXITO);
     });
+
+    /* ---------- 3. ANIMACIÓN DE ÉXITO ---------- */
+
+    // Tiempo total de la animación de register.css + un momento para leerla.
+    const DURACION_EXITO = 2600;
+
+    // Brillo del formulario + tarjeta con círculo y tilde que se dibujan.
+    function mostrarAnimacionExito() {
+        form.classList.add("is-success");
+        form.querySelectorAll("button, input").forEach((el) => { el.disabled = true; });
+        form.insertAdjacentHTML("beforeend",
+            '<div class="register-success" aria-hidden="true">' +
+                '<svg class="register-success__check" viewBox="0 0 52 52">' +
+                    '<circle cx="26" cy="26" r="24" />' +
+                    '<path d="M14 27l8 8 16-17" />' +
+                '</svg>' +
+                '<p>¡Cuenta creada!</p>' +
+                '<small>Te llevamos al inicio de sesión...</small>' +
+            '</div>'
+        );
+    }
 })();

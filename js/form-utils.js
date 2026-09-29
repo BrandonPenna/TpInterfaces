@@ -38,11 +38,12 @@ const Formulario = {
         form.querySelector(".has-error input")?.focus();
     },
 
-    // Mensaje de éxito y redirección con una pequeña pausa para leerlo.
-    exito(message, texto, destino) {
+    // Mensaje de éxito y redirección con una pausa para leerlo
+    // (o para que termine una animación).
+    exito(message, texto, destino, espera = 900) {
         Formulario.mostrarMensaje(message, texto, Formulario.COLOR_EXITO);
         setTimeout(() => {
             window.location.href = destino;
-        }, 900);
+        }, espera);
     }
 };
