@@ -193,6 +193,19 @@ body.menu-open .category-menu {
     border-radius: 0;
     background: #121212;
     box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
+    /* Nunca más alto que lo que queda de pantalla bajo el header (66px):
+       en pantallas bajas el panel scrollea y se llega a todas las
+       categorías y a las redes sociales. */
+    max-height: calc(100dvh - 66px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--neon) transparent;
+}
+
+/* Sin esto, al limitar el alto los bloques se aplastarían en vez de scrollear. */
+.category-menu__panel > * {
+    flex-shrink: 0;
 }
 
 .category-menu__title {

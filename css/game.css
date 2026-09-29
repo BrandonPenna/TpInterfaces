@@ -15,7 +15,8 @@
     width: min(100%, 1538px);
     margin: 0 auto;
     padding-inline: 44px;
-    padding-bottom: 1px;
+    /* Aire entre el formulario de comentarios y el footer (igual que la Home) */
+    padding-bottom: 72px;
 }
 
 /* ---------- 2. BREADCRUMBS ---------- */
