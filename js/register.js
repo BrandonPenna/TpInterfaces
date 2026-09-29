@@ -1,146 +1,88 @@
 /* ============================================================
-   REGISTRO | JavaScript vanilla
-   Validación del formulario de pages/register.html.
-   Mismo criterio que js/login.js: los errores de cada campo van
-   en su <small> con la clase .has-error, y el resultado general en
-   el .form-message.
+   REGISTRO | Validación de pages/register.html
+   Usa los helpers de js/form-utils.js (mismo criterio que login).
    ============================================================ */
+(function () {
+    "use strict";
 
-const form = document.querySelector(".register-form");
-const message = document.querySelector(".form-message");
+    const form = document.querySelector(".register-form");
+    if (!form) return;
+    const message = form.querySelector(".form-message");
 
-if (form) {
-  function setFieldError(input, text) {
-    const field = input.closest(".form-field");
-    field.classList.toggle("has-error", Boolean(text));
-    field.querySelector("small").textContent = text;
-  }
+    /* ---------- 1. REGLAS ---------- */
 
-  const campos = form.querySelectorAll(".form-field input");
-
-  campos.forEach((input) => {
-    // Al escribir se limpia el error del campo.
-    input.addEventListener("input", () => setFieldError(input, ""));
-  });
-
-  // Valida un campo y devuelve true si está bien.
-  function validarCampo(input) {
-    const valor = input.value.trim();
-
-    if (input.name === "captcha") return input.checked;
-
-    if (!valor) {
-      setFieldError(input, "Este campo es obligatorio");
-      return false;
-    }
-
-    if (input.name === "nombre" || input.name === "apellido") {
-      if (valor.length < 2 || !/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/.test(valor)) {
-        setFieldError(input, "Ingrese un nombre válido");
-        return false;
-      }
-    }
-
-    if (input.name === "nickname") {
-      if (/\s/.test(valor) || valor.length < 3) {
-        setFieldError(input, "Ingrese un nickname sin espacios");
-        return false;
-      }
-    }
-
-    if (input.name === "edad") {
-      const edad = Number(valor);
-      if (!Number.isInteger(edad) || edad < 13 || edad > 99) {
-        setFieldError(input, "Ingrese una edad entre 13 y 99");
-        return false;
-      }
-    }
-
-    if (input.name === "email" && !input.checkValidity()) {
-      setFieldError(input, "Ingrese un correo válido");
-      return false;
-    }
-
-    if ((input.name === "password" || input.name === "password2") && valor.length < 6) {
-      setFieldError(input, "La contraseña debe tener al menos 6 caracteres");
-      return false;
-    }
-
-    setFieldError(input, "");
-    return true;
-  }
-
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    message.textContent = "";
-
-    const email = form.elements.email;
-    const password = form.elements.password;
-    const password2 = form.elements.password2;
-    const captcha = form.querySelector("input[name='captcha']");
-
-    const textos = {
-      nombre: "Ingrese su nombre",
-      apellido: "Ingrese su apellido",
-      nickname: "Ingrese su nickname",
-      edad: "Ingrese su edad",
-      email: "Ingrese un correo válido",
-      password: "Ingrese su contraseña",
-      password2: "Repita su contraseña",
+    // Mensaje cuando el campo está vacío.
+    const TEXTO_VACIO = {
+        nombre: "Ingrese su nombre",
+        apellido: "Ingrese su apellido",
+        nickname: "Ingrese su nickname",
+        edad: "Ingrese su edad",
+        email: "Ingrese un correo válido",
+        password: "Ingrese su contraseña",
+        password2: "Repita su contraseña"
     };
 
-    // Sólo se valida lo que el usuario ya escribió: si está vacío
-    // (y no es obligatorio completar) el mensaje es el del placeholder.
-    const esNuevo = (input) => input.value.trim() !== "";
+    const SOLO_LETRAS = /^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]+$/;
 
-    let isValid = true;
-    let primerError = null;
+    function nombreValido(valor) {
+        return valor.length >= 2 && SOLO_LETRAS.test(valor) ? "" : "Ingrese un nombre válido";
+    }
 
-    campos.forEach((input) => {
-      if (input.type === "checkbox") return;
+    function passwordValida(valor) {
+        return valor.length >= 6 ? "" : "La contraseña debe tener al menos 6 caracteres";
+    }
 
-      if (!input.value.trim()) {
-        setFieldError(input, textos[input.name] || "Este campo es obligatorio");
-        isValid = false;
-        if (!primerError) primerError = input;
-        return;
-      }
+    // Cada regla recibe el valor (sin espacios en los bordes) y devuelve
+    // el texto del error, o "" si el campo está bien.
+    const REGLAS = {
+        nombre: nombreValido,
+        apellido: nombreValido,
+        nickname: (valor) =>
+            valor.length >= 3 && !/\s/.test(valor) ? "" : "Ingrese un nickname sin espacios",
+        edad: (valor) => {
+            const edad = Number(valor);
+            return Number.isInteger(edad) && edad >= 13 && edad <= 99 ? "" : "Ingrese una edad entre 13 y 99";
+        },
+        email: (valor, input) => (input.checkValidity() ? "" : "Ingrese un correo válido"),
+        password: passwordValida,
+        password2: passwordValida
+    };
 
-      if (!validarCampo(input)) {
-        isValid = false;
-        if (!primerError) primerError = input;
-      }
+    function errorDeCampo(input) {
+        const valor = input.value.trim();
+        if (!valor) return TEXTO_VACIO[input.name] || "Este campo es obligatorio";
+        return REGLAS[input.name] ? REGLAS[input.name](valor, input) : "";
+    }
+
+    /* ---------- 2. EVENTOS ---------- */
+
+    Formulario.limpiarAlEscribir(form);
+
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        message.textContent = "";
+        let isValid = true;
+
+        form.querySelectorAll(".form-field input").forEach((input) => {
+            const error = errorDeCampo(input);
+            Formulario.setFieldError(input, error);
+            if (error) isValid = false;
+        });
+
+        // Las contraseñas se comparan sólo si las dos están completas.
+        const { password, password2 } = form.elements;
+        if (password.value.trim() && password2.value.trim() && password.value !== password2.value) {
+            Formulario.setFieldError(password2, "Las contraseñas no coinciden");
+            isValid = false;
+        }
+
+        if (!Formulario.validarCaptcha(form, message)) isValid = false;
+
+        if (!isValid) {
+            Formulario.enfocarPrimerError(form);
+            return;
+        }
+
+        Formulario.exito(message, "¡Cuenta creada con éxito! Redirigiendo...", "login.html");
     });
-
-    if (esNuevo(password) && esNuevo(password2) && password.value !== password2.value) {
-      setFieldError(password2, "Las contraseñas no coinciden");
-      isValid = false;
-      if (!primerError) primerError = password2;
-    }
-
-    if (!captcha.checked) {
-      message.textContent = "Confirma que no eres un robot.";
-      message.style.color = "#cf2020";
-      isValid = false;
-    }
-
-    if (!isValid) {
-      form.querySelector(".has-error input")?.focus() || primerError?.focus();
-      return;
-    }
-
-    message.textContent = "¡Cuenta creada con éxito! Redirigiendo...";
-    message.style.color = "#15751e";
-
-    setTimeout(() => {
-      window.location.href = "login.html";
-    }, 900);
-  });
-
-  // Si el usuario tacha la contraseña repetida, el error se va solo.
-  password2.addEventListener("input", () => {
-    if (password.value && password2.value === password.value) {
-      setFieldError(password2, "");
-    }
-  });
-}
+})();

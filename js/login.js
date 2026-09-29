@@ -1,60 +1,53 @@
-const form = document.querySelector(".login-form");
-const message = document.querySelector(".form-message");
-const recoveryDialog = document.querySelector(".recovery-dialog");
+/* ============================================================
+   LOGIN | Validación de pages/login.html + diálogo de recuperación
+   Usa los helpers de js/form-utils.js.
+   ============================================================ */
+(function () {
+    "use strict";
 
-function setFieldError(input, text) {
-  const field = input.closest(".form-field");
-  field.classList.toggle("has-error", Boolean(text));
-  field.querySelector("small").textContent = text;
-}
+    const form = document.querySelector(".login-form");
+    const message = form.querySelector(".form-message");
+    const recoveryDialog = document.querySelector(".recovery-dialog");
 
-form.querySelectorAll(".form-field input").forEach((input) => {
-  input.addEventListener("input", () => setFieldError(input, ""));
-});
+    Formulario.limpiarAlEscribir(form);
 
-form.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const email = form.elements.email;
-  const password = form.elements.password;
-  let isValid = true;
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const { email, password } = form.elements;
+        let isValid = true;
 
-  setFieldError(email, "");
-  setFieldError(password, "");
-  message.textContent = "";
+        Formulario.setFieldError(email, "");
+        Formulario.setFieldError(password, "");
+        message.textContent = "";
 
-  if (!email.value.trim() || !email.checkValidity()) {
-    setFieldError(email, "Ingrese un correo válido");
-    isValid = false;
-  }
+        if (!email.value.trim() || !email.checkValidity()) {
+            Formulario.setFieldError(email, "Ingrese un correo válido");
+            isValid = false;
+        }
 
-  if (!password.value) {
-    setFieldError(password, "Ingrese su contraseña");
-    isValid = false;
-  }
+        if (!password.value) {
+            Formulario.setFieldError(password, "Ingrese su contraseña");
+            isValid = false;
+        }
 
-  if (!form.elements.captcha.checked) {
-    message.textContent = "Confirma que no eres un robot.";
-    message.style.color = "#cf2020";
-    isValid = false;
-  }
+        if (!Formulario.validarCaptcha(form, message)) isValid = false;
 
-  if (!isValid) {
-    form.querySelector(".has-error input")?.focus();
-    return;
-  }
+        if (!isValid) {
+            Formulario.enfocarPrimerError(form);
+            return;
+        }
 
-  message.textContent = "Inicio de sesión correcto. Redirigiendo...";
-  message.style.color = "#15751e";
+        Formulario.exito(message, "Inicio de sesión correcto. Redirigiendo...", "../index.html");
+    });
 
-  setTimeout(() => {
-    window.location.href = "../index.html";
-  }, 900);
-});
+    /* ---------- RECUPERAR CONTRASEÑA ---------- */
 
-document.querySelector(".forgot-password").addEventListener("click", () => {
-  recoveryDialog.showModal();
-});
+    document.querySelector(".forgot-password").addEventListener("click", () => {
+        recoveryDialog.showModal();
+    });
 
-recoveryDialog.addEventListener("click", (event) => {
-  if (event.target === recoveryDialog) recoveryDialog.close();
-});
+    // Clic en el fondo oscuro (fuera del cuadro) cierra el diálogo.
+    recoveryDialog.addEventListener("click", (event) => {
+        if (event.target === recoveryDialog) recoveryDialog.close();
+    });
+})();

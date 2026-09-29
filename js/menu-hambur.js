@@ -1,11 +1,8 @@
 /* ============================================================
    MENÚ HAMBURGUESA | JavaScript vanilla
    Abre y cierra el menú desplegable de categorías del header.
-
-   El partial templates/header.html lo inyecta main.js con
-   fetch + innerHTML, así que .menu-trigger todavía puede no
-   existir cuando corre este archivo. Por eso se espera con un
-   MutationObserver (mismo patrón que js/header-home.js).
+   El header lo inyecta main.js, por eso se conecta recién cuando
+   `templatesListos` se resuelve.
    ============================================================ */
 (function () {
     "use strict";
@@ -15,29 +12,9 @@
     function conectarMenu() {
         const trigger = document.querySelector(".menu-trigger");
         const menu = document.querySelector("#category-menu");
+        if (!trigger || !menu) return;
 
-        if (!trigger || !menu) return false;
-        if (menu.dataset.menuConectado === "true") return true;
-
-        menu.dataset.menuConectado = "true";
-
-        /* ---------- 1. En la home los links a secciones saltan ----------
-           Los anclajes (../index.html#seccion-N) los escribe el template;
-           si la sección ya existe en esta página, se convierte en un
-           scroll suave para no recargar la home completa. */
-        const linksLocales = menu.querySelectorAll("a[href*='#seccion-']");
-        linksLocales.forEach((link) => {
-            const id = link.hash.replace("#", "");
-            if (document.getElementById(id)) {
-                link.addEventListener("click", (event) => {
-                    event.preventDefault();
-                    setMenuOpen(false);
-                    document.getElementById(id).scrollIntoView({ behavior: "smooth" });
-                });
-            }
-        });
-
-        /* ---------- 2. APERTURA / CIERRE ---------- */
+        const estaAbierto = () => document.body.classList.contains(MENU_ABIERTO);
 
         function setMenuOpen(isOpen) {
             document.body.classList.toggle(MENU_ABIERTO, isOpen);
@@ -45,16 +22,31 @@
             if (!isOpen) trigger.focus();
         }
 
+        /* ---------- 1. En la home los links a secciones saltan ----------
+           Los anclajes (../index.html#seccion-N) los escribe el template;
+           si la sección ya existe en esta página, se convierte en un
+           scroll suave para no recargar la home completa. */
+        menu.querySelectorAll("a[href*='#seccion-']").forEach((link) => {
+            const seccion = document.getElementById(link.hash.slice(1));
+            if (!seccion) return;
+
+            link.addEventListener("click", (event) => {
+                event.preventDefault();
+                setMenuOpen(false);
+                seccion.scrollIntoView({ behavior: "smooth" });
+            });
+        });
+
+        /* ---------- 2. APERTURA / CIERRE ---------- */
+
         // La hamburguesa hace toggle: si el menú está abierto (cruz),
         // el mismo clic lo cierra.
-        trigger.addEventListener("click", () =>
-            setMenuOpen(!document.body.classList.contains(MENU_ABIERTO)));
+        trigger.addEventListener("click", () => setMenuOpen(!estaAbierto()));
 
         // Al tocar afuera del menú (y del trigger) se cierra.
         document.addEventListener("click", (event) => {
-            if (!document.body.classList.contains(MENU_ABIERTO)) return;
-            if (event.target.closest("#category-menu")) return;
-            if (event.target.closest(".menu-trigger")) return;
+            if (!estaAbierto()) return;
+            if (event.target.closest("#category-menu, .menu-trigger")) return;
             setMenuOpen(false);
         });
 
@@ -65,34 +57,9 @@
 
         // Escape cierra el menú.
         document.addEventListener("keydown", (event) => {
-            if (event.key === "Escape" && document.body.classList.contains(MENU_ABIERTO)) {
-                setMenuOpen(false);
-            }
-        });
-
-        return true;
-    }
-
-    /* ---------- 3. ESPERA A LA INYECCIÓN ---------- */
-
-    function iniciar() {
-        if (conectarMenu()) return;
-
-        const observer = new MutationObserver(() => {
-            if (!conectarMenu()) return;
-            observer.disconnect();
-        });
-
-        observer.observe(document.documentElement, {
-            childList: true,
-            subtree: true
+            if (event.key === "Escape" && estaAbierto()) setMenuOpen(false);
         });
     }
 
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", iniciar);
-    } else {
-        iniciar();
-    }
-
+    templatesListos.then(conectarMenu);
 })();
