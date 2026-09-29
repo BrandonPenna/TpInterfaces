@@ -76,7 +76,7 @@ h2 {
   background: transparent;
   transform: translateY(-50%);
   cursor: pointer;
-  transition: filter 160ms ease;
+  transition: filter 160ms ease, opacity 200ms ease;
 }
 
 .carousel-arrow img {
@@ -117,6 +117,13 @@ h2 {
   }
 }
 
+/* Al llegar a un extremo del carrusel, js/home.js deshabilita la flecha
+   de ese lado y se desvanece. */
+.carousel-arrow:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* ---------- CARRUSEL (base común) ---------- */
 .carousel {
   position: relative;
@@ -139,6 +146,53 @@ h2 {
   will-change: transform;
 }
 
+/* Transición entre imágenes: mientras js/home.js desliza el carrusel
+   (650ms), las tarjetas se inclinan hacia el lado del movimiento, se
+   achican un poco y vuelven, como si las arrastrara la inercia. */
+.carousel__track.is-sliding-next > * {
+  animation: carousel-slide-next 650ms ease-in-out;
+}
+
+.carousel__track.is-sliding-prev > * {
+  animation: carousel-slide-prev 650ms ease-in-out;
+}
+
+@keyframes carousel-slide-next {
+  0% {
+    transform: none;
+    filter: none;
+  }
+  40% {
+    transform: skewX(-7deg) scale(0.94);
+    filter: brightness(0.8);
+  }
+  75% {
+    transform: skewX(2deg) scale(1.01);
+  }
+  100% {
+    transform: none;
+    filter: none;
+  }
+}
+
+@keyframes carousel-slide-prev {
+  0% {
+    transform: none;
+    filter: none;
+  }
+  40% {
+    transform: skewX(7deg) scale(0.94);
+    filter: brightness(0.8);
+  }
+  75% {
+    transform: skewX(-2deg) scale(1.01);
+  }
+  100% {
+    transform: none;
+    filter: none;
+  }
+}
+
 /* ---------- CARRUSEL GRANDE (destacados) ---------- */
 .carousel--featured {
   /* Igual que en .game-section .carousel: el alto extra y los márgenes
@@ -154,10 +208,10 @@ h2 {
 .carousel--featured .carousel__track {
   gap: var(--gap);
   height: var(--card-h);
-  /* El padding derecho es el espacio que hace falta para poder desplazar el
-     scroll y dejar la tarjeta central al centro del carrusel. Al desplazarlo,
-     ese espacio se ve como margen a los dos lados de la tarjeta centrada. */
-  padding-right: calc((100% - var(--card-w)) / 2);
+  /* Los paddings laterales son el espacio que hace falta para poder
+     centrar CUALQUIER tarjeta, incluso la primera y la última, al
+     recorrerlas con las flechas. */
+  padding-inline: calc((100% - var(--card-w)) / 2);
 }
 
 .featured-card {

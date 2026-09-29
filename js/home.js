@@ -248,6 +248,13 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
         return mejor;
     }
 
+    // scrollLeft que deja una tarjeta centrada en su carrusel.
+    function scrollParaCentrar(carousel, tarjeta) {
+        const caja = carousel.getBoundingClientRect();
+        const t = tarjeta.getBoundingClientRect();
+        return carousel.scrollLeft + t.left - caja.left + t.width / 2 - caja.width / 2;
+    }
+
     // Al cargar, cada carrusel se desplaza para que se vea el efecto de
     // "hay más juegos": las tarjetas de los bordes quedan cortadas.
     function alinearCarruseles() {
@@ -255,24 +262,98 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
             const tarjetas = carousel.querySelectorAll(".carousel__track > *");
             if (!tarjetas.length) return;
 
-            const caja = carousel.getBoundingClientRect();
-
             if (carousel.classList.contains("carousel--featured")) {
                 // El CSS ya dimensiona este carrusel para que la tarjeta
                 // central entre completa y las vecinas queden cortadas a la
                 // mitad, así que basta con centrarla (índice 1 = Peg Solitaire).
-                const centro = tarjetas[1] || tarjetas[0];
-                const t = centro.getBoundingClientRect();
-                carousel.scrollLeft +=
-                    t.left - caja.left + t.width / 2 - caja.width / 2;
-                return;
+                carousel.scrollLeft = scrollParaCentrar(carousel, tarjetas[1] || tarjetas[0]);
+            } else {
+                carousel.scrollLeft = mejorScroll(carousel, tarjetas);
             }
-
-            carousel.scrollLeft = mejorScroll(carousel, tarjetas);
+            actualizarFlechas(carousel);
         });
     }
 
-    /* ---------- 5. CLICS: CARRITO Y DESTACADOS ---------- */
+    /* ---------- 5. FLECHAS: DESPLAZAMIENTO ANIMADO ---------- */
+
+    const DURACION_SLIDE = 650; // ms; igual que la animación CSS carousel-slide-*
+
+    // Curva de velocidad: arranca suave, acelera y frena al llegar.
+    function easeInOutCubic(t) {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    function maximoScroll(carousel) {
+        return carousel.scrollWidth - carousel.clientWidth;
+    }
+
+    // Oculta la flecha "anterior" al principio y la "siguiente" al final.
+    function actualizarFlechas(carousel) {
+        const caja = carousel.closest(".carousel-box");
+        if (!caja) return;
+        const margen = 2; // tolerancia por redondeo de píxeles
+        caja.querySelector(".carousel-arrow--prev").disabled = carousel.scrollLeft <= margen;
+        caja.querySelector(".carousel-arrow--next").disabled = carousel.scrollLeft >= maximoScroll(carousel) - margen;
+    }
+
+    // A dónde tiene que ir el carrusel al tocar una flecha (dir = 1 o -1).
+    function destinoDelSlide(carousel, dir) {
+        const tarjetas = Array.from(carousel.querySelectorAll(".carousel__track > *"));
+
+        if (carousel.classList.contains("carousel--featured")) {
+            // Carrusel grande: centra la tarjeta vecina de la que hoy está al medio.
+            const caja = carousel.getBoundingClientRect();
+            const centroCaja = caja.left + caja.width / 2;
+            const distancias = tarjetas.map(function (t) {
+                const r = t.getBoundingClientRect();
+                return Math.abs(r.left + r.width / 2 - centroCaja);
+            });
+            const actual = distancias.indexOf(Math.min.apply(null, distancias));
+            const vecina = tarjetas[Math.max(0, Math.min(tarjetas.length - 1, actual + dir))];
+            return scrollParaCentrar(carousel, vecina);
+        }
+
+        // Carruseles por categoría: avanza de a "página" (las tarjetas que
+        // entran enteras menos una, para no perder el contexto). Como se mueve
+        // en múltiplos exactos de tarjeta + hueco, los bordes siguen cortados.
+        const paso = tarjetas[1] ? tarjetas[1].offsetLeft - tarjetas[0].offsetLeft : carousel.clientWidth;
+        const porPagina = Math.max(1, Math.floor(carousel.clientWidth / paso) - 1);
+        return carousel.scrollLeft + dir * paso * porPagina;
+    }
+
+    // Anima el scroll cuadro a cuadro con requestAnimationFrame. Mientras dura,
+    // la clase is-sliding-* dispara la animación @keyframes de las tarjetas.
+    function deslizar(carousel, dir) {
+        const inicio = carousel.scrollLeft;
+        const destino = Math.max(0, Math.min(maximoScroll(carousel), destinoDelSlide(carousel, dir)));
+        const distancia = destino - inicio;
+        if (Math.abs(distancia) < 1) return;
+
+        const track = carousel.querySelector(".carousel__track");
+        cancelAnimationFrame(carousel.animacion);
+
+        // El scroll-snap del carrusel grande "tironearía" en cada cuadro.
+        carousel.style.scrollSnapType = "none";
+        track.classList.remove("is-sliding-next", "is-sliding-prev");
+        void track.offsetWidth; // reinicia la animación CSS si se toca seguido
+        track.classList.add(dir > 0 ? "is-sliding-next" : "is-sliding-prev");
+
+        const t0 = performance.now();
+        function cuadro(ahora) {
+            const t = Math.min(1, (ahora - t0) / DURACION_SLIDE);
+            carousel.scrollLeft = inicio + distancia * easeInOutCubic(t);
+
+            if (t < 1) {
+                carousel.animacion = requestAnimationFrame(cuadro);
+                return;
+            }
+            carousel.style.scrollSnapType = "";
+            track.classList.remove("is-sliding-next", "is-sliding-prev");
+        }
+        carousel.animacion = requestAnimationFrame(cuadro);
+    }
+
+    /* ---------- 6. CLICS: FLECHAS, CARRITO Y DESTACADOS ---------- */
 
     function mostrarAviso(texto) {
         const aviso = document.querySelector(".cart-notice");
@@ -289,6 +370,14 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
 
     // Un solo listener delegado para todo lo que se genera por JS.
     document.addEventListener("click", function (evento) {
+        // Flechas de los carruseles
+        const flecha = evento.target.closest(".carousel-arrow");
+        if (flecha) {
+            const carousel = flecha.closest(".carousel-box").querySelector(".carousel");
+            deslizar(carousel, flecha.classList.contains("carousel-arrow--next") ? 1 : -1);
+            return;
+        }
+
         // Botón "Agregar" de los juegos premium
         const boton = evento.target.closest(".game-card__add");
         if (boton) {
@@ -304,7 +393,7 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
         if (tarjeta) window.location.href = tarjeta.dataset.ir;
     });
 
-    /* ---------- 6. INICIO ---------- */
+    /* ---------- 7. INICIO ---------- */
 
     document.addEventListener("DOMContentLoaded", function () {
         renderizar();
@@ -314,6 +403,14 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
         // de la ventana porque los paddings dependen del ancho disponible.
         requestAnimationFrame(alinearCarruseles);
         window.addEventListener("resize", alinearCarruseles);
+
+        // Con el dedo o el trackpad también se puede desplazar: las flechas
+        // se actualizan con cualquier scroll. El evento scroll no burbujea,
+        // por eso se escucha en fase de captura.
+        document.addEventListener("scroll", function (evento) {
+            const el = evento.target;
+            if (el.classList && el.classList.contains("carousel")) actualizarFlechas(el);
+        }, true);
     });
 
 })();
