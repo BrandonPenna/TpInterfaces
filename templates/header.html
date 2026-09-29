@@ -21,22 +21,18 @@
           </label>
       </div>
 
+      <!-- Íconos como archivos .svg y no inline: Live Server (VS Code) inyecta su
+           script al cierre de cada svg inline de este template (no tiene body)
+           y corta el final del archivo, dejando el menú incompleto. -->
+
       <!-- Cart Icon -->
       <div class="cart-icon">
-          <svg viewBox="0 0 49 44" xmlns="http://www.w3.org/2000/svg">
-              <!-- Relleno gris del carrito -->
-              <path d="M2 2h8l6 28h22l6-20H16" fill="#424242" stroke="#39ff14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <circle cx="18" cy="38" r="4" fill="#39ff14"/>
-              <circle cx="36" cy="38" r="4" fill="#39ff14"/>
-          </svg>
+          <img src="../assets/icons/carrito.svg" alt="Carrito">
       </div>
 
       <!-- User Avatar -->
       <div class="user-avatar">
-          <svg viewBox="0 0 46 44" xmlns="http://www.w3.org/2000/svg">
-              <ellipse cx="23" cy="15" rx="13" ry="12.5" fill="#39ff14"/>
-              <path d="M0 43c0-12 10-22 23-22s23 10 23 22" fill="#39ff14"/>
-          </svg>
+          <img src="../assets/icons/avatar.svg" alt="Perfil de usuario">
       </div>
 
       <!-- Menú desplegable: las rutas ../ las vuelve absolutas main.js
