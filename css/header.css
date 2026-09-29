@@ -196,11 +196,11 @@ body.menu-open .category-menu {
     /* Nunca más alto que lo que queda de pantalla bajo el header (66px):
        en pantallas bajas el panel scrollea y se llega a todas las
        categorías y a las redes sociales. */
+    max-height: calc(100vh - 66px);   /* respaldo: navegadores sin dvh */
     max-height: calc(100dvh - 66px);
     overflow-y: auto;
     overscroll-behavior: contain;
-    scrollbar-width: thin;
-    scrollbar-color: var(--neon) transparent;
+    scrollbar-color: var(--neon) #1c1c1c;
 }
 
 /* Sin esto, al limitar el alto los bloques se aplastarían en vez de scrollear. */
@@ -295,5 +295,37 @@ body.menu-open .category-menu {
     .category-menu__panel {
         width: min(300px, 85vw);
         border-radius: 0 0 14px 14px;
+    }
+}
+
+/* ---------- 6. PANTALLAS BAJAS ----------
+   Celular horizontal, notebooks con zoom o ventanas chicas: el menú se
+   compacta (categorías en dos columnas y menos aire) para que entren
+   todas las categorías y las redes sin tener que scrollear el panel. */
+@media (max-height: 620px) {
+    .category-menu__panel {
+        gap: 8px;
+        padding: 12px 18px 14px;
+    }
+
+    .category-menu__list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 2px 8px;
+    }
+
+    .category-menu__list a {
+        padding: 6px 10px;
+    }
+
+    .category-menu__social {
+        gap: 8px;
+        padding-top: 8px;
+    }
+}
+
+@media (max-height: 620px) and (min-width: 601px) {
+    .category-menu__panel {
+        width: min(420px, 85vw);
     }
 }
