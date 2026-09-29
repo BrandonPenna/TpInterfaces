@@ -334,6 +334,18 @@ h2 {
   white-space: nowrap;
 }
 
+/* Escalones de tamaño: js/home.js agrega estas clases según cuántos caracteres
+   tiene el título. Los nombres cortos se quedan con el tamaño base de arriba
+   (sin clase); los nombres largos achican la letra para que entre el texto
+   completo en la barra, en vez de que se corte contra el borde de la tarjeta. */
+.game-card__title--med {
+  font-size: 16px;
+}
+
+.game-card__title--chico {
+  font-size: 14px;
+}
+
 /* Precio + botón "Agregar": sólo en la categoría Premium */
 .game-card__actions {
   position: absolute;
@@ -476,6 +488,15 @@ h2 {
   .game-card__title {
     height: 47px;
     font-size: 24px;
+  }
+
+  /* Los escalones de tamaño también escalan con la tarjeta */
+  .game-card__title--med {
+    font-size: 21px;
+  }
+
+  .game-card__title--chico {
+    font-size: 18px;
   }
 }
 

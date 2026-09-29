@@ -127,6 +127,21 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
         return BASE_IMAGENES + carpeta + "/" + encodeURI(archivo);
     }
 
+    // Escalones del título: la letra se achica a medida que el nombre crece,
+    // para que entre siempre en la barra (220px en móvil / 260px en escritorio).
+    // Los nombres cortos conservan el tamaño base, sin clase.
+    const ESCALONES_TITULO = [
+        { max: 13, clase: "" },
+        { max: 17, clase: "game-card__title--med" },
+        { max: Infinity, clase: "game-card__title--chico" }
+    ];
+
+    function claseTitulo(titulo) {
+        return ESCALONES_TITULO.find(function (escalon) {
+            return titulo.length <= escalon.max;
+        }).clase;
+    }
+
     // Flechas de los costados. btnant = anterior (izquierda), btnsig = siguiente (derecha).
     // Los SVG vienen espejados entre sí, así que home.css los voltea con scaleX(-1)
     // para que la punta apunte hacia afuera una vez puestos en su lugar.
@@ -157,6 +172,11 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
         // El bloque de precio + botón sólo se genera en juegos premium.
         const esPremium = typeof juego.precio === "string";
 
+        const claseTituloTexto = claseTitulo(juego.titulo);
+        const clasesTitulo = claseTituloTexto
+            ? "game-card__title " + claseTituloTexto
+            : "game-card__title";
+
         const acciones = esPremium
             ? '<div class="game-card__actions">' +
                 '<span class="game-card__price">$' + juego.precio + '</span>' +
@@ -168,7 +188,7 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
             '<article class="game-card">' +
                 '<img class="game-card__cover" src="' + portada(carpeta, juego.cover) + '" alt="Portada de ' + juego.titulo + '"' +
                     ' width="301" height="192" loading="lazy" decoding="async" />' +
-                '<h3 class="game-card__title">' + juego.titulo + '</h3>' +
+                '<h3 class="' + clasesTitulo + '">' + juego.titulo + '</h3>' +
                 acciones +
             '</article>'
         );
