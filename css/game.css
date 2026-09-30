@@ -10,20 +10,27 @@
     overflow: hidden;
 }
 
-/* Columna central angosta: la imagen principal y todo el contenido tienen
-   el mismo ancho (--content-w). Ese ancho sale del alto de la ventana para
-   que, al entrar a la página, se vean juntas la imagen del juego y la
-   galería de abajo sin hacer scroll:
+/* Columna central: la imagen principal y todo el contenido tienen el mismo
+   ancho W (--content-w). W sale del alto de la ventana para que, al entrar
+   a la página, se vean completas la imagen del juego y la galería de abajo
+   sin hacer scroll:
      66 (header) + 14 (aire) + 40 (migas) + 64 (compartir)
-     + 58 (título galería) + 16 (aire) + 0.5·W (imagen 2:1)
-     + 0.158·W − 10 (galería) = 100dvh
-   ⇒ W ≈ 152dvh − 377px, acotado entre 640px y 1100px. */
+     + 44 (título galería) + 14 (aire) + 12 (margen) = 254px fijos
+     + W / R (imagen principal, R = --hero-ratio)
+     + (W − 66) / 4 / 1.58 ≈ 0.1582·W − 10 (galería: 4 columnas, 3 huecos de 22px)
+     = 100dvh
+   ⇒ W = (100dvh − 244px) / (1/R + 0.1582), acotado entre 640px y 1400px.
+   Cuanto más apaisada la imagen (R mayor), más ancha puede ser la página. */
 .page-shell {
-    --content-w: clamp(640px, calc(152vh - 377px), 1100px); /* respaldo sin dvh */
-    --content-w: clamp(640px, calc(152dvh - 377px), 1100px);
-    width: min(100%, calc(var(--content-w) + 88px));
+    --hero-ratio: 2.4;      /* ancho/alto de la imagen principal (la original es 1.64) */
+    --content-w: clamp(640px, calc((100vh - 244px) / (1 / var(--hero-ratio) + 0.1582)), 1400px); /* respaldo sin dvh */
+    --content-w: clamp(640px, calc((100dvh - 244px) / (1 / var(--hero-ratio) + 0.1582)), 1400px);
+    /* Contenedor de consultas: 100cqw es el ancho real de la columna, que
+       el hero usa para calcular su alto (ver sección 3). */
+    container-type: inline-size;
+    width: min(100%, calc(var(--content-w) + 64px));
     margin: 0 auto;
-    padding-inline: 44px;
+    padding-inline: 32px;
     /* Aire entre el formulario de comentarios y el footer (igual que la Home) */
     padding-bottom: 72px;
 }
@@ -61,13 +68,25 @@
     border-radius: 18px;
 }
 
+/* La imagen se muestra entera (fill: sin recortes) y se estira a lo ancho.
+   Su alto es el espacio que queda libre sobre la galería, entre dos topes:
+     - mínimo W / --hero-ratio: nunca más apaisada que eso;
+     - máximo W / 1.64: nunca más alta que su proporción original.
+   100cqw = ancho real de la columna (.page-shell es el contenedor). */
 .hero img {
     display: block;
     width: 100%;
-    height: auto;
-    aspect-ratio: 2 / 1;        /* formato panorámico */
-    object-fit: cover;          /* llena el recuadro sin deformar */
-    object-position: center;
+    height: clamp(      /* respaldo sin dvh */
+        calc(100cqw / var(--hero-ratio)),
+        calc(100vh - 244px - 0.1582 * 100cqw),
+        calc(100cqw / 1.64)
+    );
+    height: clamp(
+        calc(100cqw / var(--hero-ratio)),
+        calc(100dvh - 244px - 0.1582 * 100cqw),
+        calc(100cqw / 1.64)
+    );
+    object-fit: fill;
 }
 
 /* Degradado inferior para que los controles se lean sobre la imagen.
