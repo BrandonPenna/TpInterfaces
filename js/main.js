@@ -5,7 +5,7 @@
 
    Expone `templatesListos`: una promesa que se resuelve cuando los
    partials ya están en el DOM. Los scripts que necesitan elementos
-   del header (menú hamburguesa, logo) esperan a esa promesa.
+   del header (menú hamburguesa) esperan a esa promesa.
    ============================================================ */
 
 // Ruta base de templates resuelta desde este propio archivo (js/main.js),

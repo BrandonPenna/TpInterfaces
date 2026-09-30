@@ -37,7 +37,9 @@
     outline-offset: 5px;
 }
 
-.site-logo.is-pressed {
+/* Efecto de pulsado al hacer clic. El href="#" ya vuelve arriba (con
+   scroll suave por base.css), así que el logo no necesita JavaScript. */
+.site-logo:active {
     transform: translateY(1px);
 }
 
