@@ -1,9 +1,11 @@
 /* ============================================================
    HOME | Catálogo de juegos (index.html)
    Genera el carrusel de destacados y las secciones por categoría.
-   Destacados y Premium usan sólo portadas locales de assets/games/; las
-   demás categorías muestran sus juegos locales y se completan con la
-   API de la cátedra.
+   El carrusel grande tiene tres juegos fijos (GTA VI, Peg Solitaire y
+   RDR2) y se completa con los mejor valorados de la API de la cátedra.
+   Premium usa sólo portadas locales; las demás categorías muestran sus
+   juegos locales y se completan con la API. Ningún juego del carrusel
+   grande se repite en los de abajo.
    ============================================================ */
 
 // Ruta base de las imágenes del catálogo, resuelta desde este propio archivo.
@@ -14,19 +16,23 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
 
     /* ---------- 1. DATOS ---------- */
 
-    // Carrusel grande (coverflow). Por defecto las portadas salen de
-    // assets/games/juegos-momento/; `carpeta` permite tomar otra.
-    // El orden de la lista es el orden VISUAL y arranca centrado en el
-    // juego con `inicial: true` (Peg Solitaire, entre GTA VI y RDR2).
-    const DESTACADOS = [
-        { titulo: "Reign of Thorns", cover: "reign-of-thorns_16x9-cover.avif", carpeta: "accion", etiqueta: "Acción" },
-        { titulo: "Warfare 1942", cover: "warfare-1942-riz_16x9-cover.avif", carpeta: "estrategia", etiqueta: "Estrategia" },
+    // Carrusel grande (coverflow): estos tres juegos son fijos y usan las
+    // portadas de assets/games/juegos-momento/. El resto del carrusel se
+    // completa con los mejor valorados de la API (ver armarDestacados).
+    // Arranca centrado en el juego con `inicial: true` (Peg Solitaire,
+    // entre GTA VI y RDR2).
+    const DESTACADOS_FIJOS = [
         { titulo: "GTA VI", cover: "gta-vi-1560x880.jpg.webp", etiqueta: "Próximamente" },
         { titulo: "Peg Solitaire - CyberPunk", cover: "peg-solitaire.webp", etiqueta: "Juego recomendado", link: "pages/game_solitare.html", inicial: true },
-        { titulo: "Red Dead Redemption 2", cover: "rdr2.jpg", etiqueta: "Juego del momento" },
-        { titulo: "Heavy Truck Driver", cover: "heavy-truck-driver-ati_16x9-cover.avif", carpeta: "simulacion", etiqueta: "Simulación" },
-        { titulo: "Night City Racing", cover: "night-city-racing_16x9-cover.avif", carpeta: "carrera", etiqueta: "Carrera" }
+        { titulo: "Red Dead Redemption 2", cover: "rdr2.jpg", etiqueta: "Juego del momento" }
     ];
+
+    // Cuántos juegos de la API se suman al carrusel grande (mitad a cada lado).
+    const CANT_DESTACADOS_API = 4;
+
+    // Lista que se muestra en el carrusel grande. Arranca con los fijos y se
+    // reemplaza cuando responde la API.
+    let destacados = DESTACADOS_FIJOS;
 
     // Premium es local (la API no trae precios): es la única categoría que
     // define `precio`, y por eso la única con precio y botón de carrito.
@@ -178,9 +184,11 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
     function tarjeta_destacado(juego) {
         // El data-ir marca la tarjeta como jugable y da el destino (ver clics).
         const destino = juego.link ? ' data-ir="' + juego.link + '"' : '';
+        // Los juegos de la API traen la URL completa de su imagen en `imagen`.
+        const src = juego.imagen || portada("juegos-momento", juego.cover);
         return (
             '<article class="featured-card"' + destino + '>' +
-                '<img src="' + portada(juego.carpeta || "juegos-momento", juego.cover) + '" alt="Portada de ' + juego.titulo + '"' +
+                '<img src="' + src + '" alt="Portada de ' + juego.titulo + '"' +
                     ' width="605" height="424" decoding="async" />' +
                 '<span class="featured-card__label">' + juego.etiqueta + '</span>' +
                 '<div class="featured-card__info">' +
@@ -221,18 +229,50 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
 
     /* ---------- 3. DATOS DE LA API ---------- */
 
-    // Nombres del carrusel grande, para no repetir esos juegos abajo
-    // (por ejemplo Red Dead Redemption 2, que también viene en la API).
     function normalizar(nombre) {
         return nombre.trim().toLowerCase();
     }
 
-    const NOMBRES_DESTACADOS = DESTACADOS.map(function (juego) {
-        return normalizar(juego.titulo);
-    });
-
+    // Los juegos del carrusel grande no se repiten en los de abajo
+    // (por ejemplo Red Dead Redemption 2, que también viene en la API).
     function noEsDestacado(juego) {
-        return !NOMBRES_DESTACADOS.includes(normalizar(juego.titulo));
+        return !destacados.some(function (d) {
+            return normalizar(d.titulo) === normalizar(juego.titulo);
+        });
+    }
+
+    // Pasa un juego de la API al formato que usan las tarjetas.
+    function convertirJuegoApi(j) {
+        return {
+            titulo: j.name,
+            imagen: j.background_image_low_res || j.background_image,
+            imagenGrande: j.background_image,
+            rating: j.rating,
+            generos: j.genres.map(function (g) { return g.name; })
+        };
+    }
+
+    function porRating(a, b) {
+        return b.rating - a.rating;
+    }
+
+    // Carrusel grande: los fijos en el medio y, a cada lado, los juegos
+    // mejor valorados de la API (con la imagen en alta resolución).
+    function armarDestacados(juegosApi) {
+        const elegidos = juegosApi
+            .filter(function (juego) {
+                return !DESTACADOS_FIJOS.some(function (d) {
+                    return normalizar(d.titulo) === normalizar(juego.titulo);
+                });
+            })
+            .sort(porRating)
+            .slice(0, CANT_DESTACADOS_API)
+            .map(function (juego) {
+                return { titulo: juego.titulo, imagen: juego.imagenGrande, etiqueta: "Mejor valorado" };
+            });
+
+        const mitad = Math.ceil(elegidos.length / 2);
+        return elegidos.slice(0, mitad).concat(DESTACADOS_FIJOS, elegidos.slice(mitad));
     }
 
     function tieneGenero(categoria, juego) {
@@ -248,18 +288,9 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
     // entre carruseles va a una sola categoría: la que, entre las que le
     // corresponden y tienen lugar, tenga menos juegos hasta el momento.
     // Se reparten de mayor a menor rating.
-    // Sin `juegosApi` (la API no respondió) quedan sólo los locales.
+    // Con `juegosApi` vacío (la API no respondió) quedan sólo los locales.
     function armarCategorias(juegosApi) {
-        const juegos = (juegosApi || [])
-            .map(function (j) {
-                return {
-                    titulo: j.name,
-                    imagen: j.background_image_low_res || j.background_image,
-                    rating: j.rating,
-                    generos: j.genres.map(function (g) { return g.name; })
-                };
-            })
-            .filter(noEsDestacado);
+        const juegos = juegosApi.filter(noEsDestacado);
 
         const categorias = CATEGORIAS.map(function (categoria) {
             return {
@@ -276,7 +307,7 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
         }
 
         juegos
-            .sort(function (a, b) { return b.rating - a.rating; })
+            .sort(porRating)
             .forEach(function (juego) {
                 const destino = categorias
                     .filter(function (c) {
@@ -291,32 +322,33 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
         });
     }
 
-    // Pide los juegos a la API; si falla, las categorías quedan con los locales.
-    function cargarCategorias() {
+    // Pide los juegos a la API. Si falla devuelve una lista vacía: el
+    // carrusel grande queda con los fijos y las categorías con los locales.
+    function cargarJuegosApi() {
         return fetch(API_JUEGOS)
             .then(function (respuesta) {
                 if (!respuesta.ok) throw new Error("HTTP " + respuesta.status);
                 return respuesta.json();
             })
-            .then(armarCategorias)
+            .then(function (juegos) {
+                return juegos.map(convertirJuegoApi);
+            })
             .catch(function (error) {
                 console.warn("No se pudo usar la API, se muestran sólo los juegos locales.", error);
-                return armarCategorias(null);
+                return [];
             });
     }
 
     /* ---------- 4. RENDER ---------- */
 
+    // Dibuja las tarjetas del carrusel grande y lo centra en el juego inicial.
     function renderizarDestacados() {
         const trackDestacados = document.querySelector(".carousel--featured .carousel__track");
         if (trackDestacados) {
-            trackDestacados.innerHTML = DESTACADOS.map(tarjeta_destacado).join("");
+            trackDestacados.innerHTML = destacados.map(tarjeta_destacado).join("");
         }
-
-        const boxDestacados = document.querySelector(".carousel-box--featured");
-        if (boxDestacados) {
-            boxDestacados.insertAdjacentHTML("afterbegin", flechas());
-        }
+        activo = Math.max(0, destacados.findIndex(function (juego) { return juego.inicial; }));
+        colocarDestacados();
     }
 
     // Premium va siempre primero; después las demás categorías.
@@ -396,14 +428,15 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
     /* ---------- 6. CARRUSEL GRANDE: COVERFLOW ---------- */
 
     // Índice de la tarjeta que está al frente, en el centro.
-    let activo = Math.max(0, DESTACADOS.findIndex(function (juego) { return juego.inicial; }));
+    // (lo fija renderizarDestacados en el juego con `inicial: true`).
+    let activo = 0;
 
     // Carrusel infinito: la lista se piensa como un círculo. La distancia de
     // una tarjeta a la activa es el camino más corto dando la vuelta, así que
     // siempre queda la mitad de las tarjetas a cada lado (el último juego
     // aparece a la izquierda del primero).
     function distanciaCircular(i) {
-        const n = DESTACADOS.length;
+        const n = destacados.length;
         let distancia = ((i - activo) % n + n) % n;   // 0 .. n-1 hacia la derecha
         if (distancia > n / 2) distancia -= n;        // más cerca por la izquierda
         return distancia;
@@ -440,7 +473,7 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
     }
 
     function moverDestacados(dir) {
-        const n = DESTACADOS.length;
+        const n = destacados.length;
         activo = ((activo + dir) % n + n) % n;
         colocarDestacados();
     }
@@ -557,15 +590,19 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
     /* ---------- 9. INICIO ---------- */
 
     document.addEventListener("DOMContentLoaded", function () {
-        renderizarDestacados();
-        colocarDestacados();
+        document.querySelector(".carousel-box--featured").insertAdjacentHTML("afterbegin", flechas());
 
         // Primero se dibujan los juegos locales y, cuando responde la API,
-        // se vuelven a dibujar las categorías ya completas (mientras tanto
-        // sigue la pantalla de carga de 5 s).
-        renderizarCategorias(armarCategorias(null));
-        cargarCategorias().then(function (categorias) {
-            renderizarCategorias(categorias);
+        // se vuelven a dibujar el carrusel grande y las categorías ya
+        // completos (mientras tanto sigue la pantalla de carga de 5 s).
+        renderizarDestacados();
+        renderizarCategorias(armarCategorias([]));
+        cargarJuegosApi().then(function (juegosApi) {
+            if (juegosApi.length) {
+                destacados = armarDestacados(juegosApi);
+                renderizarDestacados();
+            }
+            renderizarCategorias(armarCategorias(juegosApi));
             requestAnimationFrame(alinearCarruseles);
         });
 
