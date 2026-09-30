@@ -140,44 +140,30 @@ h2 {
 
 /* Transición entre imágenes: mientras js/home.js desliza el carrusel
    (650ms), las tarjetas se inclinan hacia el lado del movimiento, se
-   achican un poco y vuelven, como si las arrastrara la inercia. */
+   achican un poco y vuelven, como si las arrastrara la inercia.
+   Una sola animación para los dos sentidos: --dir invierte la inclinación
+   (1 = siguiente, -1 = anterior). */
 .carousel__track.is-sliding-next > * {
-  animation: carousel-slide-next 650ms ease-in-out;
+  --dir: 1;
+  animation: carousel-slide 650ms ease-in-out;
 }
 
 .carousel__track.is-sliding-prev > * {
-  animation: carousel-slide-prev 650ms ease-in-out;
+  --dir: -1;
+  animation: carousel-slide 650ms ease-in-out;
 }
 
-@keyframes carousel-slide-next {
+@keyframes carousel-slide {
   0% {
     transform: none;
     filter: none;
   }
   40% {
-    transform: skewX(-7deg) scale(0.94);
+    transform: skewX(calc(-7deg * var(--dir))) scale(0.94);
     filter: brightness(0.8);
   }
   75% {
-    transform: skewX(2deg) scale(1.01);
-  }
-  100% {
-    transform: none;
-    filter: none;
-  }
-}
-
-@keyframes carousel-slide-prev {
-  0% {
-    transform: none;
-    filter: none;
-  }
-  40% {
-    transform: skewX(7deg) scale(0.94);
-    filter: brightness(0.8);
-  }
-  75% {
-    transform: skewX(-2deg) scale(1.01);
+    transform: skewX(calc(2deg * var(--dir))) scale(1.01);
   }
   100% {
     transform: none;

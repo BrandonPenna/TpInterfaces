@@ -480,7 +480,7 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
 
     /* ---------- 7. CARRUSELES POR CATEGORÍA: DESPLAZAMIENTO ANIMADO ---------- */
 
-    const DURACION_SLIDE = 650; // ms; igual que la animación CSS carousel-slide-*
+    const DURACION_SLIDE = 650; // ms; igual que la animación CSS carousel-slide
 
     // Curva de velocidad: arranca suave, acelera y frena al llegar.
     function easeInOutCubic(t) {
