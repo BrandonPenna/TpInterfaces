@@ -59,8 +59,6 @@
 :root {
     --neon: #39ff14;
 
-    color: #fff;
-    background: #2a2a2a;
     font-family: "Oxanium", sans-serif;
     font-synthesis: none;
 }
@@ -77,11 +75,19 @@ html {
     scroll-behavior: smooth;
 }
 
+/* El fondo de todas las páginas vive sólo acá. */
 body {
     min-width: 320px;
     min-height: 100%;
     background: #2a2a2a;
     color: #e6e6e6;
+}
+
+/* Si el sistema pide menos movimiento, los saltos a secciones son directos. */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
 }
 
 /* Los controles de formulario no heredan la tipografía por defecto. */

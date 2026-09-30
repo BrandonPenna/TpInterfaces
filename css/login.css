@@ -19,7 +19,6 @@
   padding: clamp(12px, 2.5vh, 32px) 16px;
   /* hidden en X recorta los bowser, que se salen a los costados. */
   overflow-x: hidden;
-  background: #2a2a2a;
 }
 
 .login-page > h1 {
@@ -102,7 +101,7 @@
 }
 
 .form-field input:focus {
-  border-color: #39ff14;
+  border-color: var(--neon);
   box-shadow: 0 0 0 3px rgba(57, 255, 20, 0.15);
 }
 
@@ -190,7 +189,7 @@
   bottom: 0;
   width: 100%;
   height: 3px;
-  background: #39ff14;
+  background: var(--neon);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 260ms ease;
@@ -223,20 +222,20 @@
   font-weight: 500;
   line-height: 25.1px;
   text-decoration: none;
-  transition: filter 160ms ease, transform 160ms ease;
+  transition: transform 160ms ease;
 }
 
 /* Hover de "Crear cuenta" / "Ya tengo cuenta": el botón se levanta y deja
    ver una capa neón desplazada detrás (patrón "capa desplazada" de la slide). */
 .create-account {
   background: #424242;
-  box-shadow: 0 0 0 #39ff14;
+  box-shadow: 0 0 0 var(--neon);
   transition: transform 200ms ease, box-shadow 200ms ease;
 }
 
 .create-account:hover {
   transform: translate(-4px, -4px);
-  box-shadow: 4px 4px 0 #39ff14;
+  box-shadow: 4px 4px 0 var(--neon);
 }
 
 /* Hover distintivo de los botones principales ("Iniciar sesión" y
@@ -246,7 +245,7 @@
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  background: #39ff14;
+  background: var(--neon);
 }
 
 .login-button::before {
@@ -405,5 +404,5 @@
   border-radius: 8px;
   cursor: pointer;
   color: #fff;
-  background: #39ff14;
+  background: var(--neon);
 }

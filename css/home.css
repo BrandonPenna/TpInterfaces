@@ -15,7 +15,6 @@ body {
   min-height: 100dvh;
   padding: 28px 0 48px;
   overflow: hidden;
-  background: #2a2a2a;
 }
 
 h1,
@@ -70,7 +69,7 @@ h2 {
   background: transparent;
   transform: translateY(-50%);
   cursor: pointer;
-  transition: filter 160ms ease, opacity 200ms ease;
+  transition: opacity 200ms ease;
 }
 
 .carousel-arrow img {
@@ -462,7 +461,7 @@ h2 {
   height: 70px;
   margin: -35px 0 0 -35px;
   border-radius: 50%;
-  background: #39ff14;
+  background: var(--neon);
   transform: scale(0);
   transition: transform 300ms ease;
 }
@@ -583,10 +582,6 @@ h2 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
   .cart-notice,
   .game-card__add {
     transition: none;

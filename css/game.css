@@ -7,7 +7,6 @@
 .game-page {
     width: 100%;
     min-height: 100dvh;
-    background: #2a2a2a;
     overflow: hidden;
 }
 
@@ -69,7 +68,6 @@
     aspect-ratio: 2 / 1;        /* formato panorámico */
     object-fit: cover;          /* llena el recuadro sin deformar */
     object-position: center;
-    border-radius: 18px;
 }
 
 /* Degradado inferior para que los controles se lean sobre la imagen.
@@ -282,10 +280,6 @@
     object-fit: cover;
 }
 
-.gallery-item:first-child > img:first-child {
-    opacity: 0.6;
-}
-
 .gallery-item span {
     position: absolute;
     top: 7px;
@@ -306,13 +300,14 @@
     object-fit: contain;
 }
 
-/* Hover en el tráiler: la imagen hace zoom y se aclara, y el ícono de
-   play late con un pulso por keyframes. */
+/* Tráiler (primer ítem): imagen oscurecida. Al pasar el mouse hace zoom
+   y se aclara, y el ícono de play late con un pulso por keyframes. */
 .gallery-item:first-child {
     cursor: pointer;
 }
 
 .gallery-item:first-child > img:first-child {
+    opacity: 0.6;
     transition: transform 300ms ease, opacity 300ms ease;
 }
 

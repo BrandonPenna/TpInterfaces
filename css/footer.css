@@ -11,26 +11,14 @@
   --footer-muted: #9a9a9a;
   --footer-accent: var(--neon);
 
-  --footer-height: 400px;
-  --footer-padding-top: 70px;
-  --footer-padding-bottom: 28px;
   --page-padding: 16px;
-
   --columns-gap: 40px;
-  --columns-width: 1200px;
-
-  --title-size: 22px;
-  --link-size: 16px;
-  --copyright-size: 15px;
 }
 
 /* ---------- 1. CONTENEDOR ---------- */
 .cyber-footer {
   display: block;
-  grid-template-rows: 1fr auto;
-  align-content: stretch;
   width: 100%;
-  min-height: 0;
   padding: 40px 24px 24px;
   background-color: var(--footer-background);
   color: var(--footer-text);
@@ -99,11 +87,10 @@
   display: inline-block;
   max-width: 100%;
   color: var(--footer-text);
-  font-size: var(--link-size);
+  font-size: 16px;
   font-weight: 400;
   line-height: 1.4;
   text-decoration: none;
-  white-space: normal;
   transition: color 160ms ease, transform 160ms ease;
 }
 
@@ -132,10 +119,6 @@
 }
 
 /* ---------- 4. REDES SOCIALES ---------- */
-.cyber-footer__social {
-  min-width: 0;
-}
-
 .cyber-footer__social ul {
   gap: 6px;
 }
@@ -146,7 +129,6 @@
   gap: 12px;
   width: fit-content;
   min-height: 40px;
-  white-space: normal;
 }
 
 .cyber-footer__social a:hover,
@@ -179,9 +161,11 @@
 
 /* Tablets: dos columnas de links */
 @media (min-width: 561px) {
+  /* Grid de dos filas: contenido arriba y copyright pegado abajo. */
   .cyber-footer {
     display: grid;
-    min-height: var(--footer-height);
+    grid-template-rows: 1fr auto;
+    min-height: 400px;
     padding: 70px var(--page-padding) 20px;
   }
 
@@ -199,7 +183,7 @@
   }
 
   .cyber-footer__column h2 {
-    font-size: var(--title-size);
+    font-size: 22px;
   }
 
   .cyber-footer__social a {
@@ -208,7 +192,7 @@
 
   .cyber-footer__copyright {
     margin-top: 48px;
-    font-size: var(--copyright-size);
+    font-size: 15px;
   }
 }
 
@@ -235,7 +219,7 @@
 /* Escritorios grandes: todas las columnas en una fila */
 @media (min-width: 1501px) {
   .cyber-footer {
-    padding: var(--footer-padding-top) var(--page-padding) var(--footer-padding-bottom);
+    padding: 70px var(--page-padding) 28px;
   }
 
   .cyber-footer__content {
@@ -255,7 +239,7 @@
       minmax(190px, 210px)
       minmax(220px, 1.1fr);
     row-gap: var(--columns-gap);
-    width: min(100%, var(--columns-width));
+    width: min(100%, 1200px);
   }
 
   .cyber-footer__social {
