@@ -50,19 +50,13 @@ h2 {
 }
 
 .carousel-box--featured {
-  --flecha-size: 52px;
-  --flecha-offset: 14px;
-  --gap: 20px;
-  /* La tarjeta ocupa la mitad de lo que sobra tras el hueco central, con tope
-     en 420px (605.394px en escritorio, el ancho del diseño). Gracias a esto "2 tarjetas + 2 huecos"
-     miden siempre lo mismo que el carrusel, así que al centrar la tarjeta
-     central las dos vecinas quedan cortadas a la mitad en cualquier pantalla.
-     La altura y el radio se derivan del ancho para no deformar la imagen. */
-  --card-w: min(420px, calc((100vw - 2 * var(--gap)) / 2));
+  --flecha-size: 44px;
+  --flecha-offset: 6px;
+  /* Ancho de la tarjeta central; la altura y el radio se derivan de él
+     para no deformar la imagen. */
+  --card-w: min(320px, 64vw);
   --card-h: calc(var(--card-w) * 0.7009);
-  --card-r: calc(var(--card-w) * 0.0611);
-  max-width: calc(2 * (var(--card-w) + var(--gap)));
-  margin-inline: auto;
+  --card-r: calc(var(--card-w) * 0.05);
 }
 
 .carousel-arrow {
@@ -130,7 +124,6 @@ h2 {
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  scroll-snap-type: x proximity;
   scrollbar-width: none;
   overscroll-behavior-x: contain;
 }
@@ -193,67 +186,141 @@ h2 {
   }
 }
 
-/* ---------- CARRUSEL GRANDE (destacados) ---------- */
+/* ---------- CARRUSEL GRANDE (destacados): COVERFLOW ---------- */
+/* Escenario: las tarjetas se apilan en el centro y js/home.js le da a cada
+   una un transform según su distancia a la activa (de frente en el medio,
+   giradas en 3D a los costados). Debajo queda lugar para el reflejo. */
 .carousel--featured {
-  /* Igual que en .game-section .carousel: el alto extra y los márgenes
-     negativos se compensan (netos 5px arriba como antes) para que sin mover
-     el layout la tarjeta tenga aire arriba y abajo y no se corte el lift y
-     el glow del hover de .featured-card (en escritorio: ver media query). */
-  height: var(--card-h);
-  padding-block: 28px;
-  margin-top: 14px;
-  margin-bottom: -28px;
+  z-index: 1; /* las flechas (z-index 4) quedan por encima de las tarjetas */
+  height: calc(var(--card-h) * 1.35 + 24px);
+  margin-top: 8px;
+  overflow: hidden;
+  background: radial-gradient(ellipse 60% 55% at 50% 45%, rgba(255, 255, 255, 0.08), transparent 70%);
 }
 
 .carousel--featured .carousel__track {
-  gap: var(--gap);
-  height: var(--card-h);
-  /* Los paddings laterales son el espacio que hace falta para poder
-     centrar CUALQUIER tarjeta, incluso la primera y la última, al
-     recorrerlas con las flechas. */
-  padding-inline: calc((100% - var(--card-w)) / 2);
+  position: relative;
+  width: 100%;
+  height: 100%;
+  perspective: 1000px;
 }
 
 .featured-card {
-  position: relative;
-  flex: 0 0 var(--card-w);
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  width: var(--card-w);
   height: var(--card-h);
-  overflow: hidden;
-  border-radius: var(--card-r);
-  scroll-snap-align: center;
-  cursor: pointer;
+  margin-left: calc(var(--card-w) / -2);
   border: 2px solid transparent;
-  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+  border-radius: var(--card-r);
+  cursor: pointer;
+  filter: brightness(0.5);
+  /* Esta transición es la animación entre imágenes del carrusel */
+  transition: transform 650ms cubic-bezier(0.25, 0.8, 0.25, 1), opacity 400ms ease,
+    filter 650ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 
-.featured-card:hover {
+.featured-card.is-active {
+  filter: none;
+}
+
+.featured-card.is-active:hover {
   border-color: var(--neon);
   box-shadow: 0 0 26px rgba(57, 255, 20, 0.6), inset 0 0 16px rgba(57, 255, 20, 0.15);
-  transform: translateY(-6px);
 }
 
+/* El reflejo en el "piso" va en la imagen y no en la tarjeta, para que no
+   se espeje también el texto (Chrome, Edge y Safari). */
 .featured-card > img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: calc(var(--card-r) - 2px);
+  background: #111111;
+  -webkit-box-reflect: below 8px linear-gradient(transparent 62%, rgba(255, 255, 255, 0.28));
 }
 
+/* ---------- JUEGO RECOMENDADO (info de la tarjeta central) ---------- */
+/* Etiqueta arriba a la derecha y título sobre un degradado inferior. Sólo
+   aparecen en la tarjeta activa, apenas termina de llegar al centro. */
+.featured-card__info,
 .featured-card__label {
   position: absolute;
-  top: 9px;
-  right: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 14px;
-  border-radius: 6.4%;
-  background: linear-gradient(90deg, rgba(41, 103, 50, 0.58), rgba(26, 24, 24, 0.58));
-  color: var(--neon);
-  font-size: 16px;
-  font-weight: 700;
-  opacity: 0.66;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 250ms ease, transform 250ms ease;
 }
+
+.featured-card.is-active .featured-card__info,
+.featured-card.is-active .featured-card__label {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  transition-delay: 300ms;
+}
+
+.featured-card__info {
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 40px 16px 14px;
+  border-radius: 0 0 calc(var(--card-r) - 2px) calc(var(--card-r) - 2px);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.55) 55%, transparent);
+  transform: translateY(14px);
+}
+
+/* Baja desde arriba al aparecer. El fondo oscuro + tinte verde la hace
+   legible sobre cualquier portada. */
+.featured-card__label {
+  top: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--neon);
+  border-radius: 999px;
+  background: linear-gradient(rgba(57, 255, 20, 0.12), rgba(57, 255, 20, 0.12)), rgba(0, 0, 0, 0.6);
+  transform: translateY(-10px);
+  color: var(--neon);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Punto "en vivo" que late */
+.featured-card__label::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--neon);
+  animation: label-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes label-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(0.6);
+  }
+}
+
+.featured-card__title {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(17px, calc(var(--card-w) * 0.065), 32px);
+  font-weight: 700;
+  line-height: 1.15;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
 
 /* ---------- CARRUSELES POR CATEGORÍA ---------- */
 /* La altura la define el contenido (h2 + fila de tarjetas) para que la
@@ -270,9 +337,6 @@ h2 {
   margin-top: 10px;
   padding-block: 24px;
   margin-bottom: -24px;
-  /* Sin snap: el desplazamiento inicial deja la primera y la última tarjeta
-     a medio ver, y el snap las llevaría de vuelta al borde. */
-  scroll-snap-type: none;
 }
 
 .game-section .carousel__track {
@@ -289,7 +353,6 @@ h2 {
   border-radius: 32px;
   background: #111111;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
-  scroll-snap-align: none;
   cursor: pointer;
   border: 2px solid transparent;
   transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
@@ -380,11 +443,36 @@ h2 {
   color: #ffffff;
   font-size: 12px;
   font-weight: 700;
-  transition: filter 160ms ease, transform 160ms ease;
+  transition: filter 160ms ease, transform 160ms ease, color 300ms ease;
+  /* Contexto para el círculo del hover (queda detrás del texto) */
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
 }
 
-.game-card__add:hover {
-  filter: brightness(1.16);
+/* Hover de "Agregar": un círculo neón crece desde el centro hasta cubrir
+   el botón (patrón "círculo que se expande" de la slide). */
+.game-card__add::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: -1;
+  width: 70px;
+  height: 70px;
+  margin: -35px 0 0 -35px;
+  border-radius: 50%;
+  background: #39ff14;
+  transform: scale(0);
+  transition: transform 300ms ease;
+}
+
+.game-card__add:hover:not(:disabled)::before {
+  transform: scale(1);
+}
+
+.game-card__add:hover:not(:disabled) {
+  color: #0b0b0b;
 }
 
 .game-card__add:active {
@@ -447,23 +535,17 @@ h2 {
   .carousel-box--featured {
     --flecha-size: 118px;
     --flecha-offset: 52px;
-    --gap: 76.409px;
-    --card-w: min(605.394px, calc((100vw - 2 * var(--gap)) / 2));
+    --card-w: min(520px, 40vw);
   }
 
-  .carousel--featured {
-    height: calc(var(--card-h) + 56px);
-    margin-top: -23px;
+  .featured-card__info {
+    padding: 60px 26px 22px;
   }
 
-  /* La etiqueta escala con la tarjeta */
   .featured-card__label {
-    top: 1.65%;
-    right: 2.3%;
-    width: 50%;
-    height: 16.3%;
-    padding: 0;
-    font-size: calc(var(--card-w) * 0.0453);
+    top: 18px;
+    right: 18px;
+    font-size: 13px;
   }
 
   .game-section {

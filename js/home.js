@@ -1,8 +1,9 @@
 /* ============================================================
    HOME | Catálogo de juegos (index.html)
    Genera el carrusel de destacados y las secciones por categoría.
-   Cada categoría lee las portadas de su carpeta dentro de
-   assets/games/ (premium, accion, aventura, ...).
+   Destacados y Premium usan sólo portadas locales de assets/games/; las
+   demás categorías muestran sus juegos locales y se completan con la
+   API de la cátedra.
    ============================================================ */
 
 // Ruta base de las imágenes del catálogo, resuelta desde este propio archivo.
@@ -13,36 +14,48 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
 
     /* ---------- 1. DATOS ---------- */
 
-    // Carrusel grande: assets/games/juegos-momento/
-    // El orden de la lista es el orden VISUAL. Peg Solitaire va en el centro
-    // para que quede completo al cargar, con GTA VI asomando a la izquierda
-    // y Red Dead Redemption 2 a la derecha.
+    // Carrusel grande (coverflow). Por defecto las portadas salen de
+    // assets/games/juegos-momento/; `carpeta` permite tomar otra.
+    // El orden de la lista es el orden VISUAL y arranca centrado en el
+    // juego con `inicial: true` (Peg Solitaire, entre GTA VI y RDR2).
     const DESTACADOS = [
-        { titulo: "GTA VI", cover: "gta-vi-1560x880.jpg.webp", etiqueta: "Juego del momento" },
-        { titulo: "Peg Solitaire - CyberPunk", cover: "peg-solitaire.webp", etiqueta: "Juego del momento", link: "pages/game_solitare.html" },
-        { titulo: "Red Dead Redemption 2", cover: "rdr2.jpg", etiqueta: "Juego del momento" }
+        { titulo: "Reign of Thorns", cover: "reign-of-thorns_16x9-cover.avif", carpeta: "accion", etiqueta: "Acción" },
+        { titulo: "Warfare 1942", cover: "warfare-1942-riz_16x9-cover.avif", carpeta: "estrategia", etiqueta: "Estrategia" },
+        { titulo: "GTA VI", cover: "gta-vi-1560x880.jpg.webp", etiqueta: "Próximamente" },
+        { titulo: "Peg Solitaire - CyberPunk", cover: "peg-solitaire.webp", etiqueta: "Juego recomendado", link: "pages/game_solitare.html", inicial: true },
+        { titulo: "Red Dead Redemption 2", cover: "rdr2.jpg", etiqueta: "Juego del momento" },
+        { titulo: "Heavy Truck Driver", cover: "heavy-truck-driver-ati_16x9-cover.avif", carpeta: "simulacion", etiqueta: "Simulación" },
+        { titulo: "Night City Racing", cover: "night-city-racing_16x9-cover.avif", carpeta: "carrera", etiqueta: "Carrera" }
     ];
 
-    // Una entrada por carpeta de assets/games/.
-    // Sólo la categoría "premium" define `precio`: es la única que
-    // muestra el precio y el botón de agregar al carrito.
+    // Premium es local (la API no trae precios): es la única categoría que
+    // define `precio`, y por eso la única con precio y botón de carrito.
+    const PREMIUM = {
+        titulo: "Premium",
+        carpeta: "premium",
+        juegos: [
+            { titulo: "Battle Arena", cover: "battle-arena_16x9-cover.avif", precio: "9.99" },
+            { titulo: "Cubes", cover: "cubes.avif", precio: "4.99" },
+            { titulo: "One Shot Duel", cover: "one-shot-duel-snipe-hide_16x9-cover.avif", precio: "5.99" },
+            { titulo: "Patrol Racers NFL", cover: "patrol-racers-nfl_16x9-cover.avif", precio: "7.99" },
+            { titulo: "Soulstone Fields", cover: "soulstone-fields_16x9-cover.avif", precio: "6.99" },
+            { titulo: "Stickman", cover: "stickman.avif", precio: "3.99" },
+            { titulo: "War the Knights", cover: "war-the-knights_16x9-cover.avif", precio: "8.99" }
+        ]
+    };
+
+    // API de la cátedra (github.com/jimartinezabadias/api-vj-interfaces).
+    const API_JUEGOS = "https://vj.interfaces.jima.com.ar/api/v2";
+
+    // Las mismas categorías del menú y el footer. Cada una muestra sus
+    // juegos locales (portadas de assets/games/<carpeta>/) y se completa con
+    // los juegos de la API cuyos géneros figuran en `generos` (nombres en
+    // inglés, como los devuelve la API).
     const CATEGORIAS = [
-        {
-            titulo: "Premium",
-            carpeta: "premium",
-            juegos: [
-                { titulo: "Battle Arena", cover: "battle-arena_16x9-cover.avif", precio: "9.99" },
-                { titulo: "Cubes", cover: "cubes.avif", precio: "4.99" },
-                { titulo: "One Shot Duel", cover: "one-shot-duel-snipe-hide_16x9-cover.avif", precio: "5.99" },
-                { titulo: "Patrol Racers NFL", cover: "patrol-racers-nfl_16x9-cover.avif", precio: "7.99" },
-                { titulo: "Soulstone Fields", cover: "soulstone-fields_16x9-cover.avif", precio: "6.99" },
-                { titulo: "Stickman", cover: "stickman.avif", precio: "3.99" },
-                { titulo: "War the Knights", cover: "war-the-knights_16x9-cover.avif", precio: "8.99" }
-            ]
-        },
         {
             titulo: "Acción",
             carpeta: "accion",
+            generos: ["Action", "Shooter", "Fighting"],
             juegos: [
                 { titulo: "300", cover: "300.webp" },
                 { titulo: "Bodycamera Shooter", cover: "bodycamera-shooter_16x9-cover (1).avif" },
@@ -56,6 +69,7 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
         {
             titulo: "Aventura",
             carpeta: "aventura",
+            generos: ["Adventure", "RPG", "Platformer"],
             juegos: [
                 { titulo: "8 Ball Pool", cover: "8-ball-pool-billiards-multiplayer_16x9-cover.avif" },
                 { titulo: "Bloxd.io", cover: "bloxd.io.avif" },
@@ -69,6 +83,7 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
         {
             titulo: "Carrera",
             carpeta: "carrera",
+            generos: ["Racing"],
             juegos: [
                 { titulo: "Go Kart Racing", cover: "go-kart-racing-game_16x9-cover.avif" },
                 { titulo: "MX Offroad Master", cover: "mx-offroad-master_16x9-cover.avif" },
@@ -82,6 +97,7 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
         {
             titulo: "Deportes",
             carpeta: "deportes",
+            generos: ["Sports"],
             juegos: [
                 { titulo: "8 Ball Pool", cover: "8-ball-pool-billiards-multiplayer_16x9-cover.avif" },
                 { titulo: "Go Kart Racing", cover: "go-kart-racing-game_16x9-cover.avif" },
@@ -95,6 +111,7 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
         {
             titulo: "Estrategia",
             carpeta: "estrategia",
+            generos: ["Strategy", "Puzzle"],
             juegos: [
                 { titulo: "8 Ball Pool", cover: "8-ball-pool-billiards-multiplayer_16x9-cover.avif" },
                 { titulo: "Chess Free", cover: "chess-free_16x9-cover.avif" },
@@ -108,6 +125,7 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
         {
             titulo: "Simulación",
             carpeta: "simulacion",
+            generos: ["Simulation", "Massively Multiplayer"],
             juegos: [
                 { titulo: "300", cover: "300.webp" },
                 { titulo: "Demolition Inc", cover: "demolition-inc_16x9-cover.avif" },
@@ -156,14 +174,18 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
         );
     }
 
-    function tarjeta_destacado(juego, indice) {
-        // El data-ir lo marca como clickeable y da el destino (ver delegación).
+    // La etiqueta (arriba a la derecha) y el título sólo se muestran en la tarjeta del centro.
+    function tarjeta_destacado(juego) {
+        // El data-ir marca la tarjeta como jugable y da el destino (ver clics).
         const destino = juego.link ? ' data-ir="' + juego.link + '"' : '';
         return (
             '<article class="featured-card"' + destino + '>' +
-                '<img src="' + portada("juegos-momento", juego.cover) + '" alt="Portada de ' + juego.titulo + '"' +
-                    ' width="605" height="424" loading="' + (indice < 2 ? "eager" : "lazy") + '" decoding="async" />' +
+                '<img src="' + portada(juego.carpeta || "juegos-momento", juego.cover) + '" alt="Portada de ' + juego.titulo + '"' +
+                    ' width="605" height="424" decoding="async" />' +
                 '<span class="featured-card__label">' + juego.etiqueta + '</span>' +
+                '<div class="featured-card__info">' +
+                    '<h3 class="featured-card__title">' + juego.titulo + '</h3>' +
+                '</div>' +
             '</article>'
         );
     }
@@ -184,9 +206,12 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
               '</div>'
             : '';
 
+        // Los juegos de la API traen la URL completa de su imagen en `imagen`.
+        const src = juego.imagen || portada(carpeta, juego.cover);
+
         return (
             '<article class="game-card">' +
-                '<img class="game-card__cover" src="' + portada(carpeta, juego.cover) + '" alt="Portada de ' + juego.titulo + '"' +
+                '<img class="game-card__cover" src="' + src + '" alt="Portada de ' + juego.titulo + '"' +
                     ' width="301" height="192" loading="lazy" decoding="async" />' +
                 '<h3 class="' + clasesTitulo + '">' + juego.titulo + '</h3>' +
                 acciones +
@@ -194,9 +219,95 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
         );
     }
 
-    /* ---------- 3. RENDER ---------- */
+    /* ---------- 3. DATOS DE LA API ---------- */
 
-    function renderizar() {
+    // Nombres del carrusel grande, para no repetir esos juegos abajo
+    // (por ejemplo Red Dead Redemption 2, que también viene en la API).
+    function normalizar(nombre) {
+        return nombre.trim().toLowerCase();
+    }
+
+    const NOMBRES_DESTACADOS = DESTACADOS.map(function (juego) {
+        return normalizar(juego.titulo);
+    });
+
+    function noEsDestacado(juego) {
+        return !NOMBRES_DESTACADOS.includes(normalizar(juego.titulo));
+    }
+
+    function tieneGenero(categoria, juego) {
+        return categoria.generos.some(function (g) { return juego.generos.includes(g); });
+    }
+
+    // Tope de juegos de la API por categoría, para que los carruseles no
+    // queden desparejos (la API trae casi todo "Action").
+    const MAX_API_POR_CATEGORIA = 10;
+
+    // Arma las categorías: sus juegos locales + los de la API que les tocan.
+    // Un juego de la API suele tener varios géneros; para que no se repita
+    // entre carruseles va a una sola categoría: la que, entre las que le
+    // corresponden y tienen lugar, tenga menos juegos hasta el momento.
+    // Se reparten de mayor a menor rating.
+    // Sin `juegosApi` (la API no respondió) quedan sólo los locales.
+    function armarCategorias(juegosApi) {
+        const juegos = (juegosApi || [])
+            .map(function (j) {
+                return {
+                    titulo: j.name,
+                    imagen: j.background_image_low_res || j.background_image,
+                    rating: j.rating,
+                    generos: j.genres.map(function (g) { return g.name; })
+                };
+            })
+            .filter(noEsDestacado);
+
+        const categorias = CATEGORIAS.map(function (categoria) {
+            return {
+                titulo: categoria.titulo,
+                carpeta: categoria.carpeta,
+                generos: categoria.generos,
+                locales: categoria.juegos.filter(noEsDestacado),
+                deApi: []
+            };
+        });
+
+        function cantidad(c) {
+            return c.locales.length + c.deApi.length;
+        }
+
+        juegos
+            .sort(function (a, b) { return b.rating - a.rating; })
+            .forEach(function (juego) {
+                const destino = categorias
+                    .filter(function (c) {
+                        return tieneGenero(c, juego) && c.deApi.length < MAX_API_POR_CATEGORIA;
+                    })
+                    .sort(function (a, b) { return cantidad(a) - cantidad(b); })[0];
+                if (destino) destino.deApi.push(juego);
+            });
+
+        return categorias.map(function (c) {
+            return { titulo: c.titulo, carpeta: c.carpeta, juegos: c.locales.concat(c.deApi) };
+        });
+    }
+
+    // Pide los juegos a la API; si falla, las categorías quedan con los locales.
+    function cargarCategorias() {
+        return fetch(API_JUEGOS)
+            .then(function (respuesta) {
+                if (!respuesta.ok) throw new Error("HTTP " + respuesta.status);
+                return respuesta.json();
+            })
+            .then(armarCategorias)
+            .catch(function (error) {
+                console.warn("No se pudo usar la API, se muestran sólo los juegos locales.", error);
+                return armarCategorias(null);
+            });
+    }
+
+    /* ---------- 4. RENDER ---------- */
+
+    function renderizarDestacados() {
         const trackDestacados = document.querySelector(".carousel--featured .carousel__track");
         if (trackDestacados) {
             trackDestacados.innerHTML = DESTACADOS.map(tarjeta_destacado).join("");
@@ -206,11 +317,14 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
         if (boxDestacados) {
             boxDestacados.insertAdjacentHTML("afterbegin", flechas());
         }
+    }
 
+    // Premium va siempre primero; después las demás categorías.
+    function renderizarCategorias(categorias) {
         const contenedor = document.getElementById("game-sections");
         if (!contenedor) return;
 
-        contenedor.innerHTML = CATEGORIAS.map(function (categoria, indice) {
+        contenedor.innerHTML = [PREMIUM].concat(categorias).map(function (categoria, indice) {
             const id = "seccion-" + indice;
             return (
                 '<section class="game-section" aria-labelledby="' + id + '">' +
@@ -230,7 +344,7 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
         }).join("");
     }
 
-    /* ---------- 4. POSICIÓN INICIAL DE LOS CARRUSELES ---------- */
+    /* ---------- 5. POSICIÓN INICIAL DE LOS CARRUSELES ---------- */
 
     // Devuelve el desplazamiento inicial de un carrusel normal: aquel en el
     // que la tarjeta del borde izquierdo y la del borde derecho quedan
@@ -268,33 +382,70 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
         return mejor;
     }
 
-    // scrollLeft que deja una tarjeta centrada en su carrusel.
-    function scrollParaCentrar(carousel, tarjeta) {
-        const caja = carousel.getBoundingClientRect();
-        const t = tarjeta.getBoundingClientRect();
-        return carousel.scrollLeft + t.left - caja.left + t.width / 2 - caja.width / 2;
-    }
-
-    // Al cargar, cada carrusel se desplaza para que se vea el efecto de
-    // "hay más juegos": las tarjetas de los bordes quedan cortadas.
+    // Al cargar, cada carrusel por categoría se desplaza para que se vea el
+    // efecto de "hay más juegos": las tarjetas de los bordes quedan cortadas.
     function alinearCarruseles() {
-        document.querySelectorAll(".carousel").forEach(function (carousel) {
+        document.querySelectorAll(".game-section .carousel").forEach(function (carousel) {
             const tarjetas = carousel.querySelectorAll(".carousel__track > *");
             if (!tarjetas.length) return;
-
-            if (carousel.classList.contains("carousel--featured")) {
-                // El CSS ya dimensiona este carrusel para que la tarjeta
-                // central entre completa y las vecinas queden cortadas a la
-                // mitad, así que basta con centrarla (índice 1 = Peg Solitaire).
-                carousel.scrollLeft = scrollParaCentrar(carousel, tarjetas[1] || tarjetas[0]);
-            } else {
-                carousel.scrollLeft = mejorScroll(carousel, tarjetas);
-            }
+            carousel.scrollLeft = mejorScroll(carousel, tarjetas);
             actualizarFlechas(carousel);
         });
     }
 
-    /* ---------- 5. FLECHAS: DESPLAZAMIENTO ANIMADO ---------- */
+    /* ---------- 6. CARRUSEL GRANDE: COVERFLOW ---------- */
+
+    // Índice de la tarjeta que está al frente, en el centro.
+    let activo = Math.max(0, DESTACADOS.findIndex(function (juego) { return juego.inicial; }));
+
+    // Carrusel infinito: la lista se piensa como un círculo. La distancia de
+    // una tarjeta a la activa es el camino más corto dando la vuelta, así que
+    // siempre queda la mitad de las tarjetas a cada lado (el último juego
+    // aparece a la izquierda del primero).
+    function distanciaCircular(i) {
+        const n = DESTACADOS.length;
+        let distancia = ((i - activo) % n + n) % n;   // 0 .. n-1 hacia la derecha
+        if (distancia > n / 2) distancia -= n;        // más cerca por la izquierda
+        return distancia;
+    }
+
+    // Ubica cada tarjeta según su distancia a la activa: la del centro queda
+    // de frente y las demás se corren a los costados, se alejan y giran hacia
+    // el centro, apilándose. El `transition` de .featured-card anima el cambio.
+    function colocarDestacados() {
+        document.querySelectorAll(".featured-card").forEach(function (tarjeta, i) {
+            const distancia = distanciaCircular(i);  // negativa = a la izquierda
+            const lado = Math.sign(distancia);
+            const lejos = Math.abs(distancia);
+
+            // La tarjeta del extremo que pasa al otro lado salta sin
+            // animación: si no, cruzaría todo el carrusel por delante.
+            const anterior = Number(tarjeta.dataset.distancia);
+            const salta = Math.abs(distancia - anterior) > 1;
+            if (salta) tarjeta.style.transition = "none";
+
+            tarjeta.dataset.distancia = distancia;
+            tarjeta.classList.toggle("is-active", distancia === 0);
+            tarjeta.style.zIndex = 10 - lejos;
+            tarjeta.style.opacity = lejos > 3 ? 0 : 1;
+            tarjeta.style.transform = distancia === 0
+                ? "translateX(0) translateZ(0) rotateY(0deg)"
+                : "translateX(" + lado * (60 + lejos * 22) + "%) translateZ(-220px) rotateY(" + -lado * 50 + "deg)";
+
+            if (salta) {
+                void tarjeta.offsetWidth;   // aplica la posición nueva sin transición
+                tarjeta.style.transition = "";
+            }
+        });
+    }
+
+    function moverDestacados(dir) {
+        const n = DESTACADOS.length;
+        activo = ((activo + dir) % n + n) % n;
+        colocarDestacados();
+    }
+
+    /* ---------- 7. CARRUSELES POR CATEGORÍA: DESPLAZAMIENTO ANIMADO ---------- */
 
     const DURACION_SLIDE = 650; // ms; igual que la animación CSS carousel-slide-*
 
@@ -318,22 +469,9 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
 
     // A dónde tiene que ir el carrusel al tocar una flecha (dir = 1 o -1).
     function destinoDelSlide(carousel, dir) {
-        const tarjetas = Array.from(carousel.querySelectorAll(".carousel__track > *"));
+        const tarjetas = carousel.querySelectorAll(".carousel__track > *");
 
-        if (carousel.classList.contains("carousel--featured")) {
-            // Carrusel grande: centra la tarjeta vecina de la que hoy está al medio.
-            const caja = carousel.getBoundingClientRect();
-            const centroCaja = caja.left + caja.width / 2;
-            const distancias = tarjetas.map(function (t) {
-                const r = t.getBoundingClientRect();
-                return Math.abs(r.left + r.width / 2 - centroCaja);
-            });
-            const actual = distancias.indexOf(Math.min.apply(null, distancias));
-            const vecina = tarjetas[Math.max(0, Math.min(tarjetas.length - 1, actual + dir))];
-            return scrollParaCentrar(carousel, vecina);
-        }
-
-        // Carruseles por categoría: avanza de a "página" (las tarjetas que
+        // Avanza de a "página" (las tarjetas que
         // entran enteras menos una, para no perder el contexto). Como se mueve
         // en múltiplos exactos de tarjeta + hueco, los bordes siguen cortados.
         const paso = tarjetas[1] ? tarjetas[1].offsetLeft - tarjetas[0].offsetLeft : carousel.clientWidth;
@@ -352,8 +490,6 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
         const track = carousel.querySelector(".carousel__track");
         cancelAnimationFrame(carousel.animacion);
 
-        // El scroll-snap del carrusel grande "tironearía" en cada cuadro.
-        carousel.style.scrollSnapType = "none";
         track.classList.remove("is-sliding-next", "is-sliding-prev");
         void track.offsetWidth; // reinicia la animación CSS si se toca seguido
         track.classList.add(dir > 0 ? "is-sliding-next" : "is-sliding-prev");
@@ -367,13 +503,12 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
                 carousel.animacion = requestAnimationFrame(cuadro);
                 return;
             }
-            carousel.style.scrollSnapType = "";
             track.classList.remove("is-sliding-next", "is-sliding-prev");
         }
         carousel.animacion = requestAnimationFrame(cuadro);
     }
 
-    /* ---------- 6. CLICS: FLECHAS, CARRITO Y DESTACADOS ---------- */
+    /* ---------- 8. CLICS: FLECHAS, CARRITO Y DESTACADOS ---------- */
 
     function mostrarAviso(texto) {
         const aviso = document.querySelector(".cart-notice");
@@ -390,11 +525,13 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
 
     // Un solo listener delegado para todo lo que se genera por JS.
     document.addEventListener("click", function (evento) {
-        // Flechas de los carruseles
+        // Flechas: el carrusel grande cambia la tarjeta activa, los demás se deslizan
         const flecha = evento.target.closest(".carousel-arrow");
         if (flecha) {
-            const carousel = flecha.closest(".carousel-box").querySelector(".carousel");
-            deslizar(carousel, flecha.classList.contains("carousel-arrow--next") ? 1 : -1);
+            const dir = flecha.classList.contains("carousel-arrow--next") ? 1 : -1;
+            const caja = flecha.closest(".carousel-box");
+            if (caja.classList.contains("carousel-box--featured")) moverDestacados(dir);
+            else deslizar(caja.querySelector(".carousel"), dir);
             return;
         }
 
@@ -407,16 +544,41 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
             return;
         }
 
-        // Las tarjetas del carrusel grande con data-ir son clickeables:
-        // redirigen al detalle del juego (puede ser una página por juego).
-        const tarjeta = evento.target.closest(".featured-card[data-ir]");
-        if (tarjeta) window.location.href = tarjeta.dataset.ir;
+        // Carrusel grande: una tarjeta lateral pasa al centro; la del centro,
+        // si tiene data-ir, lleva al juego.
+        const tarjeta = evento.target.closest(".featured-card");
+        if (tarjeta) {
+            const indice = Array.from(tarjeta.parentNode.children).indexOf(tarjeta);
+            if (indice !== activo) moverDestacados(distanciaCircular(indice));
+            else if (tarjeta.dataset.ir) window.location.href = tarjeta.dataset.ir;
+        }
     });
 
-    /* ---------- 7. INICIO ---------- */
+    /* ---------- 9. INICIO ---------- */
 
     document.addEventListener("DOMContentLoaded", function () {
-        renderizar();
+        renderizarDestacados();
+        colocarDestacados();
+
+        // Primero se dibujan los juegos locales y, cuando responde la API,
+        // se vuelven a dibujar las categorías ya completas (mientras tanto
+        // sigue la pantalla de carga de 5 s).
+        renderizarCategorias(armarCategorias(null));
+        cargarCategorias().then(function (categorias) {
+            renderizarCategorias(categorias);
+            requestAnimationFrame(alinearCarruseles);
+        });
+
+        // En celular, deslizar el dedo sobre el carrusel grande cambia de juego.
+        const pista = document.querySelector(".carousel--featured");
+        let inicioX = 0;
+        pista.addEventListener("touchstart", function (e) {
+            inicioX = e.touches[0].clientX;
+        }, { passive: true });
+        pista.addEventListener("touchend", function (e) {
+            const dx = e.changedTouches[0].clientX - inicioX;
+            if (Math.abs(dx) > 40) moverDestacados(dx < 0 ? 1 : -1);
+        });
 
         // El ancho de las tarjetas lo fija el CSS, así que alcanza con medir
         // una vez que el DOM está montado. Se repite al cambiar el tamaño

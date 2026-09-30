@@ -180,11 +180,30 @@
   white-space: nowrap;
 }
 
+/* Hover de Google y Facebook: una línea neón se dibuja de izquierda a
+   derecha en la base del botón (patrón "borde que se dibuja" de la slide). */
+.google-auth::after,
+.facebook-auth::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  background: #39ff14;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 260ms ease;
+}
+
+.google-auth:hover::after,
+.facebook-auth:hover::after {
+  transform: scaleX(1);
+}
+
 .google-auth:hover,
-.facebook-auth:hover,
-.create-account:hover {
+.facebook-auth:hover {
   filter: brightness(1.08);
-  transform: translateY(-1px);
 }
 
 /* ---------- BOTONES PRINCIPALES ---------- */
@@ -207,8 +226,17 @@
   transition: filter 160ms ease, transform 160ms ease;
 }
 
+/* Hover de "Crear cuenta" / "Ya tengo cuenta": el botón se levanta y deja
+   ver una capa neón desplazada detrás (patrón "capa desplazada" de la slide). */
 .create-account {
   background: #424242;
+  box-shadow: 0 0 0 #39ff14;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.create-account:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 4px 4px 0 #39ff14;
 }
 
 /* Hover distintivo de los botones principales ("Iniciar sesión" y

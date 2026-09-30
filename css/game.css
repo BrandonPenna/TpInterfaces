@@ -11,8 +11,18 @@
     overflow: hidden;
 }
 
+/* Columna central angosta: la imagen principal y todo el contenido tienen
+   el mismo ancho (--content-w). Ese ancho sale del alto de la ventana para
+   que, al entrar a la página, se vean juntas la imagen del juego y la
+   galería de abajo sin hacer scroll:
+     66 (header) + 14 (aire) + 40 (migas) + 64 (compartir)
+     + 58 (título galería) + 16 (aire) + 0.5·W (imagen 2:1)
+     + 0.158·W − 10 (galería) = 100dvh
+   ⇒ W ≈ 152dvh − 377px, acotado entre 640px y 1100px. */
 .page-shell {
-    width: min(100%, 1538px);
+    --content-w: clamp(640px, calc(152vh - 377px), 1100px); /* respaldo sin dvh */
+    --content-w: clamp(640px, calc(152dvh - 377px), 1100px);
+    width: min(100%, calc(var(--content-w) + 88px));
     margin: 0 auto;
     padding-inline: 44px;
     /* Aire entre el formulario de comentarios y el footer (igual que la Home) */
@@ -24,6 +34,7 @@
     display: flex;
     align-items: center;
     min-height: 40px;
+    margin-top: 14px; /* separación del header */
     overflow: hidden;
     font-size: 16px;
     font-weight: 600;
@@ -43,32 +54,26 @@
 }
 
 /* ---------- 3. HERO ---------- */
+/* Ocupa todo el ancho de la columna, alineada con el resto del contenido. */
 .hero {
-    display: flex;
-    justify-content: center;
     width: 100%;
-    max-width: 1200px; /* Ancho alineado con las tarjetas de abajo */
-    margin: 0 auto;
-    overflow: hidden;
-    padding: 0 20px;
-    border-radius: 18px;
 }
 
 .hero img {
     display: block;
     width: 100%;
     height: auto;
-    aspect-ratio: 1200 / 578;   /* proporción original: no deforma */
-    max-height: 380px;          /* deja ver el "Compartir" sin scroll */
-    object-fit: contain;        /* imagen entera, sin recortar */
+    aspect-ratio: 2 / 1;        /* formato panorámico */
+    object-fit: cover;          /* llena el recuadro sin deformar */
     object-position: center;
+    border-radius: 18px;
 }
 
 /* ---------- 4. COMPARTIR + VALORACIÓN ---------- */
 .share-row {
     display: flex;
     align-items: center;
-    min-height: 92px;
+    min-height: 64px;
     gap: 22px;
 }
 

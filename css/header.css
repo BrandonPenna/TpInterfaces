@@ -40,6 +40,7 @@
 .header__name {
     font-size: 20px;
     color: #ffffff;
+    text-decoration: none;
     white-space: nowrap;
     flex-shrink: 0;
 }
@@ -290,7 +291,41 @@ body.menu-open .category-menu {
     object-fit: contain;
 }
 
-/* ---------- 5. PANTALLAS MÁS ANCHAS ---------- */
+/* ---------- 5. CELULAR ----------
+   En una sola fila el buscador quedaba aplastado en un cuadradito. En
+   celular el header pasa a dos filas: arriba menú, logo, nombre, carrito
+   y perfil; abajo el buscador a todo el ancho. */
+@media (max-width: 600px) {
+    .header {
+        flex-wrap: wrap;
+        height: auto;
+        padding: 10px 16px 12px;
+        row-gap: 10px;
+    }
+
+    .search-bar {
+        order: 1;           /* pasa a la segunda fila */
+        flex: 1 0 100%;
+        max-width: none;
+        margin: 0;
+    }
+
+    .search-bar input {
+        font-size: 16px;    /* 16px evita el zoom automático de iOS */
+    }
+
+    .cart-icon {
+        margin-left: auto;  /* carrito y perfil a la derecha */
+    }
+
+    /* El header ahora mide ~110px en lugar de 66px */
+    .category-menu__panel {
+        max-height: calc(100vh - 110px);
+        max-height: calc(100dvh - 110px);
+    }
+}
+
+/* ---------- 6. PANTALLAS MÁS ANCHAS ---------- */
 @media (min-width: 601px) {
     .category-menu__panel {
         width: min(300px, 85vw);
@@ -298,7 +333,7 @@ body.menu-open .category-menu {
     }
 }
 
-/* ---------- 6. PANTALLAS BAJAS ----------
+/* ---------- 7. PANTALLAS BAJAS ----------
    Celular horizontal, notebooks con zoom o ventanas chicas: el menú se
    compacta (categorías en dos columnas y menos aire) para que entren
    todas las categorías y las redes sin tener que scrollear el panel. */
