@@ -25,14 +25,14 @@
         /* ---------- 1. En la home los links a secciones saltan ----------
            Los anclajes (../index.html#seccion-N) los escribe el template;
            si la sección ya existe en esta página, se convierte en un
-           scroll suave para no recargar la home completa. */
+           scroll suave para no recargar la home completa. El menú lo
+           cierra el listener de abajo (clic en cualquier enlace). */
         menu.querySelectorAll("a[href*='#seccion-']").forEach((link) => {
             const seccion = document.getElementById(link.hash.slice(1));
             if (!seccion) return;
 
             link.addEventListener("click", (event) => {
                 event.preventDefault();
-                setMenuOpen(false);
                 seccion.scrollIntoView({ behavior: "smooth" });
             });
         });

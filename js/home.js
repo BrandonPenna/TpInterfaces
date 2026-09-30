@@ -8,13 +8,14 @@
    grande se repite en los de abajo.
    ============================================================ */
 
-// Ruta base de las imágenes del catálogo, resuelta desde este propio archivo.
-const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).href;
-
 (function () {
     "use strict";
 
-    /* ---------- 1. DATOS ---------- */
+    // Ruta base de las imágenes del catálogo, resuelta desde este propio archivo
+    // (document.currentScript sólo existe mientras el script se ejecuta).
+    const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).href;
+
+    /* ---------- 1. DATOS Y ESTADO ---------- */
 
     // Carrusel grande (coverflow): estos tres juegos son fijos y usan las
     // portadas de assets/games/juegos-momento/. El resto del carrusel se
@@ -33,6 +34,10 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
     // Lista que se muestra en el carrusel grande. Arranca con los fijos y se
     // reemplaza cuando responde la API.
     let destacados = DESTACADOS_FIJOS;
+
+    // Índice de la tarjeta del carrusel grande que está al frente, en el
+    // centro (lo fija renderizarDestacados en el juego con `inicial: true`).
+    let activo = 0;
 
     // Premium es local (la API no trae precios): es la única categoría que
     // define `precio`, y por eso la única con precio y botón de carrito.
@@ -146,21 +151,23 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
 
     /* ---------- 2. PLANTILLAS DE TARJETA ---------- */
 
-    // encodeURI en el nombre porque algunos archivos traen espacios o paréntesis.
-    function portada(carpeta, archivo) {
-        return BASE_IMAGENES + carpeta + "/" + encodeURI(archivo);
+    // Los juegos de la API traen la URL completa de su imagen en `imagen`;
+    // los locales, el nombre del archivo en `cover`. encodeURI por si algún
+    // archivo trae espacios o paréntesis.
+    function imagenDe(juego, carpeta) {
+        return juego.imagen || BASE_IMAGENES + carpeta + "/" + encodeURI(juego.cover);
     }
 
     // Escalones del título: la letra se achica a medida que el nombre crece,
     // para que entre siempre en la barra (220px en móvil / 260px en escritorio).
-    // Los nombres cortos conservan el tamaño base, sin clase.
+    // Los nombres cortos conservan el tamaño base, sin modificador.
     const ESCALONES_TITULO = [
-        { max: 13, clase: "" },
-        { max: 17, clase: "game-card__title--med" },
-        { max: Infinity, clase: "game-card__title--chico" }
+        { max: 13, clase: "game-card__title" },
+        { max: 17, clase: "game-card__title game-card__title--med" },
+        { max: Infinity, clase: "game-card__title game-card__title--chico" }
     ];
 
-    function claseTitulo(titulo) {
+    function clasesTitulo(titulo) {
         return ESCALONES_TITULO.find(function (escalon) {
             return titulo.length <= escalon.max;
         }).clase;
@@ -181,14 +188,12 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
     }
 
     // La etiqueta (arriba a la derecha) y el título sólo se muestran en la tarjeta del centro.
-    function tarjeta_destacado(juego) {
+    function tarjetaDestacado(juego) {
         // El data-ir marca la tarjeta como jugable y da el destino (ver clics).
         const destino = juego.link ? ' data-ir="' + juego.link + '"' : '';
-        // Los juegos de la API traen la URL completa de su imagen en `imagen`.
-        const src = juego.imagen || portada("juegos-momento", juego.cover);
         return (
             '<article class="featured-card"' + destino + '>' +
-                '<img src="' + src + '" alt="Portada de ' + juego.titulo + '"' +
+                '<img src="' + imagenDe(juego, "juegos-momento") + '" alt="Portada de ' + juego.titulo + '"' +
                     ' width="605" height="424" decoding="async" />' +
                 '<span class="featured-card__label">' + juego.etiqueta + '</span>' +
                 '<div class="featured-card__info">' +
@@ -198,14 +203,9 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
         );
     }
 
-    function tarjeta_juego(carpeta, juego) {
+    function tarjetaJuego(carpeta, juego) {
         // El bloque de precio + botón sólo se genera en juegos premium.
         const esPremium = typeof juego.precio === "string";
-
-        const claseTituloTexto = claseTitulo(juego.titulo);
-        const clasesTitulo = claseTituloTexto
-            ? "game-card__title " + claseTituloTexto
-            : "game-card__title";
 
         const acciones = esPremium
             ? '<div class="game-card__actions">' +
@@ -214,14 +214,11 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
               '</div>'
             : '';
 
-        // Los juegos de la API traen la URL completa de su imagen en `imagen`.
-        const src = juego.imagen || portada(carpeta, juego.cover);
-
         return (
             '<article class="game-card">' +
-                '<img class="game-card__cover" src="' + src + '" alt="Portada de ' + juego.titulo + '"' +
+                '<img class="game-card__cover" src="' + imagenDe(juego, carpeta) + '" alt="Portada de ' + juego.titulo + '"' +
                     ' width="301" height="192" loading="lazy" decoding="async" />' +
-                '<h3 class="' + clasesTitulo + '">' + juego.titulo + '</h3>' +
+                '<h3 class="' + clasesTitulo(juego.titulo) + '">' + juego.titulo + '</h3>' +
                 acciones +
             '</article>'
         );
@@ -233,12 +230,17 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
         return nombre.trim().toLowerCase();
     }
 
+    // true si `juego` figura en `lista` (se compara el título normalizado).
+    function estaEn(lista, juego) {
+        return lista.some(function (otro) {
+            return normalizar(otro.titulo) === normalizar(juego.titulo);
+        });
+    }
+
     // Los juegos del carrusel grande no se repiten en los de abajo
     // (por ejemplo Red Dead Redemption 2, que también viene en la API).
     function noEsDestacado(juego) {
-        return !destacados.some(function (d) {
-            return normalizar(d.titulo) === normalizar(juego.titulo);
-        });
+        return !estaEn(destacados, juego);
     }
 
     // Pasa un juego de la API al formato que usan las tarjetas.
@@ -261,9 +263,7 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
     function armarDestacados(juegosApi) {
         const elegidos = juegosApi
             .filter(function (juego) {
-                return !DESTACADOS_FIJOS.some(function (d) {
-                    return normalizar(d.titulo) === normalizar(juego.titulo);
-                });
+                return !estaEn(DESTACADOS_FIJOS, juego);
             })
             .sort(porRating)
             .slice(0, CANT_DESTACADOS_API)
@@ -293,13 +293,7 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
         const juegos = juegosApi.filter(noEsDestacado);
 
         const categorias = CATEGORIAS.map(function (categoria) {
-            return {
-                titulo: categoria.titulo,
-                carpeta: categoria.carpeta,
-                generos: categoria.generos,
-                locales: categoria.juegos.filter(noEsDestacado),
-                deApi: []
-            };
+            return { ...categoria, locales: categoria.juegos.filter(noEsDestacado), deApi: [] };
         });
 
         function cantidad(c) {
@@ -345,7 +339,7 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
     function renderizarDestacados() {
         const trackDestacados = document.querySelector(".carousel--featured .carousel__track");
         if (trackDestacados) {
-            trackDestacados.innerHTML = destacados.map(tarjeta_destacado).join("");
+            trackDestacados.innerHTML = destacados.map(tarjetaDestacado).join("");
         }
         activo = Math.max(0, destacados.findIndex(function (juego) { return juego.inicial; }));
         colocarDestacados();
@@ -366,7 +360,7 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
                         '<div class="carousel">' +
                             '<div class="carousel__track">' +
                                 categoria.juegos.map(function (juego) {
-                                    return tarjeta_juego(categoria.carpeta, juego);
+                                    return tarjetaJuego(categoria.carpeta, juego);
                                 }).join("") +
                             '</div>' +
                         '</div>' +
@@ -378,6 +372,16 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
 
     /* ---------- 5. POSICIÓN INICIAL DE LOS CARRUSELES ---------- */
 
+    // Distancia entre el borde izquierdo de una tarjeta y el de la siguiente
+    // (ancho + hueco). Con una sola tarjeta, `porDefecto`.
+    function pasoDeTarjeta(tarjetas, porDefecto) {
+        return tarjetas[1] ? tarjetas[1].offsetLeft - tarjetas[0].offsetLeft : porDefecto;
+    }
+
+    function maximoScroll(carousel) {
+        return carousel.scrollWidth - carousel.clientWidth;
+    }
+
     // Devuelve el desplazamiento inicial de un carrusel normal: aquel en el
     // que la tarjeta del borde izquierdo y la del borde derecho quedan
     // cortadas y lo más parecidas entre sí.
@@ -388,13 +392,11 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
     // (son unas cientos) y se queda la que mejor reparte el recorte.
     function mejorScroll(carousel, tarjetas) {
         const ancho = tarjetas[0].offsetWidth;
-        const paso = tarjetas[1]
-            ? tarjetas[1].offsetLeft - tarjetas[0].offsetLeft
-            : ancho;
+        const paso = pasoDeTarjeta(tarjetas, ancho);
         if (!paso) return 0;
 
         const visible = carousel.clientWidth;
-        const maximo = carousel.scrollWidth - visible;
+        const maximo = maximoScroll(carousel);
         let mejor = 0, mejorPuntaje = -1;
 
         for (let s = 0; s <= maximo; s++) {
@@ -426,10 +428,6 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
     }
 
     /* ---------- 6. CARRUSEL GRANDE: COVERFLOW ---------- */
-
-    // Índice de la tarjeta que está al frente, en el centro.
-    // (lo fija renderizarDestacados en el juego con `inicial: true`).
-    let activo = 0;
 
     // Carrusel infinito: la lista se piensa como un círculo. La distancia de
     // una tarjeta a la activa es el camino más corto dando la vuelta, así que
@@ -487,10 +485,6 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
         return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
     }
 
-    function maximoScroll(carousel) {
-        return carousel.scrollWidth - carousel.clientWidth;
-    }
-
     // Oculta la flecha "anterior" al principio y la "siguiente" al final.
     function actualizarFlechas(carousel) {
         const caja = carousel.closest(".carousel-box");
@@ -507,7 +501,7 @@ const BASE_IMAGENES = new URL("../assets/games/", document.currentScript.src).hr
         // Avanza de a "página" (las tarjetas que
         // entran enteras menos una, para no perder el contexto). Como se mueve
         // en múltiplos exactos de tarjeta + hueco, los bordes siguen cortados.
-        const paso = tarjetas[1] ? tarjetas[1].offsetLeft - tarjetas[0].offsetLeft : carousel.clientWidth;
+        const paso = pasoDeTarjeta(tarjetas, carousel.clientWidth);
         const porPagina = Math.max(1, Math.floor(carousel.clientWidth / paso) - 1);
         return carousel.scrollLeft + dir * paso * porPagina;
     }
