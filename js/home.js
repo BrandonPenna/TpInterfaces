@@ -69,7 +69,7 @@
             generos: ["Action", "Shooter", "Fighting"],
             juegos: [
                 { titulo: "300", cover: "300.webp" },
-                { titulo: "Bodycamera Shooter", cover: "bodycamera-shooter_16x9-cover (1).avif" },
+                { titulo: "Bodycamera Shooter", cover: "bodycamera-shooter_16x9-cover.avif" },
                 { titulo: "Dead Land Survival", cover: "dead-land-survival_16x9-cover.avif" },
                 { titulo: "Firestone Idle RPG", cover: "firestone-idle-rpg_16x9-cover.avif" },
                 { titulo: "Hazmob", cover: "hazmob.avif" },
