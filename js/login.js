@@ -6,48 +6,49 @@
     "use strict";
 
     const form = document.querySelector(".login-form");
-    const message = form.querySelector(".form-message");
-    const recoveryDialog = document.querySelector(".recovery-dialog");
+    const mensaje = form.querySelector(".form-message");
+    const dialogoRecuperar = document.querySelector(".recovery-dialog");
+
+    /* ---------- 1. REGLAS ---------- */
+
+    const TEXTO_VACIO = {
+        email: "Ingrese un correo válido",
+        password: "Ingrese su contraseña"
+    };
+
+    // La contraseña sólo tiene que estar completa (lo cubre TEXTO_VACIO).
+    const REGLAS = {
+        email: Formulario.emailValido
+    };
+
+    /* ---------- 2. EVENTOS ---------- */
 
     Formulario.limpiarAlEscribir(form);
 
     form.addEventListener("submit", (event) => {
         event.preventDefault();
-        const { email, password } = form.elements;
-        let isValid = true;
+        Formulario.mostrarMensaje(mensaje, "");
 
-        Formulario.setFieldError(email, "");
-        Formulario.setFieldError(password, "");
-        message.textContent = "";
+        // Se evalúan las dos validaciones para mostrar todos los errores juntos.
+        const camposOk = Formulario.validarCampos(form, REGLAS, TEXTO_VACIO);
+        const captchaOk = Formulario.validarCaptcha(form, mensaje);
 
-        if (!email.value.trim() || !email.checkValidity()) {
-            Formulario.setFieldError(email, "Ingrese un correo válido");
-            isValid = false;
-        }
-
-        if (!password.value) {
-            Formulario.setFieldError(password, "Ingrese su contraseña");
-            isValid = false;
-        }
-
-        if (!Formulario.validarCaptcha(form, message)) isValid = false;
-
-        if (!isValid) {
+        if (!camposOk || !captchaOk) {
             Formulario.enfocarPrimerError(form);
             return;
         }
 
-        Formulario.exito(message, "Inicio de sesión correcto. Redirigiendo...", "../index.html");
+        Formulario.exito(mensaje, "Inicio de sesión correcto. Redirigiendo...", "../index.html");
     });
 
-    /* ---------- RECUPERAR CONTRASEÑA ---------- */
+    /* ---------- 3. RECUPERAR CONTRASEÑA ---------- */
 
     document.querySelector(".forgot-password").addEventListener("click", () => {
-        recoveryDialog.showModal();
+        dialogoRecuperar.showModal();
     });
 
     // Clic en el fondo oscuro (fuera del cuadro) cierra el diálogo.
-    recoveryDialog.addEventListener("click", (event) => {
-        if (event.target === recoveryDialog) recoveryDialog.close();
+    dialogoRecuperar.addEventListener("click", (event) => {
+        if (event.target === dialogoRecuperar) dialogoRecuperar.close();
     });
 })();

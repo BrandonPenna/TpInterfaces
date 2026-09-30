@@ -6,8 +6,10 @@
     "use strict";
 
     const form = document.querySelector(".register-form");
-    if (!form) return;
-    const message = form.querySelector(".form-message");
+    const mensaje = form.querySelector(".form-message");
+
+    // Tiempo total de la animación de register.css + un momento para leerla.
+    const DURACION_EXITO = 2600;
 
     /* ---------- 1. REGLAS ---------- */
 
@@ -43,15 +45,18 @@
             const edad = Number(valor);
             return Number.isInteger(edad) && edad >= 13 && edad <= 99 ? "" : "Ingrese una edad entre 13 y 99";
         },
-        email: (valor, input) => (input.checkValidity() ? "" : "Ingrese un correo válido"),
+        email: Formulario.emailValido,
         password: passwordValida,
         password2: passwordValida
     };
 
-    function errorDeCampo(input) {
-        const valor = input.value.trim();
-        if (!valor) return TEXTO_VACIO[input.name] || "Este campo es obligatorio";
-        return REGLAS[input.name] ? REGLAS[input.name](valor, input) : "";
+    // Las contraseñas se comparan sólo si las dos están completas.
+    function passwordsCoinciden() {
+        const { password, password2 } = form.elements;
+        if (!password.value.trim() || !password2.value.trim()) return true;
+        if (password.value === password2.value) return true;
+        Formulario.marcarError(password2, "Las contraseñas no coinciden");
+        return false;
     }
 
     /* ---------- 2. EVENTOS ---------- */
@@ -60,37 +65,23 @@
 
     form.addEventListener("submit", (event) => {
         event.preventDefault();
-        message.textContent = "";
-        let isValid = true;
+        Formulario.mostrarMensaje(mensaje, "");
 
-        form.querySelectorAll(".form-field input").forEach((input) => {
-            const error = errorDeCampo(input);
-            Formulario.setFieldError(input, error);
-            if (error) isValid = false;
-        });
+        // Se evalúan todas las validaciones para mostrar todos los errores juntos.
+        const camposOk = Formulario.validarCampos(form, REGLAS, TEXTO_VACIO);
+        const coinciden = passwordsCoinciden();
+        const captchaOk = Formulario.validarCaptcha(form, mensaje);
 
-        // Las contraseñas se comparan sólo si las dos están completas.
-        const { password, password2 } = form.elements;
-        if (password.value.trim() && password2.value.trim() && password.value !== password2.value) {
-            Formulario.setFieldError(password2, "Las contraseñas no coinciden");
-            isValid = false;
-        }
-
-        if (!Formulario.validarCaptcha(form, message)) isValid = false;
-
-        if (!isValid) {
+        if (!camposOk || !coinciden || !captchaOk) {
             Formulario.enfocarPrimerError(form);
             return;
         }
 
         mostrarAnimacionExito();
-        Formulario.exito(message, "¡Cuenta creada con éxito! Redirigiendo...", "login.html", DURACION_EXITO);
+        Formulario.exito(mensaje, "¡Cuenta creada con éxito! Redirigiendo...", "login.html", DURACION_EXITO);
     });
 
     /* ---------- 3. ANIMACIÓN DE ÉXITO ---------- */
-
-    // Tiempo total de la animación de register.css + un momento para leerla.
-    const DURACION_EXITO = 2600;
 
     // Brillo del formulario + tarjeta con círculo y tilde que se dibujan.
     function mostrarAnimacionExito() {
