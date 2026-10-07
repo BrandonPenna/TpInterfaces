@@ -237,12 +237,6 @@
         });
     }
 
-    // Los juegos del carrusel grande no se repiten en los de abajo
-    // (por ejemplo Red Dead Redemption 2, que también viene en la API).
-    function noEsDestacado(juego) {
-        return !estaEn(destacados, juego);
-    }
-
     // Pasa un juego de la API al formato que usan las tarjetas.
     function convertirJuegoApi(j) {
         return {
@@ -290,11 +284,26 @@
     // Se reparten de mayor a menor rating.
     // Con `juegosApi` vacío (la API no respondió) quedan sólo los locales.
     function armarCategorias(juegosApi) {
-        const juegos = juegosApi.filter(noEsDestacado);
+        // Ningún juego se muestra dos veces en toda la home: ni entre
+        // categorías, ni contra Premium o el carrusel grande. Las categorías
+        // se recorren en orden y la primera que tiene un juego se lo queda.
+        const usados = new Set(destacados.concat(PREMIUM.juegos).map(function (j) {
+            return normalizar(j.titulo);
+        }));
+
+        function sinRepetir(juego) {
+            const clave = normalizar(juego.titulo);
+            if (usados.has(clave)) return false;
+            usados.add(clave);
+            return true;
+        }
 
         const categorias = CATEGORIAS.map(function (categoria) {
-            return { ...categoria, locales: categoria.juegos.filter(noEsDestacado), deApi: [] };
+            return { ...categoria, locales: categoria.juegos.filter(sinRepetir), deApi: [] };
         });
+
+        // Los de la API se filtran después, para que no repitan a los locales.
+        const juegos = juegosApi.filter(sinRepetir);
 
         function cantidad(c) {
             return c.locales.length + c.deApi.length;

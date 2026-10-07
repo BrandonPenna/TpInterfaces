@@ -43,7 +43,7 @@ h2 {
 .carousel-box {
   /* Las flechas de los carruseles normales son más chicas que las del
      carrusel grande, para no tapar las tarjetas. */
-  --flecha-size: 34px;
+  --flecha-size: 26px;
   --flecha-offset: 8px;
   position: relative;
 }
@@ -508,18 +508,18 @@ h2 {
 
   h2 {
     margin-left: 22px;
-    font-size: 26px;
+    font-size: 22px;
   }
 
   .carousel-box {
-    --flecha-size: 58px;
+    --flecha-size: 24px;
     --flecha-offset: 12px;
   }
 
   /* --card-h y --card-r se recalculan solos a partir del nuevo --card-w */
   .carousel-box--featured {
     --flecha-size: 48px;
-    --flecha-offset: 52px;
+    --flecha-offset: 11vw;
     --card-w: min(340px, 30vw);
   }
 
@@ -540,7 +540,7 @@ h2 {
   }
 
   .game-section .carousel {
-    margin-top: -20px;
+    margin-top: -28px;
   }
 
   .game-section .carousel__track {

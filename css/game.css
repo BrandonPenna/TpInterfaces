@@ -11,22 +11,15 @@
 }
 
 /* Columna central: la imagen principal y todo el contenido tienen el mismo
-   ancho W (--content-w). W sale del alto de la ventana para que, al entrar
-   a la página, se vean completas la imagen del juego y la galería de abajo
-   sin hacer scroll:
+   ancho (--content-w), casi todo el de la ventana. El alto de la imagen
+   principal (ver sección 3) deja libres abajo unos 160px para que, al entrar
+   a la página, apenas se asome la fila de la galería:
      66 (header) + 14 (aire) + 40 (migas) + 64 (compartir)
-     + 44 (título galería) + 14 (aire) + 12 (margen) = 254px fijos
-     + W / R (imagen principal, R = --hero-ratio)
-     + (W − 66) / 4 / 1.58 ≈ 0.1582·W − 10 (galería: 4 columnas, 3 huecos de 22px)
-     = 100dvh
-   ⇒ W = (100dvh − 244px) / (1/R + 0.1582), acotado entre 640px y 1400px.
-   Cuanto más apaisada la imagen (R mayor), más ancha puede ser la página. */
+     + 44 (título galería) + 14 (aire) = 242px + ~40px de galería visible. */
 .page-shell {
-    --hero-ratio: 2.4;      /* ancho/alto de la imagen principal (la original es 1.64) */
-    --content-w: clamp(640px, calc((100vh - 244px) / (1 / var(--hero-ratio) + 0.1582)), 1400px); /* respaldo sin dvh */
-    --content-w: clamp(640px, calc((100dvh - 244px) / (1 / var(--hero-ratio) + 0.1582)), 1400px);
-    /* Contenedor de consultas: 100cqw es el ancho real de la columna, que
-       el hero usa para calcular su alto (ver sección 3). */
+    /* Ancho = alto de la imagen x 1.8, para que quede alta y poco estirada */
+    --content-w: clamp(640px, calc((100vh - 232px) * 1.8), calc(100vw - 96px));
+    --content-w: clamp(640px, calc((100dvh - 232px) * 1.8), calc(100vw - 96px));
     container-type: inline-size;
     width: min(100%, calc(var(--content-w) + 64px));
     margin: 0 auto;
@@ -68,24 +61,14 @@
     border-radius: 18px;
 }
 
-/* La imagen se muestra entera (fill: sin recortes) y se estira a lo ancho.
-   Su alto es el espacio que queda libre sobre la galería, entre dos topes:
-     - mínimo W / --hero-ratio: nunca más apaisada que eso;
-     - máximo W / 1.64: nunca más alta que su proporción original.
-   100cqw = ancho real de la columna (.page-shell es el contenedor). */
+/* La imagen se estira (fill) al ancho de la columna y su alto es todo el
+   que queda de la ventana menos 232px: lo de arriba (header, migas) y la
+   fila de compartir + título + primera franja de la galería que se asoma. */
 .hero img {
     display: block;
     width: 100%;
-    height: clamp(      /* respaldo sin dvh */
-        calc(100cqw / var(--hero-ratio)),
-        calc(100vh - 244px - 0.1582 * 100cqw),
-        calc(100cqw / 1.64)
-    );
-    height: clamp(
-        calc(100cqw / var(--hero-ratio)),
-        calc(100dvh - 244px - 0.1582 * 100cqw),
-        calc(100cqw / 1.64)
-    );
+    height: max(320px, calc(100vh - 232px));   /* respaldo sin dvh */
+    height: max(320px, calc(100dvh - 232px));
     object-fit: fill;
 }
 
@@ -193,25 +176,68 @@
 .share-row {
     display: flex;
     align-items: center;
-    min-height: 64px;
-    gap: 22px;
+    min-height: 44px;
+    gap: 14px;
 }
 
-.share-row > strong {
-    font-size: 23px;
-    font-weight: 700;
+/* Botón de compartir: al tocarlo se despliegan las redes hacia la derecha */
+.share-toggle {
+    order: 2;
+    display: grid;
+    width: 38px;
+    height: 38px;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    padding: 0;
+    background: rgb(255 255 255 / 10%);
+    cursor: pointer;
+    transition: background 160ms ease, transform 160ms ease;
+}
+
+.share-toggle svg {
+    width: 20px;
+    height: 20px;
+    fill: #fff;
+}
+
+.share-toggle:hover,
+.share-toggle[aria-expanded="true"] {
+    background: rgb(57 255 20 / 22%);
+}
+
+.share-toggle:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
 }
 
 .share-actions {
+    order: 1;
+    margin-left: auto;
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
+    max-width: 0;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(10px);
+    transition: max-width 300ms ease, opacity 250ms ease, transform 300ms ease, visibility 0s 300ms;
+}
+
+.share-toggle[aria-expanded="true"] + .share-actions {
+    max-width: 220px;
+    padding: 4px;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition-delay: 0s;
 }
 
 .share-actions button {
     display: grid;
-    width: 29px;
-    height: 29px;
+    width: 22px;
+    height: 22px;
     place-items: center;
     border: 0;
     padding: 0;
@@ -234,7 +260,7 @@
     display: flex;
     align-items: center;
     gap: 9px;
-    margin-left: auto;
+    order: 3;
     padding-right: 6px;
     font-size: 16px;
     font-weight: 500;
@@ -365,116 +391,136 @@
             #000;
 }
 
-/* ---------- 8. DESCRIPCIÓN ---------- */
-.about-copy {
-    display: flex;
-    min-height: 86px;
-    align-items: center;
-    justify-content: center;
-    padding: 16px 32px;
+/* ---------- 8. DESCRIPCIÓN + INSTRUCCIONES ---------- */
+/* Un solo bloque oscuro, sin borde neón, con los dos títulos adentro. */
+.info-block {
+    border-color: transparent;
+    margin-top: 14px;
+    padding: 12px 32px 26px;
 }
 
-.about-copy p {
-    width: min(100%, 1090px);
-    font-size: 13px;
+.info-block .section-title + p {
+    margin: 4px 0 14px;
+    font-size: 14px;
     font-weight: 500;
-    text-align: center;
 }
 
-/* ---------- 9. INSTRUCCIONES ---------- */
-.instructions-section {
-    margin-top: 9px;
-}
-
-.instructions {
-    display: flex;
-    min-height: 164px;
-    align-items: center;
-    justify-content: center;
-    padding: 20px 32px;
-}
-
-.instructions ol {
+.info-block ol {
+    width: fit-content;
+    margin: 6px 0 0;
     padding-left: 28px;
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 500;
-    text-align: center;
 }
 
-.instructions li + li {
-    margin-top: 9px;
+.info-block li + li {
+    margin-top: 8px;
 }
 
 /* ---------- 10. COMENTARIOS ---------- */
+/* Comentarios + formulario: un solo bloque oscuro, sin borde neón */
+.comments-block {
+    border-color: transparent;
+    margin-top: 28px;
+    padding: 8px 28px 32px;
+}
+
 .comments-section {
-    margin-top: 32px;
+    margin-top: 0;
 }
 
 .comments-panel {
     display: flex;
     flex-direction: column;
-    gap: 19px;
-    padding: 19px 20px 28px;
+    gap: 10px;
+    padding: 4px 0 0;
 }
 
 .comment-card {
     position: relative;
     display: grid;
-    min-height: 100px;
-    grid-template-columns: 58px minmax(0, 1fr) auto;
-    align-items: center;
-    border: 1px solid #757575;
-    border-radius: 8px;
-    padding: 10px 18px 10px 9px;
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    column-gap: 16px;
+    align-items: start;
+    border-radius: 14px;
+    padding: 16px 20px;
+    background: rgb(255 255 255 / 4%);
+    transition: background 160ms ease;
+}
+
+.comment-card:hover {
+    background: rgb(255 255 255 / 7%);
+}
+
+/* Comentario recién publicado: entra con un fundido */
+.comment-card--new {
+    animation: comment-in 400ms ease;
+}
+
+@keyframes comment-in {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    100% {
+        opacity: 1;
+        transform: none;
+    }
 }
 
 .avatar {
-    width: 55px;
-    height: 55px;
+    width: 48px;
+    height: 48px;
     border: 2px solid var(--neon);
     border-radius: 50%;
     object-fit: cover;
-    box-shadow: 0 10px 10px rgb(0 0 0 / 25%);
+    box-shadow: 0 6px 10px rgb(0 0 0 / 25%);
 }
 
 .comment-copy {
-    align-self: center;
+    align-self: start;
 }
 
 .comment-meta {
     display: flex;
-    align-items: center;
-    gap: 16px;
+    align-items: baseline;
+    gap: 10px;
 }
 
 .comment-meta strong {
-    font-size: 10px;
+    font-size: 14px;
     font-weight: 700;
 }
 
 .comment-meta span {
-    color: #757575;
-    font-size: 9px;
+    color: #9a9a9a;
+    font-size: 12px;
 }
 
 .comment-copy p {
-    margin-top: 11px;
-    font-size: 13px;
+    margin-top: 4px;
+    font-size: 15px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
 }
 
+/* Valoración como etiqueta: estrella + puntaje */
 .comment-rating {
     display: flex;
     align-self: start;
     align-items: center;
     gap: 6px;
+    border-radius: 999px;
+    padding: 4px 12px;
+    background: rgb(0 0 0 / 35%);
     font-family: "Nunito", sans-serif;
-    font-size: 20px;
+    font-size: 15px;
     font-weight: 700;
 }
 
 .comment-rating img {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
 }
 
 /* ---------- 11. BOTONES CYBER ---------- */
@@ -505,108 +551,251 @@
 }
 
 .more-button {
-    width: 205px;
-    min-height: 44px;
-    margin: auto auto 0;
-    font-size: 15px;
+    width: 190px;
+    min-height: 42px;
+    margin: 8px auto 0;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 10%);
+    color: #fff;
+    font-size: 14px;
 }
 
-.submit-button {
-    width: 168px;
-    min-height: 43px;
-    margin: 19px auto 0;
-    background-image: url("../assets/games/55f9b.svg");
-    font-size: 17px;
+/* Sin borde ni glow verde: el hover sólo aclara el fondo */
+.more-button:hover {
+    background: rgb(255 255 255 / 18%);
+    filter: none;
 }
 
 /* ---------- 12. FORMULARIO DE COMENTARIO ---------- */
+/* Estilo red social: avatar + una línea; al enfocar se despliegan las
+   opciones. Sin cajas con borde neón: sólo una línea inferior que se
+   engrosa y se vuelve verde al escribir. */
 .form-section {
-    margin-top: 21px;
+    margin-top: 28px;
+    border-top: 1px solid rgb(255 255 255 / 12%);
+    padding-top: 8px;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
 }
 
 .comment-form {
-    display: grid;
-    min-height: 368px;
-    grid-template-rows: auto auto 1fr auto;
-    padding: 21px 34px 25px;
-}
-
-.form-user {
     display: flex;
-    align-items: center;
     gap: 16px;
+    align-items: flex-start;
+    padding: 8px 0 0;
 }
 
-.form-user strong {
-    font-size: 15px;
-    font-weight: 700;
-}
-
-.form-user .avatar {
+.comment-form .avatar {
     width: 44px;
     height: 44px;
+    flex: 0 0 auto;
 }
 
-.rating-picker {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-top: 11px;
-    font-size: 15px;
-    font-weight: 500;
-}
-
-.rating-picker button {
-    position: relative;
-    width: 65px;
-    height: 17px;
-    overflow: hidden;
-    border: 0;
-    padding: 0;
-    background: transparent;
-    cursor: pointer;
-}
-
-.rating-picker img {
-    position: absolute;
-    inset: 0;
-    width: 65px;
-    height: 17px;
-    object-fit: contain;
-}
-
-.rating-picker i {
-    position: absolute;
-    right: 0;
-    top: 0;
-    height: 100%;
-    background: rgb(0 0 0 / 58%);
-    pointer-events: none;
+.comment-form__body {
+    flex: 1;
+    min-width: 0;
 }
 
 .comment-form textarea {
+    display: block;
     width: 100%;
-    min-height: 132px;
-    margin-top: 7px;
-    resize: vertical;
-    border: 1px solid #fff;
-    border-radius: 6px;
-    padding: 10px 12px;
+    min-height: 40px;
+    max-height: 220px;
+    resize: none;
+    border: 0;
+    border-bottom: 1px solid #757575;
+    padding: 8px 2px;
     outline: none;
     background: transparent;
-    box-shadow: 0 3px 3px rgb(0 0 0 / 25%);
     color: #fff;
     font-family: "Nunito", sans-serif;
     font-size: 15px;
-    font-weight: 700;
+    font-weight: 500;
+    transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 
 .comment-form textarea::placeholder {
-    color: #666;
+    color: #9a9a9a;
     opacity: 1;
 }
 
 .comment-form textarea:focus {
-    border-color: var(--neon);
-    box-shadow: 0 0 10px rgb(57 255 20 / 35%);
+    border-bottom-color: #fff;
+    box-shadow: 0 2px 0 0 var(--neon);
+}
+
+/* Opciones: ocultas hasta enfocar el formulario o tener texto escrito */
+.comment-form__extras {
+    display: none;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 16px;
+    margin-top: 10px;
+}
+
+.comment-form:focus-within .comment-form__extras,
+.comment-form.is-open .comment-form__extras {
+    display: flex;
+}
+
+.star-picker {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 14px;
+}
+
+.star-picker__label {
+    margin-right: 8px;
+    color: #cfcfcf;
+}
+
+.star-picker button {
+    border: 0;
+    padding: 0 1px;
+    background: transparent;
+    color: #5a5a5a;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 120ms ease, transform 120ms ease;
+}
+
+.star-picker button.is-on {
+    color: #ffd23f;
+}
+
+.star-picker button:hover {
+    transform: scale(1.2);
+}
+
+.star-picker button:focus-visible,
+.btn-text:focus-visible,
+.btn-pill:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+.star-picker__hint {
+    margin-left: 8px;
+    color: #9a9a9a;
+    font-size: 13px;
+}
+
+.comment-form__actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.comment-form__counter {
+    margin-right: 6px;
+    color: #9a9a9a;
+    font-size: 12px;
+}
+
+.comment-form__counter.is-near-limit {
+    color: #ffd23f;
+}
+
+.btn-text,
+.btn-pill {
+    border: 0;
+    border-radius: 999px;
+    padding: 9px 18px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 160ms ease, color 160ms ease, opacity 160ms ease;
+}
+
+.btn-text {
+    background: transparent;
+    color: #fff;
+}
+
+.btn-text:hover {
+    background: rgb(255 255 255 / 12%);
+}
+
+.btn-pill {
+    position: relative;
+    overflow: hidden;
+    background: var(--neon);
+    color: #0b0b0b;
+}
+
+/* Carta que se envía: el sobre arranca escondido en el centro del botón. */
+.btn-pill__mail {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 22px;
+    height: 22px;
+    margin: -11px 0 0 -11px;
+    fill: #0b0b0b;
+    opacity: 0;
+}
+
+/* Al enviar: el texto se desvanece, el sobre aparece, se infla un poco,
+   se inclina y sale disparado hacia arriba a la derecha. */
+.btn-pill.is-sending {
+    background: var(--neon);
+    color: transparent;
+    cursor: default;
+}
+
+.btn-pill.is-sending .btn-pill__mail {
+    animation: mail-fly 900ms ease-in forwards;
+}
+
+@keyframes mail-fly {
+    0% {
+        opacity: 0;
+        transform: scale(0.4);
+    }
+    20% {
+        opacity: 1;
+        transform: scale(1.2) rotate(0deg);
+    }
+    40% {
+        opacity: 1;
+        transform: scale(1) rotate(-8deg);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(70px, -46px) scale(0.5) rotate(18deg);
+    }
+}
+
+.btn-pill:hover:not(:disabled) {
+    background: #7dff62;
+}
+
+/* Deshabilitado hasta que haya texto: se ve apagado y sin puntero */
+.btn-pill:disabled:not(.is-sending) {
+    background: #3a3a3a;
+    color: #8a8a8a;
+    cursor: not-allowed;
+}
+
+.comment-form__status {
+    min-height: 20px;
+    margin-top: 8px;
+    color: var(--neon);
+    font-size: 13px;
+}
+
+.comment-form__status.is-error {
+    color: #ff6b6b;
 }

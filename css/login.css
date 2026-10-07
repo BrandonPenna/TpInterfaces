@@ -133,7 +133,7 @@
   border: 0;
   cursor: pointer;
   overflow: hidden;
-  transition: filter 160ms ease, transform 160ms ease;
+  transition: transform 160ms ease, box-shadow 160ms ease;
 }
 
 .google-auth {
@@ -179,30 +179,17 @@
   white-space: nowrap;
 }
 
-/* Hover de Google y Facebook: una línea neón se dibuja de izquierda a
-   derecha en la base del botón (patrón "borde que se dibuja" de la slide). */
-.google-auth::after,
-.facebook-auth::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 3px;
-  background: var(--neon);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 260ms ease;
-}
-
-.google-auth:hover::after,
-.facebook-auth:hover::after {
-  transform: scaleX(1);
-}
-
+/* Hover de Google y Facebook: el botón se agranda apenas y levanta una
+   sombra suave; el logo y los colores no se tocan. */
 .google-auth:hover,
 .facebook-auth:hover {
-  filter: brightness(1.08);
+  transform: scale(1.07);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+}
+
+.google-auth:active,
+.facebook-auth:active {
+  transform: scale(1.02);
 }
 
 /* ---------- BOTONES PRINCIPALES ---------- */
