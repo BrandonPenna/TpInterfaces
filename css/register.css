@@ -63,6 +63,9 @@
   animation: exito-pop 700ms 150ms ease-out both;
 }
 
+/*Esta regla define lo que el círculo y el tilde tienen 
+en común: que se dibujen solo como líneas, sin relleno y
+ con las puntas redondeadas. No anima nada, pero sin ella el efecto de trazado no se vería.*/
 .register-success__check circle,
 .register-success__check path {
   fill: none;

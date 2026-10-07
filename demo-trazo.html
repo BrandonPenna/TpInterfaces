@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demo: stroke-dashoffset</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 32px 16px;
+      background: #1c1c1c;
+      color: #e6e6e6;
+      font-family: system-ui, sans-serif;
+      text-align: center;
+    }
+
+    svg {
+      width: 220px;
+      height: 220px;
+    }
+
+    circle {
+      fill: none;
+      stroke: #39ff14;
+      stroke-width: 3;
+      stroke-linecap: round;
+      /* La raya mide una vuelta entera (el perímetro del círculo). */
+      stroke-dasharray: 151;
+      /* Cuánto de esa raya queda escondido. Lo mueve el control de abajo. */
+      stroke-dashoffset: 151;
+    }
+
+    /* Círculo gris de fondo, sólo para ver el recorrido completo. */
+    .guia {
+      stroke: #3a3a3a;
+      stroke-dasharray: none;
+      stroke-dashoffset: 0;
+    }
+
+    input[type="range"] {
+      width: min(420px, 90%);
+    }
+
+    code {
+      color: #39ff14;
+      font-size: 20px;
+    }
+
+    button {
+      margin-top: 16px;
+      padding: 10px 18px;
+      border: 0;
+      border-radius: 8px;
+      background: #39ff14;
+      font-size: 15px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>stroke-dashoffset</h1>
+  <p>Mové el control: el número es cuánto del círculo queda <strong>escondido</strong>.</p>
+
+  <svg viewBox="0 0 52 52">
+    <circle class="guia" cx="26" cy="26" r="24" />
+    <circle id="trazo" cx="26" cy="26" r="24" />
+  </svg>
+
+  <p><input id="control" type="range" min="0" max="151" value="151" /></p>
+  <p><code id="valor">stroke-dashoffset: 151</code></p>
+  <p id="lectura">Escondido: 151 de 151. Se ve el 0% del círculo.</p>
+
+  <button id="animar" type="button">Animar de 151 a 0 (como en el registro)</button>
+
+  <script>
+    const trazo = document.getElementById("trazo");
+    const control = document.getElementById("control");
+    const valor = document.getElementById("valor");
+    const lectura = document.getElementById("lectura");
+    const LARGO = 151;
+
+    function pintar(offset) {
+      trazo.style.strokeDashoffset = offset;
+      control.value = offset;
+      valor.textContent = "stroke-dashoffset: " + Math.round(offset);
+      const visible = Math.round((1 - offset / LARGO) * 100);
+      lectura.textContent = "Escondido: " + Math.round(offset) + " de " + LARGO + ". Se ve el " + visible + "% del círculo.";
+    }
+
+    control.addEventListener("input", function () {
+      pintar(Number(control.value));
+    });
+
+    // Misma duración que en css/register.css (650 ms), pero en cámara lenta.
+    document.getElementById("animar").addEventListener("click", function () {
+      const inicio = performance.now();
+      const DURACION = 2500;
+      function cuadro(ahora) {
+        const t = Math.min(1, (ahora - inicio) / DURACION);
+        pintar(LARGO * (1 - t));
+        if (t < 1) requestAnimationFrame(cuadro);
+      }
+      requestAnimationFrame(cuadro);
+    });
+  </script>
+</body>
+</html>

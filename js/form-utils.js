@@ -50,9 +50,12 @@ const Formulario = {
     },
 
     // Devuelve true si el captcha está marcado; si no, avisa en el mensaje.
+    // El mensaje está al pie del formulario: en pantallas bajas queda fuera
+    // de vista, por eso se desplaza la página hasta mostrarlo.
     validarCaptcha(form, mensaje) {
         if (form.elements.captcha.checked) return true;
         Formulario.mostrarMensaje(mensaje, "Confirma que no eres un robot.", true);
+        mensaje.scrollIntoView({ block: "nearest" });
         return false;
     },
 
