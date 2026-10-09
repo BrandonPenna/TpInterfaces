@@ -1,8 +1,8 @@
 /* ============================================================
    HOME | Catálogo de juegos (index.html)
    Genera el carrusel de destacados y las secciones por categoría.
-   El carrusel grande tiene tres juegos fijos (GTA VI, Peg Solitaire y
-   RDR2) y se completa con los mejor valorados de la API de la cátedra.
+   El carrusel grande tiene cuatro juegos fijos (GTA VI, Peg Solitaire,
+   Blocka y RDR2) y se completa con los mejor valorados de la API de la cátedra.
    Premium usa sólo portadas locales; las demás categorías muestran sus
    juegos locales y se completan con la API. Ningún juego del carrusel
    grande se repite en los de abajo.
@@ -17,7 +17,7 @@
 
     /* ---------- 1. DATOS Y ESTADO ---------- */
 
-    // Carrusel grande (coverflow): estos tres juegos son fijos y usan las
+    // Carrusel grande (coverflow): estos cuatro juegos son fijos y usan las
     // portadas de assets/games/juegos-momento/. El resto del carrusel se
     // completa con los mejor valorados de la API (ver armarDestacados).
     // Arranca centrado en el juego con `inicial: true` (Peg Solitaire,
@@ -25,6 +25,7 @@
     const DESTACADOS_FIJOS = [
         { titulo: "GTA VI", cover: "gta-vi-1560x880.jpg.webp", etiqueta: "Próximamente" },
         { titulo: "Peg Solitaire - CyberPunk", cover: "peg-solitaire.webp", etiqueta: "Juego recomendado", link: "pages/game_solitare.html", inicial: true },
+        { titulo: "Blocka", cover: "blocka.jpeg", etiqueta: "Nuevo juego", link: "pages/game_blocka.html" },
         { titulo: "Red Dead Redemption 2", cover: "rdr2.jpg", etiqueta: "Juego del momento" }
     ];
 

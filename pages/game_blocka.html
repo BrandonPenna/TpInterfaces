@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blocka - Rompecabezas rotativo</title>
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/header.css" />
+  <link rel="stylesheet" href="../css/footer.css" />
+  <link rel="stylesheet" href="../css/game.css" />
+  <link rel="stylesheet" href="../css/blocka.css" />
+</head>
+
+<body>
+<!-- Contenedor vacío donde el JavaScript inyectará el header -->
+<div id="header-container"></div>
+
+<main class="game-page">
+  <div class="page-shell blocka-shell">
+    <!-- ---------- BREADCRUMBS ---------- -->
+    <nav class="breadcrumbs" aria-label="Navegación">
+      <a href="../index.html">Juegos</a>
+      <img src="../assets/games/30dee.svg" alt="" />
+      <a href="#juego">Rompecabezas</a>
+      <img src="../assets/games/07fa4.svg" alt="" />
+      <span>Blocka</span>
+    </nav>
+
+    <!-- ---------- LUGAR DE EJECUCIÓN ---------- -->
+    <section id="juego" class="neon-panel blocka" aria-label="Juego Blocka">
+      <!-- Barra de estado -->
+      <div class="blocka__hud">
+        <div class="blocka__stat"><small>Nivel</small><strong id="blocka-nivel">1 / 3</strong></div>
+        <div class="blocka__stat"><small>Filtro</small><strong id="blocka-filtro">Escala de grises</strong></div>
+        <div class="blocka__stat blocka__stat--tiempo"><small>Tiempo</small><strong id="blocka-tiempo">00:00</strong></div>
+        <div class="blocka__stat"><small>Récord</small><strong id="blocka-record">--:--</strong></div>
+      </div>
+
+      <!-- Extra 1: miniaturas del banco para la animación de selección -->
+      <div class="blocka__miniaturas" id="blocka-miniaturas"></div>
+
+      <!-- Tablero: el JS crea acá las piezas (canvas) -->
+      <div class="blocka__stage">
+        <div class="blocka__board" id="blocka-board" aria-label="Tablero de Blocka"></div>
+      </div>
+
+      <!-- Mensajes (inicio, victoria, derrota) -->
+      <p class="blocka__mensaje" id="blocka-mensaje" role="status" aria-live="polite"></p>
+
+      <!-- Controles -->
+      <div class="blocka__controles">
+        <label class="blocka__campo">
+          Piezas
+          <select id="blocka-piezas">
+            <option value="4">4 piezas</option>
+            <option value="6">6 piezas</option>
+            <option value="8">8 piezas</option>
+          </select>
+        </label>
+        <button class="blocka__btn blocka__btn--primario" type="button" id="blocka-comenzar">Comenzar</button>
+        <button class="blocka__btn" type="button" id="blocka-ayuda" disabled>Ayudita (+5 s)</button>
+        <button class="blocka__btn" type="button" id="blocka-siguiente" hidden>Siguiente nivel</button>
+        <button class="blocka__btn" type="button" id="blocka-menu" hidden>Menú principal</button>
+      </div>
+    </section>
+
+    <!-- ---------- IMÁGENES REPRESENTATIVAS ---------- -->
+    <section id="imagenes" class="gallery-section">
+      <h2 class="section-title">Imágenes del juego:</h2>
+      <div class="blocka__galeria">
+        <figure class="blocka__ejemplo">
+          <img src="../assets/games/juegos-momento/rdr2.jpg" alt="Imagen original lista para desarmar" />
+          <figcaption>1. La imagen original</figcaption>
+        </figure>
+        <figure class="blocka__ejemplo">
+          <img class="blocka__ejemplo--gris" src="../assets/games/juegos-momento/rdr2.jpg" alt="Imagen con filtro de escala de grises" />
+          <figcaption>2. Aparece con un filtro</figcaption>
+        </figure>
+        <figure class="blocka__ejemplo">
+          <img class="blocka__ejemplo--neg" src="../assets/games/juegos-momento/gta-vi-1560x880.jpg.webp" alt="Imagen con filtro negativo" />
+          <figcaption>3. Con otro nivel, otro filtro</figcaption>
+        </figure>
+        <figure class="blocka__ejemplo">
+          <img src="../assets/games/juegos-momento/gta-vi-1560x880.jpg.webp" alt="Imagen armada sin filtros" />
+          <figcaption>4. ¡Armada! Vuelve el color</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ---------- DESCRIPCIÓN + INSTRUCCIONES ---------- -->
+    <section class="info-section">
+      <div class="neon-panel info-block">
+        <h2 class="section-title">
+          <img src="../assets/games/35fdd.svg" alt="" />
+          Blocka
+        </h2>
+        <p>
+          Blocka es un rompecabezas de rotación. Una imagen se descompone en
+          piezas que aparecen giradas respecto de su posición original y con un
+          filtro que dificulta reconocerla. Tu misión es girar cada pieza hasta
+          reconstruir la imagen, ¡y hacerlo lo más rápido posible!
+        </p>
+
+        <h2 class="section-title">¿Cómo Jugar?</h2>
+        <ol>
+          <li>Elegí la cantidad de piezas (4, 6 u 8) y presioná <strong>Comenzar</strong>.</li>
+          <li><strong>Clic izquierdo</strong> sobre una pieza: la gira hacia la izquierda.</li>
+          <li><strong>Clic derecho</strong> sobre una pieza: la gira hacia la derecha.</li>
+          <li>Cuando todas las piezas estén derechas, el filtro desaparece y se frena el tiempo.</li>
+          <li>Superá los 3 niveles: escala de grises, brillo y negativo. ¡En los niveles 2 y 3 hay tiempo máximo!</li>
+          <li>¿Trabado? La <strong>Ayudita</strong> acomoda una pieza y la deja fija, pero suma 5 segundos.</li>
+        </ol>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- Contenedor vacío donde el JavaScript inyectará el footer -->
+<div id="footer-container"></div>
+
+<script src="../js/main.js" defer></script>
+<script src="../js/menu-hambur.js" defer></script>
+<script src="../js/blocka.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+/* ============================================================
+   BLOCKA | Estilos de pages/game_blocka.html
+   Complementa a game.css (layout, migas, paneles neón, galería).
+   ============================================================ */
+
+/* ---------- 1. CONTENEDOR ---------- */
+.blocka-shell {
+    --content-w: 1000px;
+}
+
+.blocka {
+    margin-top: 14px;
+    padding: 20px 24px 24px;
+}
+
+/* ---------- 2. BARRA DE ESTADO ---------- */
+.blocka__hud {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.blocka__stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border-radius: 12px;
+    padding: 8px 14px;
+    background: rgb(255 255 255 / 6%);
+    text-align: center;
+}
+
+.blocka__stat small {
+    color: #9a9a9a;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.blocka__stat strong {
+    font-size: 18px;
+}
+
+.blocka__stat--tiempo strong {
+    color: var(--neon);
+}
+
+/* ---------- 3. MINIATURAS (animación de selección) ---------- */
+.blocka__miniaturas {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.blocka__miniaturas img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 3px solid transparent;
+    border-radius: 8px;
+    object-fit: cover;
+    opacity: 0.4;
+    transition: opacity 120ms ease, transform 120ms ease;
+}
+
+/* Miniatura resaltada en este paso de la animación */
+.blocka__miniaturas img.is-activa {
+    border-color: var(--neon);
+    box-shadow: 0 0 14px var(--neon);
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* ---------- 4. TABLERO Y PIEZAS ---------- */
+.blocka__stage {
+    display: grid;
+    place-items: center;
+    min-height: 340px;
+    border-radius: 14px;
+    padding: 16px;
+    background: rgb(0 0 0 / 35%);
+}
+
+/* Las piezas son cuadradas: el alto sale de la proporción columnas:filas */
+.blocka__board {
+    display: grid;
+    grid-template-columns: repeat(var(--cols, 2), 1fr);
+    grid-template-rows: repeat(var(--rows, 2), 1fr);
+    gap: 3px;
+    width: min(100%, calc(var(--cols, 2) * 200px));
+    aspect-ratio: var(--cols, 2) / var(--rows, 2);
+    transition: gap 600ms ease;
+}
+
+/* Imagen terminada: las piezas se juntan */
+.blocka__board.is-resuelto {
+    gap: 0;
+}
+
+.blocka__pieza {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 280ms ease, box-shadow 200ms ease;
+}
+
+.blocka__pieza:hover {
+    box-shadow: 0 0 12px var(--neon);
+}
+
+/* Pieza dejada en su lugar por la ayudita */
+.blocka__pieza.is-fija {
+    cursor: default;
+    box-shadow: inset 0 0 0 3px var(--neon);
+}
+
+/* ---------- 5. MENSAJE Y CONTROLES ---------- */
+.blocka__mensaje {
+    margin-top: 14px;
+    color: var(--neon);
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.blocka__controles {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 14px;
+}
+
+.blocka__campo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+}
+
+.blocka__campo select {
+    border: 1px solid var(--neon);
+    border-radius: 8px;
+    padding: 8px 10px;
+    background: #111;
+    color: #fff;
+    font: inherit;
+}
+
+.blocka__btn {
+    border: 2px solid var(--neon);
+    border-radius: 999px;
+    padding: 10px 24px;
+    background: rgb(0 0 0 / 65%);
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.blocka__btn:hover:not(:disabled) {
+    box-shadow: 0 0 14px var(--neon);
+    transform: translateY(-2px) scale(1.05);
+}
+
+.blocka__btn:disabled {
+    border-color: #444;
+    color: #777;
+    cursor: not-allowed;
+}
+
+.blocka__btn[hidden] {
+    display: none;
+}
+
+.blocka__btn--primario {
+    background: var(--neon);
+    color: #000;
+}
+
+/* ---------- 6. GALERÍA DE EJEMPLO ---------- */
+.blocka__galeria {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.blocka__ejemplo {
+    overflow: hidden;
+    border-radius: 12px;
+    background: rgb(255 255 255 / 5%);
+}
+
+.blocka__ejemplo img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+}
+
+.blocka__ejemplo--gris { filter: grayscale(1); }
+.blocka__ejemplo--neg { filter: invert(1); }
+
+.blocka__ejemplo figcaption {
+    padding: 8px 10px;
+    font-size: 14px;
+    text-align: center;
+}
