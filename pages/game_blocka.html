@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="../css/footer.css" />
   <link rel="stylesheet" href="../css/game.css" />
   <link rel="stylesheet" href="../css/blocka.css" />
+  <link rel="icon" type="image/png" href="../assets/icons/logo.png">
 </head>
 
 <body>
@@ -64,6 +65,39 @@
       </div>
     </section>
 
+    <!-- ---------- COMPARTIR + VALORACIÓN ---------- -->
+    <div class="share-row">
+      <!-- Botón de compartir: al tocarlo se despliegan las opciones (js/share.js) -->
+      <button class="share-toggle" type="button" aria-expanded="false" aria-controls="share-options" aria-label="Compartir">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18 16.1c-.8 0-1.5.3-2 .8l-7.1-4.2c.1-.2.1-.5.1-.7s0-.5-.1-.7L15.9 7.2c.5.5 1.2.8 2.1.8 1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3c0 .2 0 .5.1.7L8.1 9.8C7.5 9.3 6.8 9 6 9c-1.7 0-3 1.3-3 3s1.3 3 3 3c.8 0 1.5-.3 2.1-.8l7.1 4.2c-.1.2-.1.4-.1.6 0 1.6 1.3 2.9 2.9 2.9s2.9-1.3 2.9-2.9-1.2-2.9-2.9-2.9z" />
+        </svg>
+      </button>
+
+      <div class="share-actions" id="share-options">
+        <button type="button" aria-label="Compartir por WhatsApp">
+          <img src="../assets/games/9c2c6.svg" alt="" />
+        </button>
+        <button type="button" aria-label="Compartir en X">
+          <img src="../assets/games/6ae11.svg" alt="" />
+        </button>
+        <button type="button" aria-label="Compartir por correo">
+          <img src="../assets/games/41885.svg" alt="" />
+        </button>
+        <button type="button" aria-label="Copiar enlace">
+          <img src="../assets/games/81ef8.svg" alt="" />
+        </button>
+      </div>
+
+      <div class="overall-rating">
+        <img src="../assets/games/320c5.svg" alt="estrella" />
+        <span>
+          <small>Valoración</small>
+          4.7
+        </span>
+      </div>
+    </div>
+
     <!-- ---------- IMÁGENES REPRESENTATIVAS ---------- -->
     <section id="imagenes" class="gallery-section">
       <h2 class="section-title">Imágenes del juego:</h2>
@@ -112,6 +146,112 @@
         </ol>
       </div>
     </section>
+
+    <!-- ---------- COMENTARIOS + FORMULARIO (un solo bloque) ---------- -->
+    <div class="neon-panel comments-block">
+    <section class="comments-section">
+      <h2 class="section-title">
+        <img src="../assets/games/56518.svg" alt="" />
+        Comentarios
+      </h2>
+
+      <div class="comments-panel" id="comments-list">
+        <article class="comment-card">
+          <img class="avatar" src="../assets/games/6109e.png" alt="" />
+          <div class="comment-copy">
+            <div class="comment-meta">
+              <strong>NicoGamer777</strong>
+              <span>2 h</span>
+            </div>
+            <p>El nivel del negativo me volvió loco.</p>
+          </div>
+          <div class="comment-rating">
+            <strong>4.5</strong>
+            <img src="../assets/games/6d78f.svg" alt="estrella" />
+          </div>
+        </article>
+
+        <article class="comment-card">
+          <img class="avatar" src="../assets/games/6109e.png" alt="" />
+          <div class="comment-copy">
+            <div class="comment-meta">
+              <strong>BrandonWarrior</strong>
+              <span>5 h</span>
+            </div>
+            <p>Súper adictivo, ¡con 8 piezas es otro nivel!</p>
+          </div>
+          <div class="comment-rating">
+            <strong>5.0</strong>
+            <img src="../assets/games/6d78f.svg" alt="estrella" />
+          </div>
+        </article>
+
+        <article class="comment-card">
+          <img class="avatar" src="../assets/games/6109e.png" alt="" />
+          <div class="comment-copy">
+            <div class="comment-meta">
+              <strong>Emanuel__777</strong>
+              <span>19/07/25</span>
+            </div>
+            <p>Increíble</p>
+          </div>
+          <div class="comment-rating">
+            <strong>4.0</strong>
+            <img src="../assets/games/6d78f.svg" alt="estrella" />
+          </div>
+        </article>
+
+        <button class="cyber-button more-button" type="button">
+          Ver más comentarios
+        </button>
+      </div>
+    </section>
+
+    <!-- ---------- FORMULARIO DE COMENTARIO ---------- -->
+    <section class="form-section">
+      <h2 class="section-title">Deja tu comentario:</h2>
+
+      <form class="comment-form" id="comment-form" novalidate>
+        <img class="avatar" src="../assets/games/6109e.png" alt="" />
+
+        <div class="comment-form__body">
+          <label class="visually-hidden" for="comment-text">Tu comentario</label>
+          <textarea
+                  id="comment-text"
+                  rows="1"
+                  maxlength="300"
+                  placeholder="Agrega un comentario..."
+                  autocomplete="off"
+          ></textarea>
+
+          <div class="comment-form__extras">
+            <div class="star-picker" role="radiogroup" aria-label="Calificación">
+              <span class="star-picker__label">Calificación:</span>
+              <button type="button" role="radio" aria-checked="false" aria-label="1 estrella" data-value="1">★</button>
+              <button type="button" role="radio" aria-checked="false" aria-label="2 estrellas" data-value="2">★</button>
+              <button type="button" role="radio" aria-checked="false" aria-label="3 estrellas" data-value="3">★</button>
+              <button type="button" role="radio" aria-checked="false" aria-label="4 estrellas" data-value="4">★</button>
+              <button type="button" role="radio" aria-checked="false" aria-label="5 estrellas" data-value="5">★</button>
+              <span class="star-picker__hint" id="star-hint">Opcional</span>
+            </div>
+
+            <div class="comment-form__actions">
+              <span class="comment-form__counter" id="comment-counter">0/300</span>
+              <button class="btn-text" type="button" id="comment-cancel">Cancelar</button>
+              <button class="btn-pill" type="submit" id="comment-submit" disabled>
+                <span class="btn-pill__text">Comentar</span>
+                <svg class="btn-pill__mail" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm1.6 2L12 12.6 19.4 7H4.6z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <p class="comment-form__status" id="comment-status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </section>
+    </div>
   </div>
 </main>
 
@@ -121,5 +261,7 @@
 <script src="../js/main.js" defer></script>
 <script src="../js/menu-hambur.js" defer></script>
 <script src="../js/blocka.js" defer></script>
+<script src="../js/comments.js" defer></script>
+<script src="../js/share.js" defer></script>
 </body>
 </html>

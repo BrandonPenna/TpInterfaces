@@ -95,7 +95,7 @@
         {
             titulo: "Carrera",
             carpeta: "carrera",
-            generos: ["Racing"],
+            generos: ["Racing", "Arcade"],
             juegos: [
                 { titulo: "Go Kart Racing", cover: "go-kart-racing-game_16x9-cover.avif" },
                 { titulo: "MX Offroad Master", cover: "mx-offroad-master_16x9-cover.avif" },
@@ -109,7 +109,7 @@
         {
             titulo: "Deportes",
             carpeta: "deportes",
-            generos: ["Sports"],
+            generos: ["Sports", "Casual"],
             juegos: [
                 { titulo: "8 Ball Pool", cover: "8-ball-pool-billiards-multiplayer_16x9-cover.avif" },
                 { titulo: "Go Kart Racing", cover: "go-kart-racing-game_16x9-cover.avif" },
@@ -278,6 +278,9 @@
     // queden desparejos (la API trae casi todo "Action").
     const MAX_API_POR_CATEGORIA = 10;
 
+    // Mínimo de juegos por carrusel (locales + API).
+    const MIN_POR_CATEGORIA = 10;
+
     // Arma las categorías: sus juegos locales + los de la API que les tocan.
     // Un juego de la API suele tener varios géneros; para que no se repita
     // entre carruseles va a una sola categoría: la que, entre las que le
@@ -320,6 +323,18 @@
                     .sort(function (a, b) { return cantidad(a) - cantidad(b); })[0];
                 if (destino) destino.deApi.push(juego);
             });
+
+        // Los géneros de la API están muy desparejos (casi todo es "Action"):
+        // las categorías que quedaron cortas se completan con los juegos que
+        // sobraron, de mayor a menor rating, hasta MIN_POR_CATEGORIA.
+        const sobrantes = juegos.filter(function (juego) {
+            return !categorias.some(function (c) { return c.deApi.includes(juego); });
+        });
+        categorias.forEach(function (c) {
+            while (cantidad(c) < MIN_POR_CATEGORIA && sobrantes.length) {
+                c.deApi.push(sobrantes.shift());
+            }
+        });
 
         return categorias.map(function (c) {
             return { titulo: c.titulo, carpeta: c.carpeta, juegos: c.locales.concat(c.deApi) };

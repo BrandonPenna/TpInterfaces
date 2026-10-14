@@ -159,6 +159,78 @@
 
 /* ---------- 6. RESPONSIVE (de menor a mayor) ---------- */
 
+/* Versión compacta (sólo celular): en pantallas más anchas se oculta y
+   se ve el footer completo. */
+.cyber-footer__compact {
+  display: none;
+}
+
+@media (max-width: 560px) {
+  .cyber-footer {
+    padding: 16px 16px 12px;
+  }
+
+  .cyber-footer__content {
+    display: none;
+  }
+
+  .cyber-footer__compact {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .cyber-footer__compact-logo {
+    display: block;
+    width: 90px;
+    height: auto;
+  }
+
+  .cyber-footer__compact-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cyber-footer__compact-links a {
+    color: var(--footer-text);
+    font-size: 13px;
+    line-height: 1.4;
+    text-decoration: none;
+    transition: color 160ms ease;
+  }
+
+  .cyber-footer__compact-links a:hover,
+  .cyber-footer__compact-links a:focus-visible {
+    color: var(--footer-accent);
+    outline: none;
+  }
+
+  .cyber-footer__compact-social {
+    display: flex;
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cyber-footer__compact-social .social-icon {
+    flex-basis: 28px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .cyber-footer__copyright {
+    margin-top: 12px;
+    font-size: 12px;
+  }
+}
+
 /* Tablets: dos columnas de links */
 @media (min-width: 561px) {
   /* Grid de dos filas: contenido arriba y copyright pegado abajo. */

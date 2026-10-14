@@ -34,7 +34,7 @@ h1 {
 
 h2 {
   margin-left: 18px;
-  font-size: clamp(24px, 6vw, 32px);
+  font-size: clamp(18px, 4.8vw, 24px);
 }
 
 /* ---------- FLECHAS ---------- */
@@ -311,7 +311,7 @@ h2 {
 /* La altura la define el contenido (h2 + fila de tarjetas) para que la
    barra de título de cada tarjeta nunca quede recortada. */
 .game-section {
-  padding-top: 36px;
+  padding-top: 24px;
 }
 
 .game-section .carousel {
@@ -319,23 +319,23 @@ h2 {
      el scroll oculta el overflow vertical en los bordes del alto de las
      tarjetas, así que este aire interior es el que evita que la elevación
      y el glow del hover de .game-card se corten arriba/abajo. */
-  margin-top: 10px;
+  margin-top: -16px;
   padding-block: 24px;
   margin-bottom: -24px;
 }
 
 .game-section .carousel__track {
-  --card-w: 240px;
-  gap: 18px;
-  height: 165px;
+  --card-w: 118px;
+  gap: 10px;
+  height: 84px;
 }
 
 .game-card {
   position: relative;
   flex: 0 0 var(--card-w);
-  height: 165px;
+  height: 84px;
   overflow: hidden;
-  border-radius: 32px;
+  border-radius: 16px;
   background: #111111;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
   cursor: pointer;
@@ -352,10 +352,10 @@ h2 {
 .game-card__cover {
   position: absolute;
   top: 0;
-  left: -11px;
+  left: 0;
   display: block;
-  width: 301px;
-  height: 192px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   border-radius: 4px;
   max-width: none;
@@ -369,13 +369,13 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 42px;
+  height: 22px;
   margin: 0;
-  padding: 0 10px;
+  padding: 0 5px;
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(1.3px);
   color: #ffffff;
-  font-size: 18px;
+  font-size: 10px;
   font-weight: 600;
   line-height: normal;
   text-align: center;
@@ -387,20 +387,20 @@ h2 {
    (sin clase); los nombres largos achican la letra para que entre el texto
    completo en la barra, en vez de que se corte contra el borde de la tarjeta. */
 .game-card__title--med {
-  font-size: 16px;
+  font-size: 9px;
 }
 
 .game-card__title--chico {
-  font-size: 14px;
+  font-size: 8px;
 }
 
 /* Precio + botón "Agregar": sólo en la categoría Premium */
 .game-card__actions {
   position: absolute;
-  top: 10px;
-  left: 16px;
+  top: 5px;
+  left: 6px;
   display: flex;
-  gap: 6px;
+  gap: 3px;
   align-items: flex-end;
 }
 
@@ -408,25 +408,25 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 68px;
-  height: 26px;
-  border-radius: 20px;
+  width: 38px;
+  height: 15px;
+  border-radius: 10px;
   background: rgba(30, 30, 30, 0.94);
   color: #ffffff;
-  font-size: 14px;
+  font-size: 8px;
   font-weight: 500;
 }
 
 .game-card__add {
-  width: 61px;
-  height: 26px;
+  width: 36px;
+  height: 15px;
   padding: 0;
   border: 0;
-  border-radius: 16px;
+  border-radius: 10px;
   cursor: pointer;
   background: linear-gradient(180deg, #2e973a 31.25%, #115619);
   color: #ffffff;
-  font-size: 12px;
+  font-size: 7px;
   font-weight: 700;
   transition: filter 160ms ease, transform 160ms ease, color 300ms ease;
   /* Contexto para el círculo del hover (queda detrás del texto) */

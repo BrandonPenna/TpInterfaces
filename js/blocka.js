@@ -231,14 +231,15 @@
         if (!jugando || mal.length === 0) return;
 
         const pieza = mal[Math.floor(Math.random() * mal.length)];
-        pieza.rot = Math.round(pieza.rot / 360) * 360;
-        pieza.fija = true;
-        pieza.canvas.classList.add("is-fija");
-        girar(pieza, 0);
-
+        // La penalización se suma antes de girar: si era la última pieza, girar() ya gana el nivel
         segundos += PENALIZACION;
         mostrarTiempo();
-        if (piezas.every(estaBien)) ganar();
+
+        // fija se activa después de girar, porque girar() ignora las piezas fijas
+        pieza.rot = Math.round(pieza.rot / 360) * 360;
+        girar(pieza, 0);
+        pieza.fija = true;
+        pieza.canvas.classList.add("is-fija");
     }
 
     // ---------- TIEMPO Y RÉCORD ----------
