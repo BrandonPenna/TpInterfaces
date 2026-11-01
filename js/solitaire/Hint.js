@@ -12,19 +12,13 @@
 class Hint {
     /**
      * Crea un hint para un casillero destino.
-     * @param {number} fila Fila lógica del casillero destino.
-     * @param {number} col Columna lógica del casillero destino.
      * @param {number} x Coordenada X del centro del casillero (píxeles del canvas).
      * @param {number} y Coordenada Y del centro del casillero (píxeles del canvas).
      * @param {number} radio Radio base del halo, en píxeles.
      * @param {number} [fase=0] Desfase en radianes; permite que varios hints no
      *        pulsen todos sincronizados.
      */
-    constructor(fila, col, x, y, radio, fase = 0) {
-        /** @type {number} */
-        this.fila = fila;
-        /** @type {number} */
-        this.col = col;
+    constructor(x, y, radio, fase = 0) {
         /** @type {number} */
         this.x = x;
         /** @type {number} */
@@ -73,11 +67,11 @@ class Hint {
     draw(ctx, tiempoMs) {
         this.actualizar(tiempoMs);
 
-        const aparicion = Math.min(1, (tiempoMs - this.nacimiento) / 200);
+        const aparicion = Math.max(0, Math.min(1, (tiempoMs - this.nacimiento) / 200));
         const r = this.radio * this.escala;
 
         ctx.save();
-        ctx.globalAlpha = Math.max(0, Math.min(1, this.alpha)) * Math.max(0, aparicion);
+        ctx.globalAlpha = this.alpha * aparicion;
 
         // --- Halo: degradado radial con brillo neón ---
         const halo = ctx.createRadialGradient(this.x, this.y, r * 0.15, this.x, this.y, r);
@@ -99,7 +93,7 @@ class Hint {
         ctx.stroke();
 
         // --- Flecha flotante sobre el casillero, apuntando hacia abajo ---
-        ctx.globalAlpha = Math.max(0, aparicion);
+        ctx.globalAlpha = aparicion;
         this.dibujarFlecha(ctx, this.x, this.y - this.radio * 1.15 + this.flotacion);
 
         ctx.restore();

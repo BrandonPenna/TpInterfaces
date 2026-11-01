@@ -45,8 +45,6 @@ class Tablero {
         this.origenY = (altoCanvas - Tablero.TAMANIO * celda) / 2;
         /** @type {?HTMLCanvasElement} Capa estática (fondo + placa + huecos) ya dibujada. */
         this.capaEstatica = null;
-        /** @type {?HTMLImageElement} Fondo con el que se armó la capa (para detectar cambios). */
-        this.fondoCacheado = null;
         /** @type {string} Color neón del filete de la placa (cambia con el estilo de ficha). */
         this.colorBorde = "#39ff14";
         /** @type {number[][]} Matriz [fila][col] con valores de Tablero.ESTADOS. */
@@ -226,12 +224,11 @@ class Tablero {
      * Cómo: todo esto es estático, así que se pinta una sola vez en un canvas
      * invisible (capa cacheada) y en cada frame solo se copia con drawImage.
      * Evita recalcular sombras y degradados costosos 60 veces por segundo.
-     * La capa se vuelve a armar si cambia la imagen de fondo.
      * @param {CanvasRenderingContext2D} ctx Contexto 2D del canvas.
      * @returns {void}
      */
     draw(ctx) {
-        if (!this.capaEstatica || this.fondoCacheado !== this.fondo) this.construirCapaEstatica();
+        if (!this.capaEstatica) this.construirCapaEstatica();
         ctx.drawImage(this.capaEstatica, 0, 0);
     }
 
@@ -250,7 +247,6 @@ class Tablero {
         this.dibujarHuecos(c);
 
         this.capaEstatica = capa;
-        this.fondoCacheado = this.fondo;
     }
 
     /**

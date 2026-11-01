@@ -147,15 +147,14 @@ class Juego {
     reiniciar() {
         this.tablero.inicializar();
         this.limpiarSeleccion();
-        this.timerArrancado = false;
-        this.timer.reiniciar(this.limiteSegundos()); // también frena la cuenta en curso
         this.crearFichas();
         this.aplicarColorEstilo();
         this.botonFin = null;
         this.hoverBotonFin = false;
         this.canvas.classList.remove("is-boton");
         this.estado = Juego.ESTADOS.JUGANDO;
-        this.actualizarHUD();
+        this.timerArrancado = false;
+        this.timer.reiniciar(this.limiteSegundos()); // frena la cuenta y refresca el HUD
     }
 
     /**
@@ -289,7 +288,7 @@ class Juego {
         const radio = this.tablero.radioFicha * 1.1;
         this.hints = this.tablero.movimientosDe(ficha.fila, ficha.col).map((m, i) => {
             const { x, y } = this.tablero.centroDe(m.destFila, m.destCol);
-            return new Hint(m.destFila, m.destCol, x, y, radio, i * 0.8);
+            return new Hint(x, y, radio, i * 0.8);
         });
     }
 
@@ -559,15 +558,15 @@ class Juego {
         const t = Math.max(0, Math.min(1, (ahora - this.finDesde) / 400));
         const e = 1 - Math.pow(1 - t, 3);
 
-        // Geometría del panel y del botón (posición final, sin el deslizamiento)
+        // Geometría del panel y del botón
         const pw = 760, ph = 420;
         const px = cx - pw / 2;
         const pyFinal = (H - ph) / 2;
         const py = pyFinal + (1 - e) * 28;
         const bw = 250, bh = 56;
         const bx = cx - bw / 2;
-        const byFinal = pyFinal + 340;
-        this.botonFin = { x: bx, y: byFinal, w: bw, h: bh };
+        const by = py + 340;
+        this.botonFin = { x: bx, y: pyFinal + 340, w: bw, h: bh };
 
         ctx.save();
         ctx.globalAlpha = e;
@@ -630,7 +629,6 @@ class Juego {
         this.dibujarChip(ctx, cx + 14, py + 226, 230, 90, "TIEMPO RESTANTE", this.timer.formato());
 
         // Botón Reiniciar (resalta cuando el cursor está encima)
-        const by = byFinal + (py - pyFinal);
         const hover = this.hoverBotonFin;
         ctx.save();
         this.trazarRectRedondeado(ctx, bx, by, bw, bh, 18);

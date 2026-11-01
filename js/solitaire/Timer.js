@@ -83,7 +83,7 @@ class Timer {
     tick(ahora) {
         if (!this.corriendo) return;
         this.restanteMs = Math.max(0, this.finMs - ahora);
-        this.onTick(this.getRestante());
+        this.onTick(this.restanteMs / 1000);
 
         if (this.restanteMs <= 0) {
             this.detenerLoop();

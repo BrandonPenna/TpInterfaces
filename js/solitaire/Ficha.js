@@ -44,7 +44,7 @@ class Ficha {
         this.offsetX = 0;
         /** @type {number} */
         this.offsetY = 0;
-        /** @type {{x0:number,y0:number,x1:number,y1:number,inicio:number,duracion:number,onFin:?function}|null} */
+        /** @type {{x0:number,y0:number,x1:number,y1:number,inicio:number,duracion:number}|null} */
         this.animacion = null;
     }
 
@@ -114,10 +114,9 @@ class Ficha {
      * @param {number} destX X del centro destino.
      * @param {number} destY Y del centro destino.
      * @param {number} [duracionMs=250] Duración de la animación en milisegundos.
-     * @param {?function(): void} [onFin=null] Se llama al llegar al destino.
      * @returns {void}
      */
-    animarRetorno(destX, destY, duracionMs = 250, onFin = null) {
+    animarRetorno(destX, destY, duracionMs = 250) {
         this.estado = Ficha.ESTADOS.RETORNANDO;
         this.animacion = {
             x0: this.x,
@@ -125,16 +124,14 @@ class Ficha {
             x1: destX,
             y1: destY,
             inicio: performance.now(),
-            duracion: duracionMs,
-            onFin
+            duracion: duracionMs
         };
     }
 
     /**
      * Avanza la animación de retorno (se llama una vez por frame).
      * Cómo: interpola linealmente entre origen y destino con el progreso
-     * suavizado; al llegar fija el destino exacto, vuelve a "en tablero" y
-     * dispara el callback.
+     * suavizado; al llegar fija el destino exacto y vuelve a "en tablero".
      * @param {number} ahora Marca de tiempo actual (performance.now / rAF).
      * @returns {void}
      */
@@ -150,7 +147,6 @@ class Ficha {
         if (t >= 1) {
             this.animacion = null;
             this.estado = Ficha.ESTADOS.EN_TABLERO;
-            if (a.onFin) a.onFin();
         }
     }
 
