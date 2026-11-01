@@ -10,8 +10,22 @@
 
 .blocka {
     margin-top: 14px;
-    padding: 20px 24px 24px;
+    padding: 14px 24px 16px;
     border: 0;
+}
+
+@media (max-width: 700px) {
+    .blocka {
+        padding: 12px;
+    }
+
+    .blocka__hud {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .blocka__galeria {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 /* ---------- 2. BARRA DE ESTADO ---------- */
@@ -19,7 +33,7 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 12px;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .blocka__stat {
@@ -51,12 +65,27 @@
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     gap: 10px;
-    margin-bottom: 16px;
+    max-width: 420px; /* miniaturas chicas y centradas: no empujan el tablero fuera de pantalla */
+    margin: 0 auto 12px;
+}
+
+/* Se desvanecen pero siguen ocupando su lugar, así el layout no pega un salto */
+.blocka__miniaturas {
+    transition: opacity 700ms ease;
+}
+
+.blocka__miniaturas.is-oculta {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.blocka__controles [hidden] {
+    display: none;
 }
 
 .blocka__miniaturas img {
     width: 100%;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 1 / 1; /* cuadradas, como las piezas del tablero */
     border: 3px solid transparent;
     border-radius: 8px;
     object-fit: cover;
@@ -76,20 +105,52 @@
 .blocka__stage {
     display: grid;
     place-items: center;
-    min-height: 340px;
+    min-height: 240px;
     border-radius: 14px;
-    padding: 16px;
-    background: rgb(0 0 0 / 35%);
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.blocka__stage {
+    position: relative;
+}
+
+/* Aviso en el centro del área de juego */
+.blocka__aviso {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    padding: 24px;
+    background: rgb(0 0 0 / 78%);
+    color: var(--neon);
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    text-shadow: 0 0 12px var(--neon);
+}
+
+.blocka__aviso[hidden] {
+    display: none;
 }
 
 /* Las piezas son cuadradas: el alto sale de la proporción columnas:filas */
+/* 2 es el valor por defecto por si la variable no llega */
 .blocka__board {
     display: grid;
     grid-template-columns: repeat(var(--cols, 2), 1fr);
     grid-template-rows: repeat(var(--rows, 2), 1fr);
     gap: 3px;
-    width: min(100%, calc(var(--cols, 2) * 200px));
-    aspect-ratio: var(--cols, 2) / var(--rows, 2);
+    /* Además de 200px por pieza, el alto del tablero se limita al de la ventana
+       (menos HUD, miniaturas y controles) para que el juego entre sin scrollear */
+    width: min(
+        100%,
+        calc(var(--cols, 2) * 200px),
+        calc(max(300px, 100vh - 380px) * var(--cols, 2) / var(--rows, 2))
+    );
+    aspect-ratio: var(--cols, 2) / var(--rows, 2);/*Mantiene la proporción del tablero*/
     transition: gap 600ms ease;
 }
 

@@ -31,7 +31,7 @@
     <section id="juego" class="neon-panel blocka" aria-label="Juego Blocka">
       <!-- Barra de estado -->
       <div class="blocka__hud">
-        <div class="blocka__stat"><small>Nivel</small><strong id="blocka-nivel">1 / 3</strong></div>
+        <div class="blocka__stat"><small>Nivel</small><strong id="blocka-nivel">1 / 8</strong></div>
         <div class="blocka__stat"><small>Filtro</small><strong id="blocka-filtro">Escala de grises</strong></div>
         <div class="blocka__stat blocka__stat--tiempo"><small>Tiempo</small><strong id="blocka-tiempo">00:00</strong></div>
         <div class="blocka__stat"><small>Récord</small><strong id="blocka-record">--:--</strong></div>
@@ -43,6 +43,8 @@
       <!-- Tablero: el JS crea acá las piezas (canvas) -->
       <div class="blocka__stage">
         <div class="blocka__board" id="blocka-board" aria-label="Tablero de Blocka"></div>
+        <!-- Aviso centrado: solo en el nivel 2 (se acaban las miniaturas de ayuda) -->
+        <p class="blocka__aviso" id="blocka-aviso" role="alert" hidden></p>
       </div>
 
       <!-- Mensajes (inicio, victoria, derrota) -->
@@ -141,7 +143,7 @@
           <li><strong>Clic izquierdo</strong> sobre una pieza: la gira hacia la izquierda.</li>
           <li><strong>Clic derecho</strong> sobre una pieza: la gira hacia la derecha.</li>
           <li>Cuando todas las piezas estén derechas, el filtro desaparece y se frena el tiempo.</li>
-          <li>Superá los 3 niveles: escala de grises, brillo y negativo. ¡En los niveles 2 y 3 hay tiempo máximo!</li>
+          <li>Superá los 8 niveles: cada partida sortea al azar el filtro de cada nivel (escala de grises, brillo, negativo, sepia, alto contraste, posterizado y los canales rojo, verde y azul). ¡Cada nivel tiene menos tiempo máximo que el anterior!</li>
           <li>¿Trabado? La <strong>Ayudita</strong> acomoda una pieza y la deja fija, pero suma 5 segundos.</li>
         </ol>
       </div>

@@ -21,15 +21,22 @@
     ];
 
     // limite = segundos máximos (0 = sin límite)
+    // penalizacion = segundos que suma la ayudita en ese nivel
+    // El filtro de cada nivel se sortea al volver al menú (ver sortearFiltros)
     const NIVELES = [
-        { filtro: "grises", nombre: "Escala de grises", limite: 0 },
-        { filtro: "brillo", nombre: "Brillo 30%", limite: 120 },
-        { filtro: "negativo", nombre: "Negativo", limite: 90 }
+        { limite: 0, penalizacion: 5 },
+        { limite: 160, penalizacion: 10 },
+        { limite: 140, penalizacion: 15 },
+        { limite: 120, penalizacion: 20 },
+        { limite: 100, penalizacion: 25 },
+        { limite: 80, penalizacion: 30 },
+        { limite: 70, penalizacion: 35 },
+        { limite: 60, penalizacion: 40 }
     ];
 
     const GRILLAS = { 4: [2, 2], 6: [3, 2], 8: [4, 2] }; // [columnas, filas]
-    const TAM = 200;          // lado en px del canvas de cada pieza
-    const PENALIZACION = 5;   // segundos que suma la ayudita
+    const PAUSA_AVISO = 3000; // ms que se lee el aviso "sin pistas" antes de arrancar
+    const TAM = 200;         // lado en px del canvas de cada pieza
 
     // ---------- ELEMENTOS ----------
     const tablero = document.getElementById("blocka-board");
@@ -45,11 +52,13 @@
     const btnMenu = document.getElementById("blocka-menu");
 
     // Miniaturas de todo el banco (se muestran en la animación de selección)
+    const elAviso = document.getElementById("blocka-aviso");
+    const elMiniaturas =document.getElementById("blocka-miniaturas");
     const miniaturas = IMAGENES.map((src) => {
         const mini = document.createElement("img");
         mini.src = src;
         mini.alt = "";
-        document.getElementById("blocka-miniaturas").appendChild(mini);
+        elMiniaturas.appendChild(mini);
         return mini;
     });
 
@@ -58,11 +67,13 @@
     let imagen = null;
     let piezas = [];      // cada una: { canvas, col, fila, rot, fija }
     let jugando = false;
+    let usosAyuda = 0;    // veces que se usó la ayudita en el nivel actual
     let segundos = 0;
     let reloj = null;
 
     // ---------- FILTROS (píxel a píxel) ----------
     // Cada filtro modifica R, G y B del píxel que empieza en la posición i
+    //solo_verde(data, i) { data[i] = 0; data[i + 2] = 0; }
     const FILTROS = {
         grises(data, i) {
             const gris = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
@@ -77,8 +88,48 @@
             data[i] = 255 - data[i];
             data[i + 1] = 255 - data[i + 1];
             data[i + 2] = 255 - data[i + 2];
+        },
+        sepia(data, i) {
+            const r = data[i], g = data[i + 1], b = data[i + 2];
+            data[i] = Math.min(255, 0.393 * r + 0.769 * g + 0.189 * b);
+            data[i + 1] = Math.min(255, 0.349 * r + 0.686 * g + 0.168 * b);
+            data[i + 2] = Math.min(255, 0.272 * r + 0.534 * g + 0.131 * b);
+        },
+        contraste(data, i) {
+            for (let c = 0; c < 3; c++) {
+                data[i + c] = Math.max(0, Math.min(255, (data[i + c] - 128) * 1.8 + 128));
+            }
+        },
+        rojo(data, i) { data[i + 1] = 0; data[i + 2] = 0; },
+        verde(data, i) { data[i] = 0; data[i + 2] = 0; },
+        azul(data, i) { data[i] = 0; data[i + 1] = 0; },
+        posterizado(data, i) {
+            // Reduce cada canal a 4 tonos
+            for (let c = 0; c < 3; c++) data[i + c] = Math.round(data[i + c] / 85) * 85;
         }
     };
+
+    const NOMBRES_FILTRO = {
+        grises: "Escala de grises",
+        brillo: "Brillo 30%",
+        negativo: "Negativo",
+        sepia: "Sepia",
+        contraste: "Alto contraste",
+        rojo: "Solo rojo",
+        verde: "Solo verde",
+        azul: "Solo azul",
+        posterizado: "Posterizado"
+    };
+
+    // Mezcla (Fisher-Yates) los filtros: cada nivel recibe uno distinto al azar
+    let filtrosDelJuego = [];
+    function sortearFiltros() {
+        filtrosDelJuego = Object.keys(FILTROS);
+        for (let i = filtrosDelJuego.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [filtrosDelJuego[i], filtrosDelJuego[j]] = [filtrosDelJuego[j], filtrosDelJuego[i]];
+        }
+    }
 
     function aplicarFiltro(canvas, nombre) {
         const ctx = canvas.getContext("2d");
@@ -133,7 +184,7 @@
                 fija: false
             };
             dibujarPieza(pieza, cols, filas);
-            aplicarFiltro(canvas, NIVELES[nivel].filtro);
+            aplicarFiltro(canvas, filtrosDelJuego[nivel]);
             girar(pieza, 0);
 
             canvas.addEventListener("click", () => girar(pieza, -90));       // izquierdo: izquierda
@@ -158,7 +209,7 @@
     }
 
     // Extra 1: animación previa. Se resalta una miniatura tras otra, cada vez
-    // más lejos, hasta frenar en la imagen elegida al azar del banco.
+    // recorre las miniaturas a velocicdad constante, hasta frenar en la imagen elegida al azar del banco.
     function elegirImagen(alTerminar) {
         const elegida = Math.floor(Math.random() * IMAGENES.length);
         const pasos = IMAGENES.length * 2 + elegida; // dos vueltas y frena en la elegida
@@ -174,29 +225,52 @@
         }, 150);
     }
 
+    // hasta aca llegue bRANDON
     function comenzar() {
-        btnComenzar.disabled = true;
-        selPiezas.disabled = true;
+        // Al comenzar el nivel desaparecen el selector de piezas y el botón Comenzar
+        btnComenzar.hidden = true;
+        selPiezas.parentElement.hidden = true;
         btnSiguiente.hidden = true;
         btnMenu.hidden = true;
         tablero.innerHTML = "";
+
+        // La animación se muestra en todos los niveles; desde el nivel 2 las
+        // miniaturas se desvanecen al terminar y se avisa que ya no hay ayuda
+        const sinMiniaturas = nivel >= 1;
+        usosAyuda = 0;
+        elMiniaturas.classList.remove("is-oculta");
         elMensaje.textContent = "Eligiendo imagen al azar...";
 
         elegirImagen((indice) => {
             const img = new Image();
             img.onload = () => {
-                imagen = img;
-                armarTablero();
-                segundos = 0;
-                jugando = true;
-                elMensaje.textContent = "¡Armá la imagen!";
-                btnAyuda.disabled = false;
-                mostrarRecord();
-                mostrarTiempo();
-                reloj = setInterval(avanzarTiempo, 1000);
+                elMiniaturas.classList.toggle("is-oculta", sinMiniaturas);
+                if (nivel === 1) {
+                    // Solo en el nivel 2: aviso centrado ANTES de que arranque (el reloj todavía no corre)
+                    elAviso.textContent = "Desde acá ya no hay miniaturas de ayuda. ¡Armá la imagen sin pistas!";
+                    elAviso.hidden = false;
+                    setTimeout(() => {
+                        elAviso.hidden = true;
+                        iniciarNivel(img);
+                    }, PAUSA_AVISO);
+                } else {
+                    iniciarNivel(img);
+                }
             };
             img.src = IMAGENES[indice];
         });
+    }
+
+    function iniciarNivel(img) {
+        imagen = img;
+        armarTablero();
+        segundos = 0;
+        jugando = true;
+        elMensaje.textContent = "¡Armá la imagen!";
+        btnAyuda.disabled = false;
+        mostrarRecord();
+        mostrarTiempo();
+        reloj = setInterval(avanzarTiempo, 1000);
     }
 
     function terminar(mensaje) {
@@ -216,23 +290,27 @@
         guardarRecord();
         terminar(`¡Nivel superado en ${formatear(segundos)}!`);
         if (nivel < NIVELES.length - 1) btnSiguiente.hidden = false;
-        else elMensaje.textContent += " ¡Completaste los 3 niveles!";
+        else elMensaje.textContent += ` ¡Completaste los ${NIVELES.length} niveles!`;
     }
 
     function perder() {
         terminar("¡Se acabó el tiempo! Perdiste el nivel.");
-        btnComenzar.disabled = false;
+        btnComenzar.hidden = false;
         btnComenzar.textContent = "Reintentar";
     }
 
-    // Ayudita: deja una pieza bien puesta y fija, y suma 5 segundos
+    // Desde el nivel 5 la ayudita se puede usar una sola vez por nivel
+    const NIVEL_AYUDA_LIMITADA = 4; // índice del nivel 5
+    const usosMaximos = () => (nivel >= NIVEL_AYUDA_LIMITADA ? 1 : Infinity);
+
+    // Ayudita: deja una pieza bien puesta y fija, y suma segundos de penalización
     function ayudita() {
         const mal = piezas.filter((p) => !estaBien(p));
-        if (!jugando || mal.length === 0) return;
+        if (!jugando || mal.length === 0 || usosAyuda >= usosMaximos()) return;
 
         const pieza = mal[Math.floor(Math.random() * mal.length)];
         // La penalización se suma antes de girar: si era la última pieza, girar() ya gana el nivel
-        segundos += PENALIZACION;
+        segundos += NIVELES[nivel].penalizacion;
         mostrarTiempo();
 
         // fija se activa después de girar, porque girar() ignora las piezas fijas
@@ -240,6 +318,8 @@
         girar(pieza, 0);
         pieza.fija = true;
         pieza.canvas.classList.add("is-fija");
+        usosAyuda++;
+        if (usosAyuda >= usosMaximos()) btnAyuda.disabled = true;
     }
 
     // ---------- TIEMPO Y RÉCORD ----------
@@ -261,7 +341,7 @@
         const limite = NIVELES[nivel].limite;
         elTiempo.textContent = formatear(limite ? Math.max(limite - segundos, 0) : segundos);
     }
-
+    //hasta aca llegue BRANDON
     const claveRecord = () => `blocka-n${nivel + 1}-p${selPiezas.value}`;
 
     function mostrarRecord() {
@@ -280,7 +360,9 @@
     // ---------- NIVELES Y MENÚ ----------
     function mostrarNivel() {
         elNivel.textContent = `${nivel + 1} / ${NIVELES.length}`;
-        elFiltro.textContent = NIVELES[nivel].nombre;
+        elFiltro.textContent = NOMBRES_FILTRO[filtrosDelJuego[nivel]];
+        btnAyuda.textContent = `Ayudita (+${NIVELES[nivel].penalizacion} s)`
+            + (nivel >= NIVEL_AYUDA_LIMITADA ? " · 1 uso" : "");
         mostrarRecord();
     }
 
@@ -295,13 +377,16 @@
         jugando = false;
         nivel = 0;
         segundos = 0;
+        sortearFiltros();
         tablero.innerHTML = "";
+        elMiniaturas.classList.remove("is-oculta");
+        elAviso.hidden = true;
         mostrarNivel();
         mostrarTiempo();
         elMensaje.textContent = "Elegí la cantidad de piezas y presioná Comenzar.";
         btnComenzar.textContent = "Comenzar";
-        btnComenzar.disabled = false;
-        selPiezas.disabled = false;
+        btnComenzar.hidden = false;
+        selPiezas.parentElement.hidden = false;
         btnAyuda.disabled = true;
         btnSiguiente.hidden = true;
         btnMenu.hidden = true;
