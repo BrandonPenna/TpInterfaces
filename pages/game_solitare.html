@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="../css/header.css" />
   <link rel="stylesheet" href="../css/footer.css" />
   <link rel="stylesheet" href="../css/game.css" />
+  <link rel="stylesheet" href="../css/solitaire.css" />
   <link rel="icon" type="image/png" href="../assets/icons/logo.png">
 </head>
 
@@ -25,42 +26,46 @@
   <div class="page-shell">
     <!-- ---------- BREADCRUMBS ---------- -->
     <nav class="breadcrumbs" aria-label="Navegación">
-      <a href="#juego">Juegos</a>
+      <a href="../index.html">Juegos</a>
       <img src="../assets/games/30dee.svg" alt="" />
       <a href="#imagenes">Más Jugados</a>
       <img src="../assets/games/07fa4.svg" alt="" />
       <span>Peg solitaire - CyberPunk</span>
     </nav>
 
-    <!-- ---------- HERO / IMAGEN PRINCIPAL ---------- -->
-    <!-- Simula un reproductor: botón "Jugar" en el centro y, al pasar el
-         mouse, controles de volumen y pantalla completa abajo a la derecha.
-         Son decorativos: se pueden clickear pero no hacen nada. -->
-    <section id="juego" class="hero" aria-label="Peg Solitaire">
-      <img
-              src="../assets/games/juegos-momento/peg-solitaire.webp"
-              alt="Tablero luminoso de Peg Solitaire CyberPunk"
-      />
+    <!-- ---------- LUGAR DE EJECUCIÓN (CANVAS) ---------- -->
+    <!-- Reemplaza al hero decorativo. El canvas tiene tamaño lógico fijo
+         (1400x853, igual que la imagen de fondo) y el CSS lo escala sin generar scrollbars (css/solitaire.css). -->
+    <section id="juego" class="solitaire" aria-label="Peg Solitaire">
+      <!-- Barra de estado y controles -->
+      <div class="solitaire__hud">
+        <div class="solitaire__stat"><small>Fichas</small><strong id="solitaire-fichas">32</strong></div>
+        <div class="solitaire__stat solitaire__stat--tiempo"><small>Tiempo</small><strong id="solitaire-tiempo">05:00</strong></div>
 
-      <button class="hero__play" type="button">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
-        Jugar
-      </button>
+        <label class="solitaire__campo">
+          Ficha
+          <select id="solitaire-skin">
+            <option value="0" selected>Estilo 1</option>
+            <option value="1">Estilo 2</option>
+            <option value="2">Estilo 3</option>
+          </select>
+        </label>
 
-      <div class="hero__controls">
-        <button class="hero__control" type="button" aria-label="Volumen">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M3 9v6h4l5 5V4L7 9H3z" />
-            <path d="M16.5 12a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z" />
-          </svg>
-        </button>
+        <label class="solitaire__campo">
+          Tiempo límite
+          <select id="solitaire-limite">
+            <option value="180">3 minutos</option>
+            <option value="300" selected>5 minutos</option>
+            <option value="600">10 minutos</option>
+          </select>
+        </label>
 
-        <button class="hero__control" type="button" aria-label="Pantalla completa">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" />
-          </svg>
-        </button>
+        <button class="solitaire__btn" type="button" id="solitaire-reiniciar">Reiniciar</button>
       </div>
+
+      <!-- Canvas del juego -->
+      <canvas id="solitaire-canvas" class="solitaire__canvas" width="1400" height="853"
+              aria-label="Tablero de Peg Solitaire"></canvas>
     </section>
 
     <!-- ---------- COMPARTIR + VALORACIÓN ---------- -->
@@ -169,11 +174,34 @@
         <h2 class="section-title">¿Cómo Jugar?</h2>
         <ol>
           <li>
-            Saltá una ficha en vertical u horizontal sobre otra hacia un
-            espacio vacío.
+            <strong>Agarrá una ficha</strong> haciendo click sobre ella y
+            mantené el botón apretado. Aparecen <strong>hints animados</strong>
+            (halos que pulsan y flechas flotantes) en los casilleros donde
+            puede caer.
           </li>
-          <li>La ficha saltada se elimina del tablero.</li>
-          <li>¡El objetivo es dejar una sola ficha en el centro!</li>
+          <li>
+            <strong>Arrastrá y soltá</strong> la ficha sobre uno de esos
+            casilleros: salta en vertical u horizontal sobre una ficha vecina
+            hacia un espacio vacío, y la ficha saltada se elimina.
+          </li>
+          <li>
+            Si soltás en un lugar donde el salto no es válido, la ficha
+            vuelve sola a su casillero.
+          </li>
+          <li>
+            El <strong>tiempo</strong> empieza a correr con tu primer click y
+            se puede elegir el límite (3, 5 o 10 minutos). Si llega a cero,
+            perdés.
+          </li>
+          <li>
+            La partida termina cuando queda <strong>una sola ficha</strong>
+            (¡victoria, y mejor aún si es en el centro!) o cuando ya no hay
+            movimientos posibles.
+          </li>
+          <li>
+            Podés cambiar el color de las fichas en cualquier momento y usar
+            <strong>Reiniciar</strong> para volver a empezar.
+          </li>
         </ol>
       </div>
     </section>
@@ -308,6 +336,12 @@
 
 <script src="../js/main.js" defer></script>
 <script src="../js/menu-hambur.js" defer></script>
+<script src="../js/solitaire/Timer.js" defer></script>
+<script src="../js/solitaire/Ficha.js" defer></script>
+<script src="../js/solitaire/Hint.js" defer></script>
+<script src="../js/solitaire/Tablero.js" defer></script>
+<script src="../js/solitaire/Juego.js" defer></script>
+<script src="../js/solitaire/main-solitaire.js" defer></script>
 <script src="../js/comments.js" defer></script>
 <script src="../js/share.js" defer></script>
 </body>

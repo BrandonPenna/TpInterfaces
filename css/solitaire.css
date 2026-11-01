@@ -1,0 +1,274 @@
+/* ============================================================
+   PEG SOLITAIRE | Estilos del canvas y controles
+   (pages/game_solitare.html). Complementa a game.css, que no se toca.
+
+   Garantía "sin scrollbars a 1920x1080":
+   - El canvas tiene tamaño lógico fijo (1400x853, la misma relación que la imagen de fondo) y se
+     escala solo por CSS, así el dibujo no cambia, únicamente su tamaño.
+   - Su alto nunca supera 100dvh - 304px: 232px que ya reservaba el hero
+     original (header, migas, fila de compartir) + 72px de la barra HUD.
+     Por eso el juego completo entra en pantalla sin desplazarse.
+   - Nada del juego es más grande que su contenedor, así que no aparecen
+     barras de desplazamiento propias (el brillo de los botones es sombra,
+     no ocupa espacio).
+   ============================================================ */
+
+/* ---------- 1. CONTENEDOR ---------- */
+.solitaire {
+    --alto-canvas: max(320px, calc(100vh - 304px));   /* respaldo sin dvh */
+    --alto-canvas: max(320px, calc(100dvh - 304px));
+    --radio-esquina: 28px;     /* esquinas bien redondeadas: canvas y contenedor */
+    --radio-control: 16px;     /* tarjetas, selectores y botón del HUD */
+    /* Sin overflow: hidden para que el resplandor de los botones no se recorte */
+    width: 100%;
+    border-radius: var(--radio-esquina);
+}
+
+/* ---------- 2. BARRA DE ESTADO Y CONTROLES ---------- */
+/* Todas las tarjetas comparten alto (--alto-control) y estilo glassmorphism.
+   La barra mide 72px: 48px de control + 12px de aire arriba y abajo. */
+.solitaire__hud {
+    --alto-control: 48px;
+    position: relative;
+    z-index: 1;            /* el brillo de los controles se ve por encima del canvas */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    height: 72px;          /* alto fijo: entra en el cálculo de --alto-canvas */
+    padding: 0 12px;
+}
+
+/* Estilo glass común: tarjetas de estado, campos con select y botón.
+   Borde con el color del estilo de ficha elegido (--color-estilo, lo pone Juego.js
+   en .solitaire y lo heredan los controles y el marco del canvas); mientras
+   no hay estilo usa el verde neón del sitio (var(--neon)). */
+.solitaire__stat,
+.solitaire__campo,
+.solitaire__btn {
+    box-sizing: border-box;
+    height: var(--alto-control);
+    border: 1px solid var(--color-estilo, var(--neon));
+    border-radius: var(--radio-control);
+    background: rgba(10, 15, 25, 0.75);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    outline: none;                         /* el foco se muestra con sombra (ver abajo) */
+    -webkit-tap-highlight-color: transparent;
+    transition: box-shadow 200ms ease, border-color 250ms ease, transform 200ms ease;
+}
+
+/* Hover y foco: mismo resplandor neón que sigue la forma redondeada de la tarjeta
+   (a diferencia del recuadro por defecto del navegador, no se corta ni se ve cuadrado) */
+.solitaire__stat:hover,
+.solitaire__campo:hover,
+.solitaire__campo:focus-within,
+.solitaire__btn:hover,
+.solitaire__btn:focus-visible {
+    box-shadow: 0 0 12px var(--color-estilo, var(--neon)),
+                inset 0 0 8px color-mix(in srgb, var(--color-estilo, var(--neon)) 25%, transparent);
+}
+
+/* Tarjetas de estado (Fichas / Tiempo): etiqueta chica + valor */
+.solitaire__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    min-width: 96px;
+    padding: 0 16px;
+    text-align: center;
+}
+
+.solitaire__stat small {
+    color: #8fa3b5;
+    font-size: 11px;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.solitaire__stat strong {
+    font-size: 18px;
+    line-height: 1.1;
+    letter-spacing: 1px;
+}
+
+.solitaire__stat--tiempo strong {
+    color: var(--neon);
+    text-shadow: 0 0 10px currentColor;
+}
+
+/* Tiempo en rojo cuando quedan pocos segundos (clase la pone Juego.js) */
+.solitaire__stat--tiempo.is-urgente strong {
+    color: #ff4d6d;
+}
+
+/* Campo = etiqueta + select dentro de la MISMA tarjeta: se leen como un solo control */
+.solitaire__campo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 8px 0 16px;
+    color: #8fa3b5;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.solitaire__campo select {
+    appearance: none;
+    -webkit-appearance: none;
+    height: 100%;
+    border: 0;
+    outline: none;         /* el foco lo muestra la tarjeta entera (:focus-within) */
+    padding: 0 26px 0 4px;
+    background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%2339ff14' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 6px center / 12px 8px;
+    color: #fff;
+    font: inherit;
+    font-size: 15px;
+    text-transform: none;
+    letter-spacing: 0;
+    cursor: pointer;
+}
+
+.solitaire__campo select option {
+    background: #0a0f19;
+    color: #fff;
+}
+
+/* Lista desplegable personalizada (Chrome/Edge 135+). La lista nativa la dibuja el
+   sistema y no se puede redondear; con appearance: base-select sí. Si el navegador
+   no lo soporta, este bloque se ignora y queda la lista nativa de siempre. */
+@supports (appearance: base-select) {
+    .solitaire__campo select,
+    .solitaire__campo select::picker(select) {
+        appearance: base-select;
+    }
+
+    /* Botón del select: sin la flecha de imagen, la dibuja ::picker-icon con el color del estilo */
+    .solitaire__campo select {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 4px;
+        background: transparent;
+    }
+
+    .solitaire__campo select::picker-icon {
+        color: var(--color-estilo, var(--neon));
+        transition: rotate 200ms ease;
+    }
+
+    .solitaire__campo select:open::picker-icon {
+        rotate: 180deg;
+    }
+
+    /* Panel de opciones: vidrio oscuro, esquinas redondeadas y borde neón del estilo */
+    .solitaire__campo select::picker(select) {
+        box-sizing: border-box;
+        min-width: 160px;
+        margin-top: 8px;
+        padding: 6px;
+        border: 1px solid var(--color-estilo, var(--neon));
+        border-radius: 18px;
+        background: rgba(10, 15, 25, 0.92);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6),
+                    0 0 14px color-mix(in srgb, var(--color-estilo, var(--neon)) 40%, transparent);
+        font-size: 15px;
+        text-transform: none;
+        letter-spacing: 0;
+        /* Entrada suave: aparece desde arriba */
+        opacity: 1;
+        transform: translateY(0);
+        transition: opacity 160ms ease, transform 160ms ease,
+                    display 160ms allow-discrete, overlay 160ms allow-discrete;
+    }
+
+    @starting-style {
+        .solitaire__campo select::picker(select):popover-open {
+            opacity: 0;
+            transform: translateY(-6px);
+        }
+    }
+
+    /* Opciones: píldoras redondeadas */
+    .solitaire__campo select option {
+        padding: 10px 16px;
+        border-radius: 12px;
+        background: transparent;
+        color: #fff;
+        cursor: pointer;
+        transition: background-color 150ms ease;
+    }
+
+    .solitaire__campo select option + option {
+        margin-top: 2px;
+    }
+
+    .solitaire__campo select option:hover,
+    .solitaire__campo select option:focus {
+        background: color-mix(in srgb, var(--color-estilo, var(--neon)) 24%, transparent);
+    }
+
+    /* La opción elegida va con el color del estilo y sin la tilde por defecto */
+    .solitaire__campo select option:checked {
+        color: var(--color-estilo, var(--neon));
+        font-weight: 700;
+    }
+
+    .solitaire__campo select option::checkmark {
+        display: none;
+    }
+}
+
+.solitaire__btn {
+    padding: 0 26px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.solitaire__btn:hover {
+    transform: translateY(-2px);
+}
+
+.solitaire__btn:active {
+    transform: translateY(0) scale(0.97);
+}
+
+/* ---------- 3. CANVAS ---------- */
+.solitaire__canvas {
+    display: block;
+    overflow: hidden;
+    /* Misma relación que el tamaño lógico (1400/853); el ancho sale del alto disponible */
+    width: min(100%, calc(var(--alto-canvas) * 1.641));
+    aspect-ratio: 1400 / 853;
+    margin: 0 auto;
+    border-radius: var(--radio-esquina);
+    /* Marco neón con el color del estilo de ficha elegido (--color-estilo lo pone Juego.js;
+       verde del sitio mientras carga). Va hacia adentro (outline) para que no se recorte. */
+    outline: 2px solid var(--color-estilo, #39ff14);
+    outline-offset: -2px;
+    box-shadow: 0 0 18px color-mix(in srgb, var(--color-estilo, #39ff14) 45%, transparent);
+    transition: box-shadow 250ms ease;
+    background: #05060f;      /* color de espera hasta que carga el fondo */
+    cursor: grab;
+    user-select: none;
+}
+
+/* Cursor de "agarrando" mientras se arrastra una ficha (clase de Juego.js) */
+.solitaire__canvas.is-arrastrando {
+    cursor: grabbing;
+}
+
+/* Manito cuando el cursor está sobre el botón "Reiniciar" del cartel de fin (clase de Juego.js) */
+.solitaire__canvas.is-boton {
+    cursor: pointer;
+}
