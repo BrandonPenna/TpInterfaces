@@ -46,6 +46,8 @@ class Ficha {
         this.offsetY = 0;
         /** @type {{x0:number,y0:number,x1:number,y1:number,inicio:number,duracion:number}|null} */
         this.animacion = null;
+        /** @type {boolean} true si es la ficha dorada de la partida (la elige Juego). */
+        this.dorada = false;
     }
 
     /**
@@ -172,6 +174,18 @@ class Ficha {
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = levantada ? 18 : 8;
         ctx.drawImage(this.imagen, this.x - lado / 2, this.y - lado / 2, lado, lado);
+
+        // Ficha dorada: anillo dorado brillante alrededor de la imagen
+        if (this.dorada) {
+            ctx.shadowColor = "#ffd700";
+            ctx.shadowBlur = 16;
+            ctx.shadowOffsetY = 0;
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = "#ffd700";
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, lado / 2 + 2, 0, Math.PI * 2);
+            ctx.stroke();
+        }
         ctx.restore();
     }
 }

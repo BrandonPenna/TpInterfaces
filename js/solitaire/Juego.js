@@ -35,11 +35,17 @@ class Juego {
     /** Ruta de la imagen de fondo del tablero. */
     static FONDO = "../assets/solitaire/fondo.webp";
 
+    /** Segundos extra que da cada salto hecho con la ficha dorada. */
+    static BONUS_DORADA = 10;
+
+    /** Cantidad de veces que se puede usar "Deshacer" por partida. */
+    static USOS_DESHACER = 3;
+
     /**
      * Crea el juego a partir de los elementos del DOM (no arranca solo: llamar a iniciar()).
      * @param {{canvas: HTMLCanvasElement, elFichas: HTMLElement, elTiempo: HTMLElement,
      *          selSkin: HTMLSelectElement, selLimite: HTMLSelectElement,
-     *          btnReiniciar: HTMLButtonElement}} refs Elementos que usa el juego.
+     *          btnReiniciar: HTMLButtonElement, btnDeshacer: HTMLButtonElement}} refs Elementos que usa el juego.
      */
     constructor(refs) {
         /** @type {HTMLCanvasElement} */
@@ -51,6 +57,16 @@ class Juego {
         this.selSkin = refs.selSkin;
         this.selLimite = refs.selLimite;
         this.btnReiniciar = refs.btnReiniciar;
+        this.btnDeshacer = refs.btnDeshacer;
+
+        /** @type {string} Forma del tablero elegida (clave de Tablero.FORMAS). */
+        this.forma = "normal";
+        /** @type {{matriz: number[][], dorada: ?{fila: number, col: number}}[]} Estados anteriores, para "Deshacer". */
+        this.historial = [];
+        /** @type {number} Usos de "Deshacer" que le quedan a la partida. */
+        this.deshacerRestantes = Juego.USOS_DESHACER;
+        /** @type {?{x: number, y: number, desde: number}} Texto "+10 s" flotante tras saltar con la dorada. */
+        this.bonus = null;
 
         /** @type {string} Uno de Juego.ESTADOS. */
         this.estado = Juego.ESTADOS.CARGANDO;
@@ -139,15 +155,20 @@ class Juego {
     }
 
     /**
-     * Restablece todo: tablero, fichas, hints, timer y HUD.
-     * Cómo: reinicia la matriz, vuelve a generar las fichas, detiene el timer
+     * Restablece todo: tablero, fichas, ficha dorada, deshacer, hints, timer y HUD.
+     * Cómo: reinicia la matriz con la forma elegida (y un hueco al azar), vuelve
+     * a generar las fichas, elige la dorada, vacía el historial, detiene el timer
      * y lo deja con el límite elegido; el timer vuelve a arrancar con el primer click.
      * @returns {void}
      */
     reiniciar() {
-        this.tablero.inicializar();
+        this.tablero.inicializar(this.forma);
         this.limpiarSeleccion();
         this.crearFichas();
+        this.elegirDorada();
+        this.historial = [];
+        this.deshacerRestantes = Juego.USOS_DESHACER;
+        this.bonus = null;
         this.aplicarColorEstilo();
         this.botonFin = null;
         this.hoverBotonFin = false;
@@ -155,6 +176,87 @@ class Juego {
         this.estado = Juego.ESTADOS.JUGANDO;
         this.timerArrancado = false;
         this.timer.reiniciar(this.limiteSegundos()); // frena la cuenta y refresca el HUD
+        this.actualizarBotonDeshacer();
+    }
+
+    /**
+     * Cambia la forma del tablero y arranca una partida nueva con ella.
+     * @param {string} forma Clave de Tablero.FORMAS ("normal", "triangulo", "diamante" o "flecha").
+     * @returns {void}
+     */
+    cambiarForma(forma) {
+        this.forma = forma;
+        this.reiniciar();
+    }
+
+    /**
+     * Elige al azar una de las fichas y la convierte en la ficha dorada.
+     * @returns {void}
+     */
+    elegirDorada() {
+        const elegida = this.fichas[Math.floor(Math.random() * this.fichas.length)];
+        if (elegida) elegida.dorada = true;
+    }
+
+    /**
+     * Posición actual de la ficha dorada.
+     * @returns {?{fila: number, col: number}} Su casillero, o null si ya fue eliminada.
+     */
+    posicionDorada() {
+        const dorada = this.fichas.find((f) => f.dorada);
+        return dorada ? { fila: dorada.fila, col: dorada.col } : null;
+    }
+
+    /**
+     * Vuelve el tablero al estado anterior al último salto (máximo 3 veces por partida).
+     * Cómo: saca del historial la última copia guardada de la matriz, la vuelve
+     * a poner en el tablero, recrea las fichas y marca de nuevo la dorada en su
+     * lugar. Si la partida había terminado "sin movimientos", la reanuda.
+     * @returns {void}
+     */
+    deshacer() {
+        if (!this.puedeDeshacer()) return;
+        const anterior = this.historial.pop();
+        this.deshacerRestantes--;
+
+        this.tablero.matriz = anterior.matriz;
+        this.limpiarSeleccion();
+        this.crearFichas();
+        const dorada = anterior.dorada &&
+            this.fichas.find((f) => f.fila === anterior.dorada.fila && f.col === anterior.dorada.col);
+        if (dorada) dorada.dorada = true;
+
+        // Si no quedaban jugadas, al deshacer se puede seguir jugando
+        if (this.estado === Juego.ESTADOS.SIN_MOVIMIENTOS) {
+            this.estado = Juego.ESTADOS.JUGANDO;
+            this.botonFin = null;
+            this.hoverBotonFin = false;
+            this.canvas.classList.remove("is-boton");
+            this.timer.iniciar();
+        }
+        this.actualizarHUD();
+        this.actualizarBotonDeshacer();
+    }
+
+    /**
+     * Indica si en este momento se puede usar "Deshacer".
+     * @returns {boolean} true si quedan usos, hay un salto para deshacer y la
+     *          partida sigue en juego (o terminó por falta de movimientos).
+     */
+    puedeDeshacer() {
+        const E = Juego.ESTADOS;
+        return this.deshacerRestantes > 0 && this.historial.length > 0 &&
+            (this.estado === E.JUGANDO || this.estado === E.SIN_MOVIMIENTOS);
+    }
+
+    /**
+     * Refresca el botón "Deshacer": muestra los usos que quedan y lo
+     * deshabilita cuando no se puede usar.
+     * @returns {void}
+     */
+    actualizarBotonDeshacer() {
+        this.btnDeshacer.textContent = `Deshacer (${this.deshacerRestantes})`;
+        this.btnDeshacer.disabled = !this.puedeDeshacer();
     }
 
     /**
@@ -223,6 +325,7 @@ class Juego {
         window.addEventListener("mouseup", () => this.alSoltar());
 
         this.btnReiniciar.addEventListener("click", () => this.reiniciar());
+        this.btnDeshacer.addEventListener("click", () => this.deshacer());
         this.selLimite.addEventListener("change", () => this.reiniciar());
         this.selSkin.addEventListener("change", () => {
             const imagen = this.imagenesSkin[this.skinActual()];
@@ -348,13 +451,20 @@ class Juego {
     }
 
     /**
-     * Aplica un salto válido: actualiza la matriz, mueve la ficha, quita la
-     * saltada y comprueba si terminó la partida.
+     * Aplica un salto válido: guarda el estado anterior (para "Deshacer"),
+     * actualiza la matriz, mueve la ficha, quita la saltada, da el premio si
+     * saltó la dorada y comprueba si terminó la partida.
      * @param {Ficha} ficha Ficha que saltó.
      * @param {object} movimiento Movimiento devuelto por Tablero.esMovimientoValido().
      * @returns {void}
      */
     ejecutarSalto(ficha, movimiento) {
+        // Copia de la matriz (fila por fila) y de dónde estaba la dorada antes del salto
+        this.historial.push({
+            matriz: this.tablero.matriz.map((fila) => [...fila]),
+            dorada: this.posicionDorada()
+        });
+
         this.tablero.aplicarSalto(movimiento);
         this.fichas = this.fichas.filter(
             (f) => !(f.fila === movimiento.saltadaFila && f.col === movimiento.saltadaCol)
@@ -365,8 +475,15 @@ class Juego {
         ficha.col = movimiento.destCol;
         ficha.animarRetorno(destino.x, destino.y, 140); // desliza al casillero final
 
+        // Premio de la ficha dorada: segundos extra y un "+10 s" flotante
+        if (ficha.dorada) {
+            this.timer.agregarSegundos(Juego.BONUS_DORADA);
+            this.bonus = { x: destino.x, y: destino.y, desde: performance.now() };
+        }
+
         this.actualizarHUD();
         this.evaluarFin();
+        this.actualizarBotonDeshacer();
     }
 
     /**
@@ -401,6 +518,7 @@ class Juego {
         this.estado = motivo;
         this.finDesde = performance.now();   // arranca la animación de entrada del cartel
         this.actualizarHUD();
+        this.actualizarBotonDeshacer();
     }
 
     /**
@@ -436,10 +554,36 @@ class Juego {
         this.fichas.forEach((f) => f.actualizar(ahora));
         this.fichas.filter((f) => f !== this.fichaActiva).forEach((f) => f.draw(ctx));
         if (this.fichaActiva) this.fichaActiva.draw(ctx);
+        this.dibujarBonus(ctx, ahora);
 
         if (this.estado !== Juego.ESTADOS.JUGANDO) this.dibujarOverlay(ctx, ahora);
 
         requestAnimationFrame(this.loop);
+    }
+
+    /**
+     * Dibuja el texto "+10 s" que sube y se desvanece durante 1 segundo
+     * después de saltar con la ficha dorada.
+     * @param {CanvasRenderingContext2D} ctx Contexto 2D del canvas.
+     * @param {number} ahora Marca de tiempo del frame.
+     * @returns {void}
+     */
+    dibujarBonus(ctx, ahora) {
+        if (!this.bonus) return;
+        const t = (ahora - this.bonus.desde) / 1000;   // progreso de 0 a 1
+        if (t >= 1) {
+            this.bonus = null;
+            return;
+        }
+        ctx.save();
+        ctx.globalAlpha = 1 - t;
+        ctx.fillStyle = "#ffd700";
+        ctx.shadowColor = "#ffd700";
+        ctx.shadowBlur = 12;
+        ctx.font = `800 34px ${this.fuente}`;
+        ctx.textAlign = "center";
+        ctx.fillText(`+${Juego.BONUS_DORADA} s`, this.bonus.x, this.bonus.y - 50 - t * 40);
+        ctx.restore();
     }
 
     /**
@@ -473,13 +617,12 @@ class Juego {
     textoFin() {
         const E = Juego.ESTADOS;
         if (this.estado === E.VICTORIA) {
+            const dorada = this.fichas.some((f) => f.dorada);   // la única que queda es la dorada
             const centro = this.tablero.getEstado(3, 3) === Tablero.ESTADOS.FICHA;
-            return {
-                titulo: "¡Victoria!",
-                detalle: centro ? "Quedó una sola ficha, ¡y en el centro! Resultado perfecto."
-                                : "Quedó una sola ficha en el tablero.",
-                color: "#7dff9b"
-            };
+            let detalle = "Quedó una sola ficha en el tablero.";
+            if (centro) detalle = "Quedó una sola ficha, ¡y en el centro! Resultado perfecto.";
+            if (dorada) detalle = "¡La última ficha es la dorada! Resultado perfecto.";
+            return { titulo: "¡Victoria!", detalle, color: "#7dff9b" };
         }
         if (this.estado === E.TIEMPO_AGOTADO) {
             return { titulo: "¡Tiempo agotado!", detalle: "Se acabó el tiempo antes de terminar el tablero.", color: "#ff4d6d" };

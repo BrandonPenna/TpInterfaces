@@ -60,12 +60,30 @@
           </select>
         </label>
 
+        <button class="solitaire__btn" type="button" id="solitaire-deshacer">Deshacer (3)</button>
         <button class="solitaire__btn" type="button" id="solitaire-reiniciar">Reiniciar</button>
       </div>
 
       <!-- Canvas del juego -->
+      <div class="solitaire__escenario">
       <canvas id="solitaire-canvas" class="solitaire__canvas" width="1400" height="853"
               aria-label="Tablero de Peg Solitaire"></canvas>
+
+        <!-- Pantalla de inicio: tapa el canvas hasta que se pulsa "Jugar".
+             Antes de jugar se puede elegir la forma del tablero (se ve de fondo). -->
+        <div class="solitaire__inicio" id="solitaire-inicio">
+          <label class="solitaire__campo">
+            Tablero
+            <select id="solitaire-forma">
+              <option value="normal" selected>Normal</option>
+              <option value="triangulo">Triángulo</option>
+              <option value="diamante">Diamante</option>
+              <option value="flecha">Flecha</option>
+            </select>
+          </label>
+          <button class="solitaire__btn solitaire__btn--jugar" type="button" id="solitaire-jugar">Jugar</button>
+        </div>
+      </div>
     </section>
 
     <!-- ---------- COMPARTIR + VALORACIÓN ---------- -->
@@ -201,6 +219,20 @@
           <li>
             Podés cambiar el color de las fichas en cualquier momento y usar
             <strong>Reiniciar</strong> para volver a empezar.
+          </li>
+          <li>
+            Antes de tocar <strong>Jugar</strong> elegís la forma del tablero:
+            normal, triángulo, diamante o flecha. En cada partida el
+            <strong>hueco inicial</strong> aparece en un lugar distinto.
+          </li>
+          <li>
+            Una de las fichas es <strong>dorada</strong>: cada salto que hagas
+            con ella te suma 10 segundos. ¡Si es la última que queda, el
+            resultado es perfecto!
+          </li>
+          <li>
+            Con <strong>Deshacer</strong> volvés atrás el último salto, pero
+            solo tenés 3 usos por partida.
           </li>
         </ol>
       </div>

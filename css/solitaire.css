@@ -272,3 +272,42 @@
 .solitaire__canvas.is-boton {
     cursor: pointer;
 }
+
+
+/* ---------- 4. PANTALLA DE INICIO (botón "Jugar") ---------- */
+.solitaire__escenario {
+    position: relative;
+}
+
+/* Capa transparente sobre el canvas: bloquea los clicks hasta pulsar "Jugar" */
+.solitaire__inicio {
+    --alto-control: 48px;  /* alto del selector de tablero (igual que en el HUD) */
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.solitaire__inicio.is-oculto {
+    display: none;
+}
+
+.solitaire__btn--jugar {
+    --alto-control: 64px;
+    padding: 0 48px;
+    font-size: 24px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Botón deshabilitado (Deshacer sin usos o sin saltos para deshacer) */
+.solitaire__btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}

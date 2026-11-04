@@ -1,8 +1,9 @@
 /* ============================================================
    TABLERO | Lógica y dibujo del tablero de Peg Solitaire
-   Grilla 7x7 en forma de cruz (33 casilleros jugables). Las cuatro
-   esquinas de 2x2 están deshabilitadas (NULO). Al empezar, todos
-   los casilleros tienen ficha menos el central.
+   Grilla 7x7 con distintas formas (cruz, triángulo, diamante y
+   flecha; ver Tablero.FORMAS). Los casilleros fuera de la forma
+   son NULO. Al empezar, todos los casilleros tienen ficha menos
+   uno elegido al azar.
    ============================================================ */
 
 /**
@@ -21,6 +22,49 @@ class Tablero {
 
     /** Direcciones de salto: [dFila, dCol] arriba, abajo, izquierda y derecha. */
     static DIRECCIONES = Object.freeze([[-1, 0], [1, 0], [0, -1], [0, 1]]);
+
+    /**
+     * Formas de tablero que puede elegir el usuario. Cada una es un "dibujo"
+     * de 7 filas x 7 columnas: "X" = casillero jugable, "." = no existe (NULO).
+     */
+    static FORMAS = Object.freeze({
+        normal: [
+            "..XXX..",
+            "..XXX..",
+            "XXXXXXX",
+            "XXXXXXX",
+            "XXXXXXX",
+            "..XXX..",
+            "..XXX.."
+        ],
+        triangulo: [
+            "...X...",
+            "...X...",
+            "..XXX..",
+            "..XXX..",
+            ".XXXXX.",
+            ".XXXXX.",
+            "XXXXXXX"
+        ],
+        diamante: [
+            "...X...",
+            "..XXX..",
+            ".XXXXX.",
+            "XXXXXXX",
+            ".XXXXX.",
+            "..XXX..",
+            "...X..."
+        ],
+        flecha: [
+            "...X...",
+            "..XXX..",
+            ".XXXXX.",
+            "XXXXXXX",
+            "..XXX..",
+            "..XXX..",
+            "..XXX.."
+        ]
+    });
 
     /**
      * Crea el tablero y lo deja en la posición inicial.
@@ -61,25 +105,45 @@ class Tablero {
     }
 
     /**
-     * Arma la matriz inicial: cruz de 33 casilleros llenos y el centro vacío.
-     * Cómo: un casillero queda NULO si cae en una esquina de 2x2 (fila y columna
-     * ambas en {0,1} o {5,6}); el resto se llena con FICHA y el (3,3) con VACIO.
+     * Arma la matriz inicial a partir de una de las Tablero.FORMAS: todos los
+     * casilleros jugables con ficha y uno solo vacío, elegido al azar.
+     * Cómo: recorre el dibujo de la forma; cada "X" pasa a FICHA y cada "." a
+     * NULO. Después pone el hueco aleatorio. Como la forma puede cambiar, se
+     * descarta la capa estática para que la placa se vuelva a dibujar.
+     * @param {string} [forma="normal"] Clave de Tablero.FORMAS.
      * @returns {void}
      */
-    inicializar() {
-        const n = Tablero.TAMANIO;
-        const { NULO, VACIO, FICHA } = Tablero.ESTADOS;
-        const fueraDeCruz = (i) => i < 2 || i > 4;
+    inicializar(forma = "normal") {
+        const { NULO, FICHA } = Tablero.ESTADOS;
+        const dibujo = Tablero.FORMAS[forma] || Tablero.FORMAS.normal;
 
-        this.matriz = [];
-        for (let f = 0; f < n; f++) {
-            const fila = [];
-            for (let c = 0; c < n; c++) {
-                fila.push(fueraDeCruz(f) && fueraDeCruz(c) ? NULO : FICHA);
+        this.matriz = dibujo.map((fila) => [...fila].map((letra) => letra === "X" ? FICHA : NULO));
+        this.ponerHuecoAleatorio();
+        this.capaEstatica = null;
+    }
+
+    /**
+     * Vacía un casillero jugable al azar (el hueco inicial de la partida).
+     * Cómo: junta todos los casilleros con ficha y elige uno con Math.random().
+     * Si con ese hueco no se puede hacer ningún salto, lo vuelve a llenar y
+     * prueba con otro, así la partida nunca arranca trabada.
+     * @returns {void}
+     */
+    ponerHuecoAleatorio() {
+        const { VACIO, FICHA } = Tablero.ESTADOS;
+        const casilleros = [];
+        for (let f = 0; f < Tablero.TAMANIO; f++) {
+            for (let c = 0; c < Tablero.TAMANIO; c++) {
+                if (this.matriz[f][c] === FICHA) casilleros.push({ fila: f, col: c });
             }
-            this.matriz.push(fila);
         }
-        this.matriz[3][3] = VACIO;
+
+        let hueco = null;
+        do {
+            if (hueco) this.matriz[hueco.fila][hueco.col] = FICHA;   // deshace el intento anterior
+            hueco = casilleros[Math.floor(Math.random() * casilleros.length)];
+            this.matriz[hueco.fila][hueco.col] = VACIO;
+        } while (!this.hayMovimientos());
     }
 
     /**
@@ -250,53 +314,51 @@ class Tablero {
     }
 
     /**
-     * Traza (sin rellenar) el contorno en cruz del tablero como un único path
-     * con las esquinas redondeadas.
-     * Cómo: recorre los 12 vértices de la cruz (brazos de 3 casilleros de
-     * ancho; las líneas de la grilla que la delimitan son 0, 2, 5 y 7). Empieza
-     * en el punto medio de la última arista y, en cada vértice, usa arcTo()
-     * para curvar la esquina con el radio pedido (tanto las salientes como las
-     * entrantes).
+     * Traza (sin rellenar) la forma del tablero, sea cual sea (cruz, triángulo...).
+     * Cómo: agrega un cuadrado redondeado por cada casillero jugable, un poco más
+     * grande que la celda (margen) para que se solapen con sus vecinos. Al
+     * rellenar o recortar con ese path, todos los cuadrados se ven como una
+     * sola placa. El radio es igual al margen para que no queden "muescas"
+     * donde se juntan dos casilleros.
      * @param {CanvasRenderingContext2D} ctx Contexto sobre el que se traza el path.
-     * @param {number} margen Píxeles que se agranda el contorno hacia afuera.
-     * @param {number} [radio=30] Radio de las esquinas redondeadas, en píxeles.
-     * @returns {{x0: number, y0: number, x1: number, y1: number}} Caja que contiene la cruz.
+     * @param {number} margen Píxeles que se agranda cada casillero hacia afuera.
+     * @returns {{x0: number, y0: number, x1: number, y1: number}} Caja que contiene la forma.
      */
-    trazarCruz(ctx, margen, radio = 30) {
-        const gx = (i) => this.origenX + i * this.celda;
-        const gy = (i) => this.origenY + i * this.celda;
-        const x = [gx(0) - margen, gx(2) - margen, gx(5) + margen, gx(7) + margen];
-        const y = [gy(0) - margen, gy(2) - margen, gy(5) + margen, gy(7) + margen];
-        const puntos = [
-            [x[1], y[0]], [x[2], y[0]], [x[2], y[1]], [x[3], y[1]], [x[3], y[2]], [x[2], y[2]],
-            [x[2], y[3]], [x[1], y[3]], [x[1], y[2]], [x[0], y[2]], [x[0], y[1]], [x[1], y[1]]
-        ];
+    trazarForma(ctx, margen) {
+        const lado = this.celda + margen * 2;
+        const caja = { x0: Infinity, y0: Infinity, x1: -Infinity, y1: -Infinity };
 
-        const ultimo = puntos[puntos.length - 1];
         ctx.beginPath();
-        ctx.moveTo((ultimo[0] + puntos[0][0]) / 2, (ultimo[1] + puntos[0][1]) / 2);
-        puntos.forEach(([px, py], i) => {
-            const [sx, sy] = puntos[(i + 1) % puntos.length];
-            ctx.arcTo(px, py, sx, sy, radio);
-        });
-        ctx.closePath();
-        return { x0: x[0], y0: y[0], x1: x[3], y1: y[3] };
+        for (let f = 0; f < Tablero.TAMANIO; f++) {
+            for (let c = 0; c < Tablero.TAMANIO; c++) {
+                if (!this.esJugable(f, c)) continue;
+                const x = this.origenX + c * this.celda - margen;
+                const y = this.origenY + f * this.celda - margen;
+                ctx.roundRect(x, y, lado, lado, margen);
+                caja.x0 = Math.min(caja.x0, x);
+                caja.y0 = Math.min(caja.y0, y);
+                caja.x1 = Math.max(caja.x1, x + lado);
+                caja.y1 = Math.max(caja.y1, y + lado);
+            }
+        }
+        return caja;
     }
 
     /**
-     * Dibuja la placa en cruz con volumen: sombra proyectada, metal oscuro
-     * cepillado, reflejo superior y un bisel de luz/sombra.
-     * Cómo: traza la cruz una vez y la reutiliza. Primero la rellena con una
-     * sombra grande hacia abajo (la placa "flota" sobre el fondo), luego la
-     * pinta con un degradado gunmetal y, recortando al contorno (clip), le
-     * suma líneas finas horizontales y un brillo. Por último traza el borde
-     * con un degradado claro arriba-izquierda y oscuro abajo-derecha. El color
-     * es neutro (no cian) para que las fichas destaquen sobre ella.
+     * Dibuja la placa del tablero con volumen: sombra proyectada, filete neón,
+     * bisel, metal oscuro cepillado y reflejo superior.
+     * Cómo: traza la forma una vez y la reutiliza. Primero la rellena con una
+     * sombra grande hacia abajo (la placa "flota" sobre el fondo). Después
+     * traza el filete y el bisel con líneas anchas y recién ahí pinta el metal
+     * encima: así de esas líneas solo se ve la mitad de afuera (el borde) y no
+     * las uniones entre casilleros. Por último, recortando a la forma (clip),
+     * suma líneas finas horizontales y un brillo. El color del metal es neutro
+     * para que las fichas destaquen sobre ella.
      * @param {CanvasRenderingContext2D} ctx Contexto 2D donde se dibuja.
      * @returns {void}
      */
     dibujarPlaca(ctx) {
-        const b = this.trazarCruz(ctx, 10);
+        const b = this.trazarForma(ctx, 12);
 
         // 1) Sombra proyectada externa
         ctx.save();
@@ -307,7 +369,30 @@ class Tablero {
         ctx.fill();
         ctx.restore();
 
-        // 2) Metal oscuro: degradado diagonal gunmetal
+        // 2) Filete neón con el color del estilo (asoma por fuera del bisel)
+        ctx.save();
+        ctx.lineJoin = "round";
+        ctx.lineWidth = 20;
+        ctx.globalAlpha = 0.85;
+        ctx.strokeStyle = this.colorBorde;
+        ctx.shadowColor = this.colorBorde;
+        ctx.shadowBlur = 8;
+        ctx.stroke();
+        ctx.restore();
+
+        // 3) Bisel: luz arriba-izquierda, sombra abajo-derecha
+        const bisel = ctx.createLinearGradient(b.x0, b.y0, b.x1, b.y1);
+        bisel.addColorStop(0, "rgba(200, 215, 240, 0.55)");
+        bisel.addColorStop(0.5, "rgba(90, 100, 120, 0.25)");
+        bisel.addColorStop(1, "rgba(0, 0, 0, 0.7)");
+        ctx.save();
+        ctx.lineJoin = "round";
+        ctx.lineWidth = 16;
+        ctx.strokeStyle = bisel;
+        ctx.stroke();
+        ctx.restore();
+
+        // 4) Metal oscuro: degradado diagonal gunmetal (tapa la mitad interna de los trazos)
         const metal = ctx.createLinearGradient(b.x0, b.y0, b.x1, b.y1);
         metal.addColorStop(0, "#2b303b");
         metal.addColorStop(0.35, "#151922");
@@ -316,7 +401,7 @@ class Tablero {
         ctx.fillStyle = metal;
         ctx.fill();
 
-        // 3) Textura de metal cepillado + reflejo, recortados a la cruz
+        // 5) Textura de metal cepillado + reflejo, recortados a la forma
         ctx.save();
         ctx.clip();
         ctx.fillStyle = "rgba(255, 255, 255, 0.035)";
@@ -327,29 +412,6 @@ class Tablero {
         reflejo.addColorStop(1, "rgba(255, 255, 255, 0)");
         ctx.fillStyle = reflejo;
         ctx.fillRect(b.x0, b.y0, b.x1 - b.x0, mitad);
-        ctx.restore();
-
-        // 4) Bisel: luz arriba-izquierda, sombra abajo-derecha
-        const bisel = ctx.createLinearGradient(b.x0, b.y0, b.x1, b.y1);
-        bisel.addColorStop(0, "rgba(200, 215, 240, 0.55)");
-        bisel.addColorStop(0.5, "rgba(90, 100, 120, 0.25)");
-        bisel.addColorStop(1, "rgba(0, 0, 0, 0.7)");
-        ctx.lineJoin = "round";
-        ctx.lineWidth = 8;
-        ctx.strokeStyle = bisel;
-        ctx.stroke();
-
-        // 5) Filete interior fino con el color del estilo (mismo path achicado un poco)
-        ctx.save();
-        ctx.translate(this.anchoCanvas / 2, this.altoCanvas / 2);
-        ctx.scale(0.985, 0.985);
-        ctx.translate(-this.anchoCanvas / 2, -this.altoCanvas / 2);
-        ctx.lineWidth = 2;
-        ctx.globalAlpha = 0.85;
-        ctx.strokeStyle = this.colorBorde;
-        ctx.shadowColor = this.colorBorde;
-        ctx.shadowBlur = 8;
-        ctx.stroke();
         ctx.restore();
     }
 

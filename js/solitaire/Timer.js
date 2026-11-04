@@ -74,6 +74,19 @@ class Timer {
     }
 
     /**
+     * Suma segundos extra a la cuenta (premio de la ficha dorada).
+     * Cómo: si está corriendo corre hacia adelante el instante final; si no,
+     * suma directamente a lo que resta. Después avisa el nuevo valor.
+     * @param {number} segundos Segundos a sumar.
+     * @returns {void}
+     */
+    agregarSegundos(segundos) {
+        if (this.corriendo) this.finMs += segundos * 1000;
+        else this.restanteMs += segundos * 1000;
+        this.onTick(this.getRestante());
+    }
+
+    /**
      * Cuerpo del bucle: recalcula lo que falta y notifica.
      * Cómo: resta el reloj actual al instante final. Si llega a cero fija el
      * restante en 0, detiene el bucle y dispara onFin; si no, reagenda el frame.
