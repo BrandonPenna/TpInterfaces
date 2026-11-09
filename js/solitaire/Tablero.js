@@ -360,16 +360,7 @@ class Tablero {
     dibujarPlaca(ctx) {
         const b = this.trazarForma(ctx, 12);
 
-        // 1) Sombra proyectada externa
-        ctx.save();
-        ctx.shadowColor = "rgba(0, 0, 0, 0.75)";
-        ctx.shadowBlur = 40;
-        ctx.shadowOffsetY = 18;
-        ctx.fillStyle = "#151922";
-        ctx.fill();
-        ctx.restore();
-
-        // 2) Filete neón con el color del estilo (asoma por fuera del bisel)
+        // Filete neón con el color del estilo (asoma por fuera del bisel)
         ctx.save();
         ctx.lineJoin = "round";
         ctx.lineWidth = 20;
@@ -380,19 +371,7 @@ class Tablero {
         ctx.stroke();
         ctx.restore();
 
-        // 3) Bisel: luz arriba-izquierda, sombra abajo-derecha
-        const bisel = ctx.createLinearGradient(b.x0, b.y0, b.x1, b.y1);
-        bisel.addColorStop(0, "rgba(200, 215, 240, 0.55)");
-        bisel.addColorStop(0.5, "rgba(90, 100, 120, 0.25)");
-        bisel.addColorStop(1, "rgba(0, 0, 0, 0.7)");
-        ctx.save();
-        ctx.lineJoin = "round";
-        ctx.lineWidth = 16;
-        ctx.strokeStyle = bisel;
-        ctx.stroke();
-        ctx.restore();
-
-        // 4) Metal oscuro: degradado diagonal gunmetal (tapa la mitad interna de los trazos)
+        // Metal oscuro: degradado diagonal gunmetal (tapa la mitad interna de los trazos)
         const metal = ctx.createLinearGradient(b.x0, b.y0, b.x1, b.y1);
         metal.addColorStop(0, "#2b303b");
         metal.addColorStop(0.35, "#151922");
@@ -401,18 +380,6 @@ class Tablero {
         ctx.fillStyle = metal;
         ctx.fill();
 
-        // 5) Textura de metal cepillado + reflejo, recortados a la forma
-        ctx.save();
-        ctx.clip();
-        ctx.fillStyle = "rgba(255, 255, 255, 0.035)";
-        for (let yy = b.y0; yy < b.y1; yy += 4) ctx.fillRect(b.x0, yy, b.x1 - b.x0, 1);
-        const mitad = (b.y1 - b.y0) / 2;
-        const reflejo = ctx.createLinearGradient(0, b.y0, 0, b.y0 + mitad);
-        reflejo.addColorStop(0, "rgba(255, 255, 255, 0.07)");
-        reflejo.addColorStop(1, "rgba(255, 255, 255, 0)");
-        ctx.fillStyle = reflejo;
-        ctx.fillRect(b.x0, b.y0, b.x1 - b.x0, mitad);
-        ctx.restore();
     }
 
     /**
@@ -458,18 +425,7 @@ class Tablero {
      */
     dibujarHueco(ctx, x, y, r) {
         ctx.save();
-
-        // a) Labio inferior iluminado
-        const labio = ctx.createLinearGradient(0, y - r, 0, y + r);
-        labio.addColorStop(0.5, "rgba(255, 255, 255, 0)");
-        labio.addColorStop(1, "rgba(255, 255, 255, 0.2)");
-        ctx.lineWidth = 4;
-        ctx.strokeStyle = labio;
-        ctx.beginPath();
-        ctx.arc(x, y, r + 1, 0, Math.PI * 2);
-        ctx.stroke();
-
-        // b) Fondo del agujero (luz desplazada arriba-izquierda)
+        // Fondo del agujero
         const cuerpo = ctx.createRadialGradient(x - r * 0.25, y - r * 0.3, r * 0.1, x, y, r);
         cuerpo.addColorStop(0, "rgba(0, 0, 0, 0.95)");
         cuerpo.addColorStop(0.85, "rgba(10, 12, 18, 0.95)");
@@ -478,19 +434,6 @@ class Tablero {
         ctx.beginPath();
         ctx.arc(x, y, r, 0, Math.PI * 2);
         ctx.fill();
-
-        // c) Sombra interna: el anillo queda fuera del clip, solo se ve su sombra
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.clip();
-        ctx.shadowColor = "rgba(0, 0, 0, 0.9)";
-        ctx.shadowBlur = 14;
-        ctx.shadowOffsetY = 5;
-        ctx.lineWidth = 14;
-        ctx.strokeStyle = "#000";
-        ctx.beginPath();
-        ctx.arc(x, y, r + 7, 0, Math.PI * 2);
-        ctx.stroke();
 
         ctx.restore();
     }
@@ -537,14 +480,5 @@ class Tablero {
         }
         this.taparTableroDelFondo(ctx);
 
-        // Viñeta: centro casi limpio y bordes oscuros para dirigir la mirada al tablero
-        const viñeta = ctx.createRadialGradient(
-            this.anchoCanvas / 2, this.altoCanvas / 2, this.altoCanvas * 0.35,
-            this.anchoCanvas / 2, this.altoCanvas / 2, this.anchoCanvas * 0.62
-        );
-        viñeta.addColorStop(0, "rgba(0, 0, 10, 0.15)");
-        viñeta.addColorStop(1, "rgba(0, 0, 10, 0.6)");
-        ctx.fillStyle = viñeta;
-        ctx.fillRect(0, 0, this.anchoCanvas, this.altoCanvas);
     }
 }

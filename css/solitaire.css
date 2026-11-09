@@ -5,9 +5,9 @@
    Garantía "sin scrollbars a 1920x1080":
    - El canvas tiene tamaño lógico fijo (1400x853, la misma relación que la imagen de fondo) y se
      escala solo por CSS, así el dibujo no cambia, únicamente su tamaño.
-   - Su alto nunca supera 100dvh - 304px: 232px que ya reservaba el hero
-     original (header, migas, fila de compartir) + 72px de la barra HUD.
-     Por eso el juego completo entra en pantalla sin desplazarse.
+   - Su alto nunca supera 100dvh - 208px: 66px del header + 54px de las migas
+     + 72px de la barra HUD + 16px de aire. Así, al abrir la página se ve el
+     header, la barra de controles y el juego completo, lo más grande posible.
    - Nada del juego es más grande que su contenedor, así que no aparecen
      barras de desplazamiento propias (el brillo de los botones es sombra,
      no ocupa espacio).
@@ -15,8 +15,10 @@
 
 /* ---------- 1. CONTENEDOR ---------- */
 .solitaire {
-    --alto-canvas: max(320px, calc(100vh - 304px));   /* respaldo sin dvh */
-    --alto-canvas: max(320px, calc(100dvh - 304px));
+    /* Alto del canvas: toda la ventana menos lo que va arriba del juego:
+       66 (header) + 54 (migas) + 72 (barra de controles) + 16 de aire abajo = 208px */
+    --alto-canvas: max(320px, calc(100vh - 208px));   /* respaldo sin dvh */
+    --alto-canvas: max(320px, calc(100dvh - 208px));
     --radio-esquina: 28px;     /* esquinas bien redondeadas: canvas y contenedor */
     --radio-control: 16px;     /* tarjetas, selectores y botón del HUD */
     /* Sin overflow: hidden para que el resplandor de los botones no se recorte */
@@ -26,7 +28,10 @@
 
 /* ---------- 2. BARRA DE ESTADO Y CONTROLES ---------- */
 /* Todas las tarjetas comparten alto (--alto-control) y estilo glassmorphism.
-   La barra mide 72px: 48px de control + 12px de aire arriba y abajo. */
+   La barra mide 72px: 48px de control + 12px de aire arriba y abajo.
+   Usa todo el ancho de la ventana (no solo el de la columna central) para que
+   los controles entren en una sola fila. Si aun así no entran (pantallas muy
+   angostas), pasan a una segunda fila y la barra crece: nunca tapa el canvas. */
 .solitaire__hud {
     --alto-control: 48px;
     position: relative;
@@ -36,8 +41,10 @@
     align-items: center;
     justify-content: center;
     gap: 12px;
-    height: 72px;          /* alto fijo: entra en el cálculo de --alto-canvas */
-    padding: 0 12px;
+    min-height: 72px;      /* 72px en una fila; crece si los controles bajan de fila */
+    margin-inline: calc(50% - 50vw);   /* se estira de borde a borde de la ventana */
+    padding: 12px;
+    box-sizing: border-box;
 }
 
 /* Estilo glass común: tarjetas de estado, campos con select y botón.
