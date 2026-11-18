@@ -138,6 +138,10 @@ class Tablero {
             }
         }
 
+
+
+
+
         let hueco = null;
         do {
             if (hueco) this.matriz[hueco.fila][hueco.col] = FICHA;   // deshace el intento anterior
