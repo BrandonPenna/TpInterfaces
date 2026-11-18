@@ -266,9 +266,9 @@ function crearTubo() {
   const distanciaSiguiente = azar(260, 390);
   juego.distanciaTubo = distanciaSiguiente;
 
-  // Con 65% de probabilidad generamos un ítem (Corazón o Dron) justo en el medio del pasillo
+  // Con 28% de probabilidad generamos un ítem (Corazón o Dron) justo en el medio del pasillo
   // entre este tubo y el próximo, así jamás se superpone con un tubo.
-  if (Math.random() < 0.65) {
+  if (Math.random() < 0.28) {
     const xMedioPasillo = ANCHO_ESCENARIO + ANCHO_TUBO + (distanciaSiguiente - ANCHO_TUBO) / 2 - 24;
     crearItemEnPasillo(xMedioPasillo, centro);
   }
