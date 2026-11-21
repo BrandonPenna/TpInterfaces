@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neon Drift - Horizontal scroller</title>
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/header.css" />
+  <link rel="stylesheet" href="../css/footer.css" />
+  <link rel="stylesheet" href="../css/game.css" />
+  <link rel="stylesheet" href="../css/flappy.css" />
+  <link rel="icon" type="image/png" href="../assets/icons/logo.png">
+</head>
+
+<body>
+<!-- Contenedor vacío donde el JavaScript inyectará el header -->
+<div id="header-container"></div>
+
+<main class="game-page">
+  <div class="page-shell flappy-shell">
+    <!-- ---------- BREADCRUMBS ---------- -->
+    <nav class="breadcrumbs" aria-label="Navegación">
+      <a href="../index.html">Juegos</a>
+      <img src="../assets/games/30dee.svg" alt="" />
+      <a href="#juego">Arcade</a>
+      <img src="../assets/games/07fa4.svg" alt="" />
+      <span>Neon Drift</span>
+    </nav>
+
+    <!-- ---------- LUGAR DE EJECUCIÓN ---------- -->
+    <section id="juego" class="neon-panel flappy" aria-label="Juego Neon Drift">
+      <!-- Barra de estado -->
+      <div class="flappy__hud">
+        <div class="flappy__stat"><small>Vidas</small><strong id="flappy-vidas">❤️❤️❤️</strong></div>
+        <div class="flappy__stat"><small>Puntaje</small><strong id="flappy-puntos">0</strong></div>
+        <div class="flappy__stat"><small>Mejor</small><strong id="flappy-record">0</strong></div>
+        <div class="flappy__stat"><small>Estado</small><strong id="flappy-estado-texto">Normal</strong></div>
+        <button class="flappy__btn" type="button" id="flappy-reiniciar">Reiniciar</button>
+      </div>
+
+      <!-- Escenario: el JS mueve las capas y crea tubos e ítems -->
+      <div class="flappy__escenario" id="flappy-escenario">
+        <!-- Parallax: de la capa más lejana a la más cercana -->
+        <div class="flappy__capa flappy__capa--cielo"></div>
+        <div class="flappy__capa flappy__capa--luna"></div>
+        <div class="flappy__capa flappy__capa--nubes"></div>
+        <div class="flappy__capa flappy__capa--lejos"></div>
+        <div class="flappy__capa flappy__capa--cerca"></div>
+        <div class="flappy__capa flappy__capa--piso"></div>
+
+        <div id="flappy-tubos"></div>
+        <div id="flappy-items"></div>
+
+        <!-- El JS mueve este contenedor; las animaciones van en el sprite -->
+        <div class="flappy__jugador" id="flappy-jugador"><div class="flappy__sprite"></div></div>
+
+        <div class="flappy__aviso" id="flappy-aviso" role="status" aria-live="polite"></div>
+
+        <div class="flappy__overlay" id="flappy-overlay">
+          <h2 id="flappy-overlay-titulo">Neon Drift</h2>
+          <p id="flappy-overlay-sub">Pilotá el dron entre las torres de la ciudad. Presioná Espacio, W, Flecha arriba o hacé clic para elevarte.</p>
+          <button class="flappy__btn flappy__btn--primario" type="button" id="flappy-jugar">Jugar (Espacio o Click)</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- COMPARTIR + VALORACIÓN ---------- -->
+    <div class="share-row">
+      <button class="share-toggle" type="button" aria-expanded="false" aria-controls="share-options" aria-label="Compartir">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18 16.1c-.8 0-1.5.3-2 .8l-7.1-4.2c.1-.2.1-.5.1-.7s0-.5-.1-.7L15.9 7.2c.5.5 1.2.8 2.1.8 1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3c0 .2 0 .5.1.7L8.1 9.8C7.5 9.3 6.8 9 6 9c-1.7 0-3 1.3-3 3s1.3 3 3 3c.8 0 1.5-.3 2.1-.8l7.1 4.2c-.1.2-.1.4-.1.6 0 1.6 1.3 2.9 2.9 2.9s2.9-1.3 2.9-2.9-1.2-2.9-2.9-2.9z" />
+        </svg>
+      </button>
+
+      <div class="share-actions" id="share-options">
+        <button type="button" aria-label="Compartir por WhatsApp"><img src="../assets/games/9c2c6.svg" alt="" /></button>
+        <button type="button" aria-label="Compartir en X"><img src="../assets/games/6ae11.svg" alt="" /></button>
+        <button type="button" aria-label="Compartir por correo"><img src="../assets/games/41885.svg" alt="" /></button>
+        <button type="button" aria-label="Copiar enlace"><img src="../assets/games/81ef8.svg" alt="" /></button>
+      </div>
+    </div>
+
+    <!-- ---------- IMÁGENES REPRESENTATIVAS ---------- -->
+    <section id="imagenes" class="gallery-section">
+      <h2 class="section-title">Imágenes del juego:</h2>
+      <div class="flappy__galeria">
+        <figure class="flappy__ejemplo">
+          <img src="../assets/flappy/capturas/tuberias.png" alt="El dron vuela entre torres con huecos a distintas alturas" />
+          <figcaption>1. Cruzá los huecos entre las torres</figcaption>
+        </figure>
+        <figure class="flappy__ejemplo">
+          <img src="../assets/flappy/capturas/items.png" alt="Corazón de vida y dron de energía en la ciudad" />
+          <figcaption>2. Corazones y drones de energía</figcaption>
+        </figure>
+        <figure class="flappy__ejemplo">
+          <img src="../assets/flappy/capturas/explosion.png" alt="El dron explota al perder la última vida" />
+          <figcaption>3. Sin vidas, el dron explota</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ---------- DESCRIPCIÓN + INSTRUCCIONES ---------- -->
+    <section class="info-section">
+      <div class="neon-panel info-block">
+        <h2 class="section-title">
+          <img src="../assets/games/35fdd.svg" alt="" />
+          Neon Drift
+        </h2>
+        <p>
+          Neon Drift es un videojuego de avance horizontal ambientado en una ciudad
+          cyberpunk. Controlás un dron de reparto que cruza la ciudad a velocidad
+          constante mientras la gravedad lo empuja hacia abajo. Tenés que elevarlo en
+          el momento justo para atravesar los huecos entre las torres de energía.
+          La separación entre torres y la altura de cada hueco cambian todo el tiempo,
+          y los huecos se van cerrando a medida que avanza la partida.
+        </p>
+
+        <h2 class="section-title">¿Cómo Jugar?</h2>
+        <ol>
+          <li>Presioná <strong>Espacio</strong>, <strong>W</strong>, <strong>Flecha arriba</strong> o hacé <strong>clic</strong> sobre el escenario para comenzar y para dar cada impulso.</li>
+          <li>Pasá entre las torres: cada torre superada suma <strong>1 punto</strong>.</li>
+          <li>Empezás con <strong>3 vidas</strong>. Chocar con una torre o con el piso resta una y te da un instante de invulnerabilidad.</li>
+          <li><span class="flappy__ref flappy__ref--vida"></span><strong>Corazón:</strong> recupera una vida. Si ya tenés las 3, suma 5 puntos.</li>
+          <li><span class="flappy__ref flappy__ref--enemigo"></span><strong>Dron de energía:</strong> activa 3 segundos de turbo, con más velocidad y más riesgo. No termina la partida.</li>
+          <li>La partida termina al perder las 3 vidas. ¡Superá tu mejor puntaje!</li>
+        </ol>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- Contenedor vacío donde el JavaScript inyectará el footer -->
+<div id="footer-container"></div>
+
+<script src="../js/main.js" defer></script>
+<script src="../js/menu-hambur.js" defer></script>
+<script src="../js/flappy.js" defer></script>
+<script src="../js/share.js" defer></script>
+</body>
+</html>

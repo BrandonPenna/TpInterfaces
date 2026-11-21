@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="224" height="56" viewBox="0 0 224 56" shape-rendering="crispEdges">
+  <!-- Spritesheet del dron de energía: 4 cuadros de 56x56 con ojo y rayos alternados. -->
+  <defs>
+    <g id="base">
+      <rect x="16" y="14" width="24" height="4" fill="#ff9900"/>
+      <rect x="12" y="18" width="32" height="20" fill="#3a1238"/>
+      <rect x="16" y="38" width="24" height="4" fill="#ff9900"/>
+      <rect x="6" y="24" width="6" height="8" fill="#7a1f6b"/>
+      <rect x="44" y="24" width="6" height="8" fill="#7a1f6b"/>
+      <rect x="20" y="22" width="16" height="12" fill="#14081f"/>
+    </g>
+  </defs>
+  <g><use xlink:href="#base"/><rect x="24" y="25" width="8" height="6" fill="#ffee00"/><rect x="26" y="4" width="4" height="10" fill="#ffee00"/><rect x="26" y="42" width="4" height="10" fill="#ffee00"/></g>
+  <g transform="translate(56 0)"><use xlink:href="#base"/><rect x="28" y="25" width="6" height="6" fill="#ff9900"/><rect x="8" y="8" width="6" height="6" fill="#ffee00"/><rect x="42" y="42" width="6" height="6" fill="#ffee00"/></g>
+  <g transform="translate(112 0)"><use xlink:href="#base"/><rect x="24" y="27" width="8" height="3" fill="#ffee00"/><rect x="0" y="26" width="6" height="4" fill="#ffee00"/><rect x="50" y="26" width="6" height="4" fill="#ffee00"/></g>
+  <g transform="translate(168 0)"><use xlink:href="#base"/><rect x="22" y="25" width="6" height="6" fill="#ff9900"/><rect x="42" y="8" width="6" height="6" fill="#ffee00"/><rect x="8" y="42" width="6" height="6" fill="#ffee00"/></g>
+</svg>

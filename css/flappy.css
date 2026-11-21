@@ -1,0 +1,349 @@
+/* ============================================================
+   NEON DRIFT | Estilos de pages/game_flappy.html
+   Complementa a game.css (layout, migas, paneles neón, galería).
+   Incluye parallax, spritesheets y animaciones @keyframes.
+   ============================================================ */
+
+/* ---------- 1. CONTENEDOR Y BARRA DE ESTADO ---------- */
+.flappy-shell {
+    --content-w: 1040px;
+}
+
+.flappy {
+    margin-top: 14px;
+    padding: 14px 24px 16px;
+    border: 0;
+}
+
+.flappy__hud {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr 1.3fr auto;
+    gap: 10px;
+    width: 960px;
+    margin: 0 auto 10px;
+}
+
+.flappy__stat {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    border-radius: 12px;
+    padding: 6px 12px;
+    background: rgb(255 255 255 / 6%);
+    text-align: center;
+}
+
+.flappy__stat small {
+    color: #9a9a9a;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.flappy__stat strong {
+    font-size: 18px;
+}
+
+.flappy__stat.is-turbo {
+    box-shadow: 0 0 12px #ff9900;
+    color: #ff9900;
+}
+
+.flappy__btn {
+    border: 2px solid var(--neon);
+    border-radius: 999px;
+    padding: 10px 24px;
+    background: rgb(0 0 0 / 65%);
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.flappy__btn:hover {
+    box-shadow: 0 0 14px var(--neon);
+    transform: translateY(-2px) scale(1.05);
+}
+
+.flappy__btn--primario {
+    background: var(--neon);
+    color: #000;
+}
+
+/* ---------- 2. ESCENARIO Y PARALLAX ---------- */
+.flappy__escenario {
+    position: relative;
+    overflow: hidden;
+    width: 960px;
+    height: 540px;
+    margin: 0 auto;
+    border-radius: 10px;
+    background: #9d8ae2;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Cada capa de 576x324 se escala a 960x540 y se repite en X sin cortes */
+.flappy__capa {
+    position: absolute;
+    inset: 0;
+    background-repeat: repeat-x;
+    background-size: 960px 540px;
+    image-rendering: pixelated;
+    pointer-events: none;
+}
+
+.flappy__capa--cielo { background-image: url("../assets/flappy/fondo/1.png"); }
+.flappy__capa--luna { background-image: url("../assets/flappy/fondo/2.png"); }
+.flappy__capa--nubes { background-image: url("../assets/flappy/fondo/3.png"); }
+.flappy__capa--lejos { background-image: url("../assets/flappy/fondo/5.png"); }
+.flappy__capa--cerca { background-image: url("../assets/flappy/fondo/8.png"); }
+.flappy__capa--piso { background-image: url("../assets/flappy/fondo/9.png"); }
+
+#flappy-tubos,
+#flappy-items {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+/* ---------- 3. TUBERÍAS ---------- */
+.flappy__par-tubos {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 68px;
+    height: 540px;
+    will-change: transform;
+}
+
+.flappy__tubo {
+    position: absolute;
+    left: 0;
+    width: 68px;
+    border: 2px solid #00f0ff;
+    background: linear-gradient(90deg, #191a4d 0%, #3b3f9e 38%, #2b2f77 62%, #14143a 100%);
+    box-shadow: 0 0 10px rgb(0 240 255 / 55%);
+}
+
+.flappy__tubo--arriba {
+    top: 0;
+    border-top: 0;
+    border-bottom-width: 6px;
+}
+
+.flappy__tubo--abajo {
+    border-top-width: 6px;
+    border-bottom: 0;
+}
+
+/* ---------- 4. JUGADOR Y SUS ANIMACIONES ---------- */
+/* El JS mueve y rota #flappy-jugador con transform; las animaciones van en
+   el sprite interno para no pisar ese transform. */
+.flappy__jugador {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 3;
+    width: 64px;
+    height: 64px;
+    will-change: transform;
+    pointer-events: none;
+}
+
+.flappy__sprite {
+    width: 64px;
+    height: 64px;
+    background: url("../assets/flappy/jugador-sheet.svg") 0 0 / 512px 64px no-repeat;
+    animation: dron-vuelo 360ms steps(4) infinite;
+}
+
+/* Animación 1: hélices en vuelo (spritesheet) */
+@keyframes dron-vuelo {
+    from { background-position-x: 0; }
+    to { background-position-x: -256px; }
+}
+
+/* Animación 2: impulso hacia arriba */
+.impulsando .flappy__sprite {
+    animation: dron-vuelo 140ms steps(4) infinite, dron-impulso 250ms ease-out;
+}
+
+@keyframes dron-impulso {
+    0% { transform: scale(1, 1); }
+    35% { transform: scale(0.86, 1.18) translateY(-3px); }
+    100% { transform: scale(1, 1); }
+}
+
+/* Animación 3: golpe con parpadeo y sacudida durante la invulnerabilidad */
+.golpeado .flappy__sprite {
+    animation: dron-vuelo 360ms steps(4) infinite, dron-golpe 280ms linear 5;
+}
+
+@keyframes dron-golpe {
+    0%, 100% { opacity: 1; transform: translateX(0); filter: none; }
+    25% { opacity: 0.25; transform: translateX(-4px); filter: brightness(2) saturate(3) hue-rotate(-40deg); }
+    75% { opacity: 0.8; transform: translateX(4px); }
+}
+
+/* Animación 4: estela de energía durante el turbo */
+.en-turbo .flappy__sprite {
+    animation: dron-vuelo 100ms steps(4) infinite, dron-turbo 300ms ease-in-out infinite alternate;
+}
+
+@keyframes dron-turbo {
+    from { filter: drop-shadow(-6px 0 3px #ff9900); }
+    to { filter: drop-shadow(-18px 0 6px #ffee00); }
+}
+
+/* Animación 5: explosión al perder la última vida (cuadros 4 a 7) */
+.explotando .flappy__sprite {
+    animation: dron-explosion 480ms steps(4) forwards;
+}
+
+@keyframes dron-explosion {
+    from { background-position-x: -256px; transform: scale(1); }
+    to { background-position-x: -512px; transform: scale(1.7); }
+}
+
+/* ---------- 5. ELEMENTOS ANIMADOS (SPRITESHEETS) ---------- */
+.flappy__item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-repeat: no-repeat;
+    will-change: transform;
+}
+
+.flappy__item--vida {
+    width: 48px;
+    height: 48px;
+    background-image: url("../assets/flappy/vida-sheet.svg");
+    background-size: 192px 48px;
+    animation: item-vida 640ms steps(4) infinite;
+}
+
+.flappy__item--enemigo {
+    width: 56px;
+    height: 56px;
+    background-image: url("../assets/flappy/enemigo-sheet.svg");
+    background-size: 224px 56px;
+    animation: item-enemigo 400ms steps(4) infinite;
+}
+
+@keyframes item-vida {
+    to { background-position-x: -192px; }
+}
+
+@keyframes item-enemigo {
+    to { background-position-x: -224px; }
+}
+
+/* Usa la propiedad scale porque el JS ocupa transform para moverlo */
+.flappy__item.tomado {
+    animation: item-tomado 320ms ease-out forwards;
+}
+
+@keyframes item-tomado {
+    to { opacity: 0; scale: 1.9; filter: brightness(2.4); }
+}
+
+/* ---------- 6. AVISOS Y CARTEL ---------- */
+.flappy__aviso {
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    z-index: 4;
+    border-radius: 999px;
+    padding: 6px 18px;
+    font-weight: 700;
+    opacity: 0;
+    translate: -50% 0;
+    pointer-events: none;
+}
+
+.flappy__aviso.is-visible {
+    animation: aviso-entra 850ms ease-out forwards;
+}
+
+@keyframes aviso-entra {
+    0% { opacity: 0; translate: -50% -12px; }
+    15%, 75% { opacity: 1; translate: -50% 0; }
+    100% { opacity: 0; translate: -50% -6px; }
+}
+
+.flappy__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 24px;
+    background: rgb(12 8 28 / 72%);
+    text-align: center;
+}
+
+.flappy__overlay.is-hidden {
+    display: none;
+}
+
+.flappy__overlay h2 {
+    color: #00f0ff;
+    font-size: 38px;
+    text-shadow: 0 0 14px #00f0ff;
+}
+
+.flappy__overlay p {
+    max-width: 560px;
+    font-size: 17px;
+}
+
+/* ---------- 7. GALERÍA Y REFERENCIAS ---------- */
+.flappy__galeria {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.flappy__ejemplo {
+    overflow: hidden;
+    border-radius: 12px;
+    background: rgb(255 255 255 / 5%);
+}
+
+.flappy__ejemplo img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    image-rendering: pixelated;
+}
+
+.flappy__ejemplo figcaption {
+    padding: 8px 10px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.flappy__ref {
+    display: inline-block;
+    width: 48px;
+    height: 48px;
+    margin-right: 10px;
+    vertical-align: middle;
+    background-repeat: no-repeat;
+}
+
+.flappy__ref--vida {
+    background-image: url("../assets/flappy/vida-sheet.svg");
+    background-size: 192px 48px;
+}
+
+.flappy__ref--enemigo {
+    background-image: url("../assets/flappy/enemigo-sheet.svg");
+    background-size: 192px 48px;
+}

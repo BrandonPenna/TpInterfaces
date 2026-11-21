@@ -34,7 +34,7 @@
         { limite: 60, penalizacion: 40 }
     ];
 
-    const GRILLAS = { 4: [2, 2], 6: [3, 2], 8: [4, 2] }; // [columnas, filas]
+    const GRILLAS = { 4: [2, 2], 6: [3, 2], 8: [4, 2], 9: [3, 3] }; // [columnas, filas]
     const PAUSA_AVISO = 3000; // ms que se lee el aviso "sin pistas" antes de arrancar
     const TAM = 200;         // lado en px del canvas de cada pieza
 

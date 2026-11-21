@@ -403,6 +403,12 @@ class Juego {
      * @returns {void}
      */
     alMover(e) {
+        if (this.estado !== Juego.ESTADOS.JUGANDO) {
+            const { x, y } = this.posicionMouse(e);
+            this.hoverBotonFin = this.sobreBotonFin(x, y);
+            this.canvas.classList.toggle("is-boton", this.hoverBotonFin);
+            return;
+        }
         if (!this.fichaActiva) return;
         const { x, y } = this.posicionMouse(e);
         this.fichaActiva.arrastrarA(x, y);

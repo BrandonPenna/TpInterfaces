@@ -480,6 +480,7 @@ function limpiarEscenario() {
  * Inicia o reinicia una nueva partida limpia.
  */
 function empezar() {
+  clearTimeout(timerFin);
   limpiarEscenario();
 
   juego.estado        = 'jugando';
@@ -510,6 +511,7 @@ function reiniciar() {
 /**
  * Pasa al estado 'fin' cuando el jugador pierde sus 3 vidas.
  */
+let timerFin = null;
 function terminarJuego() {
   juego.estado = 'fin';
   if (juego.puntos > juego.record) {
@@ -517,7 +519,8 @@ function terminarJuego() {
   }
   actualizarHUD();
 
-  setTimeout(() => {
+  // Se guarda el timer para cancelarlo si el usuario reinicia antes de que aparezca el cartel
+  timerFin = setTimeout(() => {
     overlayTituloEl.textContent = '¡Misión Fallida!';
     overlaySubEl.textContent    = `Puntaje obtenido: ${juego.puntos} pts | Mejor récord: ${juego.record} pts`;
     btnJugar.textContent        = 'Reintentar (Espacio o Click)';
