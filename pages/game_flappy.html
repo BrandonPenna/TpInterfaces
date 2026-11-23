@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cyber Flight - Flappy Cyberpunk</title>
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/header.css" />
+  <link rel="stylesheet" href="../css/footer.css" />
+  <link rel="stylesheet" href="../css/game.css" />
+  <link rel="stylesheet" href="../css/flappy.css" />
+  <link rel="icon" type="image/png" href="../assets/icons/logo.png">
+</head>
+
+<body>
+<!-- Contenedor vacío donde el JavaScript inyectará el header -->
+<div id="header-container"></div>
+
+<main class="game-page">
+  <div class="page-shell">
+    <!-- ---------- BREADCRUMBS ---------- -->
+    <nav class="breadcrumbs" aria-label="Navegación">
+      <a href="../index.html">Juegos</a>
+      <img src="../assets/games/30dee.svg" alt="" />
+      <a href="#imagenes">Más Jugados</a>
+      <img src="../assets/games/07fa4.svg" alt="" />
+      <span>Cyber Flight - Flappy Cyberpunk</span>
+    </nav>
+
+    <!-- ---------- SECCIÓN DEL JUEGO (DOM + CSS3 + JS) ---------- -->
+    <section id="juego" class="flappy" aria-label="Cyber Flight">
+      <!-- Barra HUD superior -->
+      <div class="flappy__hud">
+        <div class="flappy__stat">
+          <small>Vidas</small>
+          <strong id="flappy-vidas" aria-live="polite">❤️❤️❤️</strong>
+        </div>
+
+        <div class="flappy__stat flappy__stat--puntos">
+          <small>Puntaje</small>
+          <strong id="flappy-puntos">0</strong>
+        </div>
+
+        <div class="flappy__stat">
+          <small>Mejor</small>
+          <strong id="flappy-record">0</strong>
+        </div>
+
+        <div class="flappy__stat flappy__stat--estado">
+          <small>Estado</small>
+          <strong id="flappy-estado-texto">Normal</strong>
+        </div>
+
+        <button class="flappy__btn" type="button" id="flappy-reiniciar">Reiniciar</button>
+      </div>
+
+      <!-- Escenario principal del juego (960x540 lógico, con overflow: hidden) -->
+      <div class="flappy__escenario" id="flappy-escenario" tabindex="0" aria-label="Escenario del juego Cyber Flight">
+
+        <!-- 6 Capas de Parallax Scrolling (mínimo 4 requeridas por la cátedra) -->
+        <div class="flappy__capa flappy__capa--1" data-capa="0"></div>
+        <div class="flappy__capa flappy__capa--2" data-capa="1"></div>
+        <div class="flappy__capa flappy__capa--3" data-capa="2"></div>
+        <div class="flappy__capa flappy__capa--4" data-capa="3"></div>
+        <div class="flappy__capa flappy__capa--5" data-capa="4"></div>
+        <div class="flappy__capa flappy__capa--6" data-capa="5"></div>
+
+        <!-- Contenedor dinámico donde JS inserta y limpia las tuberías -->
+        <div class="flappy__tubos" id="flappy-tubos"></div>
+
+        <!-- Contenedor dinámico donde JS inserta y limpia los ítems (vidas y enemigos) -->
+        <div class="flappy__items" id="flappy-items"></div>
+
+        <!-- El Personaje (Dron Cyberpunk) -->
+        <div class="flappy__jugador" id="flappy-jugador"></div>
+
+        <!-- Cartel flotante de aviso rápido (-1 VIDA / +1 VIDA / ¡TURBO!) -->
+        <div class="flappy__aviso" id="flappy-aviso" aria-live="assertive"></div>
+
+        <!-- Pantalla superpuesta de Menú / Fin de juego -->
+        <div class="flappy__overlay" id="flappy-overlay">
+          <div class="flappy__panel">
+            <h2 id="flappy-overlay-titulo">Cyber Flight</h2>
+            <p id="flappy-overlay-sub">
+              Esquivá las torres láser, recolectá corazones neón para recuperar vidas y aprovechá el turbo de los drones.
+            </p>
+            <button class="flappy__btn flappy__btn--jugar" type="button" id="flappy-jugar">
+              Jugar (Espacio o Click)
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ---------- COMPARTIR + VALORACIÓN ---------- -->
+    <div class="share-row">
+      <button class="share-toggle" type="button" aria-expanded="false" aria-controls="share-options" aria-label="Compartir">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18 16.1c-.8 0-1.5.3-2 .8l-7.1-4.2c.1-.2.1-.5.1-.7s0-.5-.1-.7L15.9 7.2c.5.5 1.2.8 2.1.8 1.7 0 3-1.3 3-3s-1.3-3-3-3-3 1.3-3 3c0 .2 0 .5.1.7L8.1 9.8C7.5 9.3 6.8 9 6 9c-1.7 0-3 1.3-3 3s1.3 3 3 3c.8 0 1.5-.3 2.1-.8l7.1 4.2c-.1.2-.1.4-.1.6 0 1.6 1.3 2.9 2.9 2.9s2.9-1.3 2.9-2.9-1.2-2.9-2.9-2.9z" />
+        </svg>
+      </button>
+
+      <div class="share-actions" id="share-options">
+        <button type="button" aria-label="Compartir por WhatsApp">
+          <img src="../assets/games/9c2c6.svg" alt="" />
+        </button>
+        <button type="button" aria-label="Compartir en X">
+          <img src="../assets/games/6ae11.svg" alt="" />
+        </button>
+        <button type="button" aria-label="Compartir por correo">
+          <img src="../assets/games/41885.svg" alt="" />
+        </button>
+        <button type="button" aria-label="Copiar enlace">
+          <img src="../assets/games/81ef8.svg" alt="" />
+        </button>
+      </div>
+
+      <div class="overall-rating">
+        <img src="../assets/games/320c5.svg" alt="estrella" />
+        <span>
+          <small>Valoración</small>
+          4.9
+        </span>
+      </div>
+    </div>
+
+    <!-- ---------- GALERÍA DE IMÁGENES ---------- -->
+    <section id="imagenes" class="gallery-section">
+      <h2 class="section-title">Imágenes del juego:</h2>
+
+      <div class="gallery">
+        <button class="gallery-item" type="button" aria-label="Escenario Cyberpunk">
+          <img src="../assets/flappy/fondo/10.png" alt="Escenario Nocturno Cyber Flight" />
+          <span>Gameplay Preview</span>
+          <img class="play-icon" src="../assets/games/60471.svg" alt="" />
+        </button>
+
+        <button class="gallery-item" type="button" aria-label="Capas de ciudad Cyberpunk">
+          <img src="../assets/flappy/fondo/8.png" alt="Edificios Neón Cyberpunk" />
+        </button>
+
+        <button class="gallery-item" type="button" aria-label="Rascacielos de fondo">
+          <img src="../assets/flappy/fondo/5.png" alt="Rascacielos del horizonte" />
+        </button>
+
+        <button class="gallery-item" type="button" aria-label="Cielo y nubes nocturnas">
+          <img src="../assets/flappy/fondo/3.png" alt="Nubes de la ciudad" />
+        </button>
+      </div>
+    </section>
+
+    <!-- ---------- DESCRIPCIÓN + INSTRUCCIONES ---------- -->
+    <section class="info-section">
+      <div class="neon-panel info-block">
+        <h2 class="section-title">
+          <img src="../assets/games/35fdd.svg" alt="" />
+          Cyber Flight - Flappy Cyberpunk
+        </h2>
+        <p>
+          Cyber Flight es un juego arcade de desplazamiento horizontal ambientado en una metrópolis nocturna Cyberpunk.
+          Pilotás un dron de alta velocidad que debe atravesar las torres de seguridad láser mientras el hueco de paso se
+          reduce progresivamente. Recolectá corazones de energía para recuperar tus vidas o sumar puntos adicionales y
+          aprovechá las descargas de los drones enemigos para activar el modo Turbo.
+        </p>
+
+        <h2 class="section-title">¿Cómo Jugar?</h2>
+        <ol>
+          <li>
+            <strong>Impulsá tu dron</strong> presionando la barra <strong>Espaciadora</strong> o haciendo
+            <strong>Click</strong> dentro del escenario para mantener el vuelo.
+          </li>
+          <li>
+            <strong>Esquivá las torres láser:</strong> la separación horizontal y la altura de las aberturas cambian en
+            cada torre, y el espacio vertical se va achicando a medida que avanzás.Cada torre superada suma <strong>+1 punto</strong>.
+          </li>
+          <li>
+            <strong>Sistema de 3 Vidas:</strong> contás con 3 vidas. Si chocás contra una torre o tocás el piso, el dron
+            sufre un impacto (animación de daño) y perdés <strong>1 vida</strong> con una breve invulnerabilidad. Al perder las 3 vidas, el dron explota y termina la partida.
+          </li>
+          <li>
+            <strong>Corazón Neón (Bonus):</strong> al agarrarlo en el aire recuperás <strong>+1 vida</strong> (hasta el
+            máximo de 3). Si ya tenés las 3 vidas completas, te otorga <strong>+5 puntos extra</strong>.
+          </li>
+          <li>
+            <strong>Dron Enemigo (Turbo):</strong> al colisionar con él <strong>no termina el juego</strong>, sino que
+            sobrecarga tu motor activando <strong>3 segundos de Turbo</strong> (mayor velocidad de avance).
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ---------- COMENTARIOS + FORMULARIO ---------- -->
+    <div class="neon-panel comments-block">
+      <section class="comments-section">
+        <h2 class="section-title">
+          <img src="../assets/games/56518.svg" alt="" />
+          Comentarios
+        </h2>
+
+        <div class="comments-panel" id="comments-list">
+          <article class="comment-card">
+            <img class="avatar" src="../assets/games/6109e.png" alt="" />
+            <div class="comment-copy">
+              <div class="comment-meta">
+                <strong>NicoGamer777</strong>
+                <span>1 h</span>
+              </div>
+              <p>Muy buen efecto parallax y cuando agarrás el turbo vuela.</p>
+            </div>
+            <div class="comment-rating">
+              <strong>5.0</strong>
+              <img src="../assets/games/6d78f.svg" alt="estrella" />
+            </div>
+          </article>
+
+          <article class="comment-card">
+            <img class="avatar" src="../assets/games/6109e.png" alt="" />
+            <div class="comment-copy">
+              <div class="comment-meta">
+                <strong>CyberRunner99</strong>
+                <span>4 h</span>
+              </div>
+              <p>Las 3 vidas te salvan cuando los tubos se empiezan a achicar.</p>
+            </div>
+            <div class="comment-rating">
+              <strong>4.8</strong>
+              <img src="../assets/games/6d78f.svg" alt="estrella" />
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="form-section">
+        <h2 class="section-title">Deja tu comentario:</h2>
+
+        <form class="comment-form" id="comment-form" novalidate>
+          <img class="avatar" src="../assets/games/6109e.png" alt="" />
+
+          <div class="comment-form__body">
+            <label class="visually-hidden" for="comment-text">Tu comentario</label>
+            <textarea
+              id="comment-text"
+              rows="1"
+              maxlength="300"
+              placeholder="Agrega un comentario..."
+              autocomplete="off"
+            ></textarea>
+
+            <div class="comment-form__extras">
+              <div class="star-picker" role="radiogroup" aria-label="Calificación">
+                <span class="star-picker__label">Calificación:</span>
+                <button type="button" role="radio" aria-checked="false" aria-label="1 estrella" data-value="1">★</button>
+                <button type="button" role="radio" aria-checked="false" aria-label="2 estrellas" data-value="2">★</button>
+                <button type="button" role="radio" aria-checked="false" aria-label="3 estrellas" data-value="3">★</button>
+                <button type="button" role="radio" aria-checked="false" aria-label="4 estrellas" data-value="4">★</button>
+                <button type="button" role="radio" aria-checked="false" aria-label="5 estrellas" data-value="5">★</button>
+                <span class="star-picker__hint" id="star-hint">Opcional</span>
+              </div>
+
+              <div class="comment-form__actions">
+                <span class="comment-form__counter" id="comment-counter">0/300</span>
+                <button class="btn-text" type="button" id="comment-cancel">Cancelar</button>
+                <button class="btn-pill" type="submit" id="comment-submit" disabled>
+                  <span class="btn-pill__text">Comentar</span>
+                  <svg class="btn-pill__mail" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm1.6 2L12 12.6 19.4 7H4.6z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <p class="comment-form__status" id="comment-status" role="status" aria-live="polite"></p>
+          </div>
+        </form>
+      </section>
+    </div>
+  </div>
+</main>
+
+<!-- Contenedor vacío donde el JavaScript inyectará el footer -->
+<div id="footer-container"></div>
+
+<script src="../js/main.js" defer></script>
+<script src="../js/menu-hambur.js" defer></script>
+<script src="../js/flappy.js" defer></script>
+<script src="../js/comments.js" defer></script>
+<script src="../js/share.js" defer></script>
+</body>
+</html>

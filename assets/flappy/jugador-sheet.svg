@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="64" viewBox="0 0 256 64" shape-rendering="crispEdges">
+  <!--
+    SPRITESHEET DEL JUGADOR (Cyber Drone / Nave)
+    4 fotogramas de 64x64px (Total: 256x64px).
+    Se anima con background-position y steps(4) en CSS.
+  -->
+
+  <!-- ==================== FRAME 1 (x: 0..64) ==================== -->
+  <g transform="translate(0, 0)">
+    <!-- Estela / Fuego del propulsor (Corto) -->
+    <rect x="4" y="28" width="8" height="8" fill="#ff2bd6"/>
+    <rect x="8" y="30" width="6" height="4" fill="#00f0ff"/>
+    <!-- Hélice superior (Posición 1) -->
+    <rect x="20" y="10" width="24" height="3" fill="#00f0ff"/>
+    <rect x="30" y="13" width="4" height="5" fill="#7a5cff"/>
+    <!-- Cuerpo principal del Dron Cyberpunk -->
+    <rect x="14" y="22" width="34" height="20" fill="#1a133b"/>
+    <rect x="18" y="18" width="26" height="28" fill="#291f5c"/>
+    <!-- Borde Neón Cian/Violeta -->
+    <rect x="18" y="18" width="26" height="3" fill="#00f0ff"/>
+    <rect x="18" y="43" width="26" height="3" fill="#ff2bd6"/>
+    <rect x="12" y="24" width="4" height="16" fill="#7a5cff"/>
+    <!-- Cabina / Visor Neón -->
+    <rect x="34" y="24" width="14" height="12" fill="#00f0ff"/>
+    <rect x="36" y="26" width="10" height="4" fill="#ffffff"/>
+    <!-- Ala / Detalle lateral -->
+    <rect x="22" y="32" width="10" height="6" fill="#ff2bd6"/>
+  </g>
+
+  <!-- ==================== FRAME 2 (x: 64..128) ==================== -->
+  <g transform="translate(64, -2)">
+    <!-- Estela / Fuego del propulsor (Mediano) -->
+    <rect x="0" y="26" width="12" height="12" fill="#ff2bd6"/>
+    <rect x="4" y="28" width="10" height="8" fill="#00f0ff"/>
+    <rect x="8" y="30" width="6" height="4" fill="#ffffff"/>
+    <!-- Hélice superior (Posición 2 - comprimida/girando) -->
+    <rect x="26" y="10" width="12" height="3" fill="#ff2bd6"/>
+    <rect x="30" y="13" width="4" height="5" fill="#7a5cff"/>
+    <!-- Cuerpo principal -->
+    <rect x="14" y="22" width="34" height="20" fill="#1a133b"/>
+    <rect x="18" y="18" width="26" height="28" fill="#291f5c"/>
+    <rect x="18" y="18" width="26" height="3" fill="#00f0ff"/>
+    <rect x="18" y="43" width="26" height="3" fill="#ff2bd6"/>
+    <rect x="12" y="24" width="4" height="16" fill="#7a5cff"/>
+    <!-- Cabina / Visor -->
+    <rect x="34" y="24" width="14" height="12" fill="#00f0ff"/>
+    <rect x="36" y="26" width="10" height="4" fill="#ffffff"/>
+    <!-- Ala arriba -->
+    <rect x="22" y="28" width="10" height="6" fill="#00f0ff"/>
+  </g>
+
+  <!-- ==================== FRAME 3 (x: 128..192) ==================== -->
+  <g transform="translate(128, 0)">
+    <!-- Estela / Fuego del propulsor (Largo / Potente) -->
+    <rect x="0" y="24" width="14" height="16" fill="#ff2bd6"/>
+    <rect x="3" y="27" width="11" height="10" fill="#00f0ff"/>
+    <rect x="6" y="29" width="8" height="6" fill="#ffffff"/>
+    <!-- Hélice superior (Posición 3 - extendida brillante) -->
+    <rect x="16" y="10" width="32" height="3" fill="#ffffff"/>
+    <rect x="30" y="13" width="4" height="5" fill="#7a5cff"/>
+    <!-- Cuerpo principal -->
+    <rect x="14" y="22" width="34" height="20" fill="#1a133b"/>
+    <rect x="18" y="18" width="26" height="28" fill="#291f5c"/>
+    <rect x="18" y="18" width="26" height="3" fill="#00f0ff"/>
+    <rect x="18" y="43" width="26" height="3" fill="#ff2bd6"/>
+    <rect x="12" y="24" width="4" height="16" fill="#7a5cff"/>
+    <!-- Cabina / Visor -->
+    <rect x="34" y="24" width="14" height="12" fill="#00f0ff"/>
+    <rect x="36" y="26" width="10" height="4" fill="#ffffff"/>
+    <!-- Ala abajo -->
+    <rect x="22" y="35" width="10" height="6" fill="#ff2bd6"/>
+  </g>
+
+  <!-- ==================== FRAME 4 (x: 192..256) ==================== -->
+  <g transform="translate(192, 1)">
+    <!-- Estela / Fuego del propulsor (Mediano) -->
+    <rect x="2" y="27" width="10" height="10" fill="#ff2bd6"/>
+    <rect x="6" y="29" width="8" height="6" fill="#00f0ff"/>
+    <!-- Hélice superior (Posición 4) -->
+    <rect x="24" y="10" width="16" height="3" fill="#00f0ff"/>
+    <rect x="30" y="13" width="4" height="5" fill="#7a5cff"/>
+    <!-- Cuerpo principal -->
+    <rect x="14" y="22" width="34" height="20" fill="#1a133b"/>
+    <rect x="18" y="18" width="26" height="28" fill="#291f5c"/>
+    <rect x="18" y="18" width="26" height="3" fill="#00f0ff"/>
+    <rect x="18" y="43" width="26" height="3" fill="#ff2bd6"/>
+    <rect x="12" y="24" width="4" height="16" fill="#7a5cff"/>
+    <!-- Cabina / Visor -->
+    <rect x="34" y="24" width="14" height="12" fill="#00f0ff"/>
+    <rect x="36" y="26" width="10" height="4" fill="#ffffff"/>
+    <!-- Ala centro -->
+    <rect x="22" y="32" width="10" height="6" fill="#00f0ff"/>
+  </g>
+</svg>
