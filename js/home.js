@@ -24,7 +24,8 @@
     // entre GTA VI y RDR2).
     const DESTACADOS_FIJOS = [
         { titulo: "GTA VI", cover: "gta-vi-1560x880.jpg.webp", etiqueta: "Próximamente" },
-        { titulo: "Peg Solitaire - CyberPunk", cover: "peg-solitaire.webp", etiqueta: "Juego recomendado", link: "pages/game_solitare.html", inicial: true },
+        { titulo: "Cyber Flight - Flappy", cover: "cyber-flight.png", etiqueta: "Nuevo lanzamiento", link: "pages/game_flappy.html", inicial: true },
+        { titulo: "Peg Solitaire - CyberPunk", cover: "peg-solitaire.webp", etiqueta: "Juego recomendado", link: "pages/game_solitare.html" },
         { titulo: "Blocka", cover: "blocka.jpeg", etiqueta: "Nuevo juego", link: "pages/game_blocka.html" },
         { titulo: "Red Dead Redemption 2", cover: "rdr2.jpg", etiqueta: "Juego del momento" }
     ];

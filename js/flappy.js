@@ -17,7 +17,7 @@ const FACTOR_TURBO    = 1.65;
 // Configuración de las tuberías (obstáculos)
 const ANCHO_TUBO      = 68;
 const HUECO_INICIAL   = 185; // Hueco vertical amplio al empezar
-const HUECO_MIN       = 125; // Hueco vertical mínimo cuando avanza el tiempo
+const HUECO_MIN       = 140; // Hueco vertical mínimo cuando avanza el tiempo
 
 // Factores de velocidad para las 6 capas de Parallax (la última va a 1.0 como los tubos)
 const FACTORES_PARALLAX = [0.05, 0.02, 0.15, 0.35, 0.65, 1.0];
@@ -216,7 +216,7 @@ function crearItemEnPasillo(xItem, yCentroSugerido) {
 function crearTubo() {
   // 5b: El hueco vertical se achica a medida que avanza el tiempo
   const reduccion = juego.tiempo * 2.0;
-  const hueco = limitar(HUECO_INICIAL - reduccion + azar(-10, 10), HUECO_MIN, HUECO_INICIAL);
+  const hueco = limitar(HUECO_INICIAL - reduccion, HUECO_MIN, HUECO_INICIAL);
 
   // 5c: El centro del hueco varía en altura entre TECHO y PISO
   const centro = azar(TECHO + hueco / 2, PISO - hueco / 2);
@@ -269,7 +269,7 @@ function crearTubo() {
   // Con 28% de probabilidad generamos un ítem (Corazón o Dron) justo en el medio del pasillo
   // entre este tubo y el próximo, así jamás se superpone con un tubo.
   if (Math.random() < 0.28) {
-    const xMedioPasillo = ANCHO_ESCENARIO + ANCHO_TUBO + (distanciaSiguiente - ANCHO_TUBO) / 2 - 24;
+    const xMedioPasillo = ANCHO_ESCENARIO + ANCHO_TUBO + (distanciaSiguiente - ANCHO_TUBO) / 2;
     crearItemEnPasillo(xMedioPasillo, centro);
   }
 }
